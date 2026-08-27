@@ -1,0 +1,28 @@
+---
+import BlogSidebar from "@/components/BlogSidebar.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { blog } from "@/data/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { Post } from "@/lib/posts";
+
+interface Props {
+  title: string;
+  description: string;
+  active: "archive" | "categories" | "about" | "search";
+  posts: Post[];
+}
+
+const { title, description, active, posts } = Astro.props;
+---
+
+<BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page">
+  <div class="site-shell blog-shell">
+    <SiteHeader variant="blog" active={active} />
+    <div class="page-layout">
+      <main class="main-content inner-content" id="main"><slot /></main>
+      <BlogSidebar posts={posts} />
+    </div>
+    <SiteFooter variant="blog" />
+  </div>
+</BaseLayout>

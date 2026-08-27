@@ -1,0 +1,14 @@
+---
+import { blog } from "@/data/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { withBase } from "@/lib/url";
+---
+
+<BaseLayout title={`Page not found · ${blog.title}`} description="The requested page could not be found.">
+  <main class="not-found" id="main">
+    <p class="eyebrow">404 · LOST NOTE</p>
+    <h1>This page has not been written yet.</h1>
+    <p>Return to the template home page to explore the blog and academic variants.</p>
+    <a class="button primary" href={withBase("/")}>Back home</a>
+  </main>
+</BaseLayout>

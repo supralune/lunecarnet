@@ -1,0 +1,30 @@
+---
+import { academic, identity, projects, publications, showEditingGuides } from "@/data/site";
+const selectedPublicationCount = publications.filter((publication) => publication.selected).length;
+---
+
+<aside class="sidebar academic-sidebar">
+  <section class="profile-card">
+    <div class="avatar" aria-hidden="true">{identity.initials}</div>
+    <h2>{identity.name}</h2>
+    <p>{academic.role}</p>
+    <dl>
+      <div><dt>Email</dt><dd><a href={`mailto:${identity.email}`}>{identity.email}</a></dd></div>
+      {(identity.github || showEditingGuides) && <div><dt>GitHub</dt><dd>{identity.github ? <a href={identity.github} target="_blank" rel="noreferrer">Profile</a> : <span class="placeholder-link">Add profile URL</span>}</dd></div>}
+      {(academic.orcid || showEditingGuides) && <div><dt>ORCID</dt><dd>{academic.orcid ? <a href={academic.orcid} target="_blank" rel="noreferrer">Record</a> : <span class="placeholder-link">Add ORCID URL</span>}</dd></div>}
+      <div><dt>Based</dt><dd>{identity.location}</dd></div>
+    </dl>
+  </section>
+  <section class="widget">
+    <h2>Research Areas</h2>
+    <div class="area-list">{academic.topics.map((topic) => <span>{topic}</span>)}</div>
+  </section>
+  <section class="widget">
+    <h2>At a glance</h2>
+    <ul class="plain-list">
+      <li>{selectedPublicationCount} selected publications</li>
+      <li>{projects.length} active projects</li>
+      <li>{academic.availability}</li>
+    </ul>
+  </section>
+</aside>

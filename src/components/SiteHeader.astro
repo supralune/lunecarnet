@@ -1,0 +1,41 @@
+---
+import { academic, blog, showVariantSwitcher, type SiteVariant } from "@/data/site";
+import { withBase } from "@/lib/url";
+
+interface Props { variant: SiteVariant; active?: string }
+const { variant, active = "home" } = Astro.props;
+const content = variant === "blog" ? blog : academic;
+const homePath = variant === "blog" ? "/blog/" : "/academic/";
+const navigationId = `${variant}-navigation`;
+---
+
+<header class="site-header">
+  <div class="brand-row">
+    <div class="site-name">
+      <a class="logo" href={withBase(homePath)}>{content.title}</a>
+      <p>{content.description}</p>
+    </div>
+    <div class="header-tools">
+      {showVariantSwitcher && (
+        <nav class="variant-switcher" aria-label="Template variant">
+          <a class:list={{ active: variant === "blog" }} aria-current={variant === "blog" ? "page" : undefined} href={withBase("/blog/")}>Blog</a>
+          <a class:list={{ active: variant === "academic" }} aria-current={variant === "academic" ? "page" : undefined} href={withBase("/academic/")}>Academic</a>
+        </nav>
+      )}
+      <div class="utility-actions">
+        {variant === "blog" && <a class="utility-link search-link" href={withBase("/blog/search/")}><span aria-hidden="true">⌕</span><span class="sr-only">Search notes</span></a>}
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Use dark theme" aria-pressed="false">
+          <span class="theme-light" aria-hidden="true">☼</span>
+          <span class="theme-dark" aria-hidden="true">◐</span>
+        </button>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-controls={navigationId} aria-expanded="false">
+          <span aria-hidden="true">Menu</span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <nav class="nav-menu" id={navigationId} data-nav-menu aria-label="Primary navigation">
+    {content.nav.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(item.href)}>{item.label}</a>)}
+  </nav>
+</header>

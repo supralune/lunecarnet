@@ -1,0 +1,28 @@
+---
+import { showEditingGuides, type Publication } from "@/data/site";
+
+interface Props { publication: Publication; highlight?: boolean }
+const { publication, highlight = false } = Astro.props;
+---
+
+<article class="publication">
+  <div class:list={["year-badge", { highlight }]}>{publication.year}</div>
+  <div>
+    <h3>{publication.title}</h3>
+    <p class="authors">
+      {publication.authors.map((author, index) => (
+        <>
+          {index > 0 && ", "}
+          <span class:list={{ "self-author": author.self }}>{author.name}</span>
+          {author.corresponding && <sup class="corresponding-mark" title="Corresponding author">*</sup>}
+        </>
+      ))}
+    </p>
+    <p class="venue"><em>{publication.venue}</em>{publication.badge && <span>{publication.badge}</span>}</p>
+    <div class="paper-links">
+      {publication.links.map((link) => link.href
+        ? <a href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
+        : showEditingGuides && <span>{link.label}</span>)}
+    </div>
+  </div>
+</article>

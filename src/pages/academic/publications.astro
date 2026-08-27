@@ -1,0 +1,29 @@
+---
+import TemplateGuide from "@/components/TemplateGuide.astro";
+import PublicationRow from "@/components/PublicationRow.astro";
+import { publications } from "@/data/site";
+import AcademicPageLayout from "@/layouts/AcademicPageLayout.astro";
+
+const years = [...new Set(publications.map((publication) => publication.year))].sort((a, b) => b - a);
+---
+
+<AcademicPageLayout title="Publications" description="A complete list of publications and research outputs." active="publications">
+  <header class="page-heading">
+    <p class="eyebrow">PUBLICATIONS · {publications.length} ENTRIES</p>
+    <h1>Publications</h1>
+    <p>List peer-reviewed papers, preprints, theses, datasets, or other research outputs here.</p>
+  </header>
+
+  <TemplateGuide title="Publication guidance">
+    <p>Maintain this page in the <code>publications</code> array in <code>src/data/site.ts</code>. Set <code>self: true</code> for your name and <code>corresponding: true</code> for each corresponding author.</p>
+  </TemplateGuide>
+
+  <p class="publication-legend"><span class="self-author">Your Name</span> indicates the profile owner; <sup>*</sup> indicates the corresponding author.</p>
+
+  {years.map((year) => (
+    <section class="publication-year-section">
+      <h2 class="year-heading">{year}</h2>
+      {publications.filter((publication) => publication.year === year).map((publication) => <PublicationRow publication={publication} />)}
+    </section>
+  ))}
+</AcademicPageLayout>

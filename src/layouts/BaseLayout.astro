@@ -1,0 +1,105 @@
+---
+import "@/styles/global.css";
+import { blog } from "@/data/site";
+import { withBase } from "@/lib/url";
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+  pageClass?: string;
+  type?: "website" | "article";
+  publishedTime?: Date;
+  schema?: Record<string, unknown>;
+}
+
+const { title, description, lang = "en", pageClass = "", type = "website", publishedTime, schema } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : undefined;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta id="theme-color" name="theme-color" content="#f8f7f3" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={`${blog.title} RSS`} href={withBase("/rss.xml")} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {serializedSchema && <script is:inline type="application/ld+json" set:html={serializedSchema}></script>}
+    <title>{title}</title>
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      let savedTheme = null;
+      try { savedTheme = localStorage.getItem("lunecarnet-theme"); } catch {}
+      const dark = savedTheme === "dark" || (savedTheme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document.querySelector("#theme-color")?.setAttribute("content", dark ? "#191b1c" : "#f8f7f3");
+    </script>
+  </head>
+  <body class={pageClass} id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+    <script is:inline>
+      const root = document.documentElement;
+      const themeColor = document.querySelector("#theme-color");
+      const syncThemeControls = () => {
+        const dark = root.dataset.theme === "dark";
+        themeColor?.setAttribute("content", dark ? "#191b1c" : "#f8f7f3");
+        document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+          button.setAttribute("aria-label", dark ? "Use light theme" : "Use dark theme");
+          button.setAttribute("aria-pressed", String(dark));
+        });
+      };
+
+      syncThemeControls();
+      document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const dark = root.dataset.theme !== "dark";
+          root.dataset.theme = dark ? "dark" : "light";
+          try { localStorage.setItem("lunecarnet-theme", dark ? "dark" : "light"); } catch {}
+          syncThemeControls();
+        });
+      });
+
+      const systemTheme = matchMedia("(prefers-color-scheme: dark)");
+      systemTheme.addEventListener("change", (event) => {
+        let hasSavedTheme = false;
+        try { hasSavedTheme = Boolean(localStorage.getItem("lunecarnet-theme")); } catch {}
+        if (!hasSavedTheme) {
+          root.dataset.theme = event.matches ? "dark" : "light";
+          syncThemeControls();
+        }
+      });
+
+      document.querySelectorAll("[data-nav-toggle]").forEach((button) => {
+        const menu = document.querySelector(`#${button.getAttribute("aria-controls")}`);
+        if (!menu) return;
+        const close = () => {
+          menu.classList.remove("open");
+          button.setAttribute("aria-expanded", "false");
+        };
+        button.addEventListener("click", () => {
+          const open = !menu.classList.contains("open");
+          menu.classList.toggle("open", open);
+          button.setAttribute("aria-expanded", String(open));
+        });
+        menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", close));
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && menu.classList.contains("open")) { close(); button.focus(); }
+        });
+        matchMedia("(min-width: 721px)").addEventListener("change", (event) => { if (event.matches) close(); });
+      });
+    </script>
+  </body>
+</html>

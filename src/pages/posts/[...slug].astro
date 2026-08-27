@@ -1,0 +1,63 @@
+---
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { identity } from "@/data/site";
+import { formatDate, getPublishedPosts, postPath, type Post } from "@/lib/posts";
+import { withBase } from "@/lib/url";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.id.replace(/\.(md|mdx)$/, "") },
+    props: { post, previous: posts[index + 1], next: posts[index - 1] }
+  }));
+}
+
+interface Props { post: Post; previous?: Post; next?: Post }
+const { post, previous, next } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.publishDate.toISOString(),
+  author: { "@type": "Person", name: identity.name },
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString()
+};
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} lang="en" pageClass="blog-page" type="article" publishedTime={post.data.publishDate} schema={schema}>
+  <div class="site-shell article-site">
+    <SiteHeader variant="blog" />
+    <main class="article-main" id="main">
+      <header class="article-header">
+        <a href={withBase("/blog/")}>← Back to all notes</a>
+        <p class="eyebrow">{post.data.category}</p>
+        <h1>{post.data.title}</h1>
+        <p>{post.data.description}</p>
+        <div><time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time><span>/</span><span>{post.data.readingTime} min read</span></div>
+      </header>
+      <div class:list={["article-shell", { "has-toc": toc.length > 1 }]}>
+        <article class="article-content"><Content /></article>
+        {toc.length > 1 && (
+          <aside class="toc" aria-label="On this page">
+            <strong>On this page</strong>
+            <ol>{toc.map((heading) => <li class={`toc-depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol>
+          </aside>
+        )}
+      </div>
+      <nav class="article-tags" aria-label="Note tags">{post.data.tags.map((tag) => <a href={`${withBase("/blog/search/")}?q=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>
+      {(previous || next) && (
+        <nav class="post-navigation" aria-label="Adjacent notes">
+          {previous ? <a href={withBase(postPath(previous))}><small>Previous note</small><span>{previous.data.title}</span></a> : <span></span>}
+          {next && <a href={withBase(postPath(next))}><small>Next note</small><span>{next.data.title}</span></a>}
+        </nav>
+      )}
+    </main>
+    <SiteFooter variant="blog" />
+  </div>
+</BaseLayout>

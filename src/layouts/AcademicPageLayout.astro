@@ -1,0 +1,26 @@
+---
+import AcademicSidebar from "@/components/AcademicSidebar.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { academic } from "@/data/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  active: "publications" | "projects" | "about";
+}
+
+const { title, description, active } = Astro.props;
+---
+
+<BaseLayout title={`${title} · ${academic.title}`} description={description} lang={academic.language} pageClass="academic-page">
+  <div class="site-shell academic-shell">
+    <SiteHeader variant="academic" active={active} />
+    <div class="page-layout">
+      <main class="main-content inner-content" id="main"><slot /></main>
+      <AcademicSidebar />
+    </div>
+    <SiteFooter variant="academic" />
+  </div>
+</BaseLayout>

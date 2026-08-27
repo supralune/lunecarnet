@@ -1,0 +1,41 @@
+---
+import { blog } from "@/data/site";
+import { postPath, type Post } from "@/lib/posts";
+import { withBase } from "@/lib/url";
+
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+const categories = [...new Set(posts.map((post) => post.data.category))];
+---
+
+<aside class="sidebar blog-sidebar">
+  <section class="sidebar-card">
+    <p class="eyebrow">ABOUT THIS PLACE</p>
+    <p>{blog.about}</p>
+    <a class="text-link" href={withBase("/blog/about/")}>Learn more →</a>
+  </section>
+  {categories.length > 0 && <section class="widget">
+    <h2>Categories</h2>
+    <ul class="category-list">
+      {categories.map((category, index) => (
+        <li><a href={`${withBase("/blog/categories/")}#category-${index + 1}`}><span>{category}</span><span>{posts.filter((post) => post.data.category === category).length}</span></a></li>
+      ))}
+    </ul>
+  </section>}
+  {posts.length > 0 && <section class="widget">
+    <h2>Recent Notes</h2>
+    <ol class="recent-list">
+      {posts.slice(0, 3).map((post, index) => (
+        <li><span>0{index + 1}</span><div><a href={withBase(postPath(post))}>{post.data.title}</a><small>{post.data.category}</small></div></li>
+      ))}
+    </ol>
+  </section>}
+  <section class="widget sidebar-contact">
+    <h2>Search & Subscribe</h2>
+    <p>Find a note by title, topic, or keyword, or follow new writing through RSS.</p>
+    <div class="sidebar-actions">
+      <a class="text-link" href={withBase("/blog/search/")}>Search notes →</a>
+      <a class="text-link" href={withBase("/rss.xml")}>Open RSS feed →</a>
+    </div>
+  </section>
+</aside>

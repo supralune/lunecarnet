@@ -1,0 +1,13 @@
+---
+import { showEditingGuides } from "@/data/site";
+
+interface Props { title?: string; compact?: boolean }
+const { title = "Template editing guide", compact = false } = Astro.props;
+---
+
+{showEditingGuides && (
+  <aside class:list={["template-note", { compact }]} aria-label={title}>
+    <strong>{title}</strong>
+    <div><slot /></div>
+  </aside>
+)}

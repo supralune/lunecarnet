@@ -1,0 +1,46 @@
+---
+import PostItem from "@/components/PostItem.astro";
+import BlogSidebar from "@/components/BlogSidebar.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import TemplateGuide from "@/components/TemplateGuide.astro";
+import { blog } from "@/data/site";
+import type { Post } from "@/lib/posts";
+import { withBase } from "@/lib/url";
+
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+---
+
+<div class="site-shell blog-shell">
+  <SiteHeader variant="blog" active="home" />
+  <div class="page-layout">
+    <main class="main-content" id="main">
+      <section class="blog-hero">
+        <p class="eyebrow">PERSONAL NOTES · SINCE {blog.foundedYear}</p>
+        <h1>{blog.hero}</h1>
+        <p>{blog.intro}</p>
+      </section>
+
+      <TemplateGuide compact>
+        <p>Replace the blog and identity fields in <code>src/data/site.ts</code>, then set <code>showEditingGuides</code> to <code>false</code>.</p>
+      </TemplateGuide>
+
+      <section id="notes" class="content-section">
+        <div class="section-heading">
+          <h2>Latest Notes</h2>
+          <a class="section-more" href={withBase("/blog/archive/")}>View archive →</a>
+        </div>
+        <div class="post-list">
+          {posts.length > 0
+            ? posts.map((post, index) => <PostItem post={post} featured={index === 0 && post.data.featured} />)
+            : <EmptyState title="No notes published yet" description="Add your first Markdown file to src/content/posts/ and it will appear here automatically." />}
+        </div>
+      </section>
+    </main>
+
+    <BlogSidebar posts={posts} />
+  </div>
+  <SiteFooter variant="blog" />
+</div>

@@ -1,0 +1,17 @@
+---
+import AcademicHome from "@/components/AcademicHome.astro";
+import BlogHome from "@/components/BlogHome.astro";
+import { academic, blog, defaultVariant, identity } from "@/data/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPublishedPosts } from "@/lib/posts";
+
+const posts = await getPublishedPosts();
+const content = defaultVariant === "blog" ? blog : academic;
+const schema = defaultVariant === "blog"
+  ? { "@context": "https://schema.org", "@type": "Blog", name: blog.title, description: blog.description, url: new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString() }
+  : { "@context": "https://schema.org", "@type": "Person", name: identity.name, description: academic.bio, url: new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString() };
+---
+
+<BaseLayout title={content.title} description={content.description} lang={content.language} pageClass={`${defaultVariant}-page`} schema={schema}>
+  {defaultVariant === "blog" ? <BlogHome posts={posts} /> : <AcademicHome />}
+</BaseLayout>

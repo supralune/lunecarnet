@@ -1,0 +1,21 @@
+---
+import AcademicHome from "@/components/AcademicHome.astro";
+import { academic, identity } from "@/data/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const siteOrigin = Astro.site ?? Astro.url.origin;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: identity.name,
+  description: academic.bio,
+  url: new URL(import.meta.env.BASE_URL + "academic/", siteOrigin).toString(),
+  email: `mailto:${identity.email}`,
+  affiliation: { "@type": "Organization", name: academic.role },
+  sameAs: [identity.github, academic.scholar, academic.orcid].filter(Boolean)
+};
+---
+
+<BaseLayout title={`${academic.title} · Academic`} description={academic.description} lang={academic.language} pageClass="academic-page" schema={schema}>
+  <AcademicHome />
+</BaseLayout>

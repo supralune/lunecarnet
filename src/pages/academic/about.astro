@@ -1,0 +1,53 @@
+---
+import { academic, education, honors, identity, service } from "@/data/site";
+import TemplateGuide from "@/components/TemplateGuide.astro";
+import AcademicPageLayout from "@/layouts/AcademicPageLayout.astro";
+---
+
+<AcademicPageLayout title="About" description="Biography, education, honors, and academic service." active="about">
+  <header class="page-heading">
+    <p class="eyebrow">ABOUT · CURRICULUM VITAE</p>
+    <h1>About</h1>
+    <p>A concise academic biography, followed by the records people most often look for.</p>
+  </header>
+
+  <TemplateGuide title="Academic profile guidance">
+    <p>Prioritize information relevant to your current academic role. Education, honors, and service are maintained as arrays in <code>src/data/site.ts</code>.</p>
+  </TemplateGuide>
+
+  <section class="academic-detail-section">
+    <h2>Biography</h2>
+    <p class="about-copy">{academic.longBio}</p>
+  </section>
+
+  <section class="academic-detail-section">
+    <h2>Education</h2>
+    {education.map((item) => (
+      <div class="record-row">
+        <div><h3>{item.title}</h3><p>{item.detail}</p></div>
+        <time>{item.period}</time>
+      </div>
+    ))}
+  </section>
+
+  <section class="academic-detail-section">
+    <h2>Honors & Awards</h2>
+    {honors.map((item) => (
+      <div class="record-row"><div><h3>{item.title}</h3><p>{item.detail}</p></div></div>
+    ))}
+  </section>
+
+  <section class="academic-detail-section">
+    <h2>Academic Service</h2>
+    <ul class="service-list">{service.map((item) => <li>{item}</li>)}</ul>
+  </section>
+
+  <section class="academic-detail-section">
+    <h2>Contact</h2>
+    <dl class="contact-grid">
+      <div><dt>Email</dt><dd><a href={`mailto:${identity.email}`}>{identity.email}</a></dd></div>
+      {identity.github && <div><dt>GitHub</dt><dd><a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></dd></div>}
+      <div><dt>Location</dt><dd>{identity.location}</dd></div>
+    </dl>
+  </section>
+</AcademicPageLayout>

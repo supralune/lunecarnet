@@ -1,0 +1,19 @@
+name: Feature request
+description: Suggest a focused improvement to the template.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: User need
+      description: What user problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed direction
+      description: Describe the smallest useful solution and any tradeoffs.
+    validations:
+      required: true

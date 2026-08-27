@@ -1,0 +1,43 @@
+---
+import TemplateGuide from "@/components/TemplateGuide.astro";
+import { blog, identity, showEditingGuides } from "@/data/site";
+import BlogPageLayout from "@/layouts/BlogPageLayout.astro";
+import { getPublishedPosts } from "@/lib/posts";
+
+const posts = await getPublishedPosts();
+---
+
+<BlogPageLayout title="About" description="About the blog and its author." active="about" posts={posts}>
+  <header class="page-heading">
+    <p class="eyebrow">ABOUT · BLOG & AUTHOR</p>
+    <h1>About This Blog</h1>
+    <p>A little context about these notes, the subjects behind them, and the person writing them.</p>
+  </header>
+
+  <TemplateGuide title="About-page guidance">
+    <p>Replace the example paragraphs below with your writing philosophy, recurring topics, brief biography, and public contact details.</p>
+  </TemplateGuide>
+
+  <div class="prose-page">
+    <section>
+      <h2>Why I Write</h2>
+      <p>{blog.about}</p>
+      <p>{blog.writingPurpose}</p>
+    </section>
+    <section>
+      <h2>What I Cover</h2>
+      <p>{blog.coverage}</p>
+    </section>
+    <section>
+      <h2>About the Author</h2>
+      <p><strong>{identity.name}</strong></p>
+      <p>{blog.authorBio}</p>
+    </section>
+    <section>
+      <h2>Contact</h2>
+      <p>{blog.contactNote}</p>
+      <p>Public email: <a href={`mailto:${identity.email}`}>{identity.email}</a></p>
+      {identity.github ? <p>GitHub: <a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></p> : showEditingGuides && <p class="fill-caption">Add a GitHub URL in the <code>identity</code> section of <code>src/data/site.ts</code>.</p>}
+    </section>
+  </div>
+</BlogPageLayout>
