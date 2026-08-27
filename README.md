@@ -6,6 +6,18 @@ An Astro template that combines a personal blog and an academic homepage in one 
 
 The template contains no personal information or branding from the reference projects. Its academic sections use discipline-neutral placeholders, and the built-in editing guides explain where to replace them. The repository is ready to use as a GitHub Template Repository.
 
+## Preview
+
+The screenshots show the light theme with the optional editing guides enabled.
+
+### Blog home
+
+![Lunecarnet blog home page in the light theme](./docs/screenshots/blog-home.png)
+
+### Academic home
+
+![Lunecarnet academic home page in the light theme](./docs/screenshots/academic-home.png)
+
 ## Highlights
 
 - Two complete, responsive site variants built from one shared design system

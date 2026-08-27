@@ -6,6 +6,18 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 
 模板不包含参考项目中的个人信息或品牌内容。学术部分采用学科中立的通用占位信息，并通过可开关的编辑指引说明应该在哪里替换内容，可直接作为 GitHub Template Repository 使用。
 
+## 页面预览
+
+以下截图使用浅色主题，并保留了可选的模板编辑指引。
+
+### 博客主页
+
+![Lunecarnet 博客主页浅色主题示例](./docs/screenshots/blog-home.png)
+
+### 学术主页
+
+![Lunecarnet 学术主页浅色主题示例](./docs/screenshots/academic-home.png)
+
 ## 主要特性
 
 - 一套共享设计系统下的博客与学术主页双版本
