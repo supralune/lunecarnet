@@ -16,7 +16,7 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 - RSS、Sitemap、robots、canonical 与文章元数据
 - 持久化明暗主题与浏览器主题色同步
 - 键盘导航、可见焦点、减少动态效果和移动端触控尺寸支持
-- GitHub Pages 自动部署、Pull Request 质量检查和路由测试
+- 可选的 GitHub Pages 手动部署、Pull Request 质量检查和路由测试
 - 不包含分析追踪、远程字体、数据库或前端框架运行时
 
 ## 页面路由
@@ -135,7 +135,9 @@ Start the article here. Section headings should normally begin at `##`.
 
 ## GitHub Pages
 
-仓库包含 `.github/workflows/pages.yml`。创建仓库后，在 GitHub 的 **Settings → Pages → Build and deployment** 中选择 **GitHub Actions**，然后推送到 `main`。
+仓库包含 `.github/workflows/pages.yml`，但默认仅允许手动触发，避免从模板创建的新仓库自动发布示例内容。如需部署，请先在 GitHub 的 **Settings → Pages → Build and deployment** 中选择 **GitHub Actions**，然后进入 **Actions → Deploy to GitHub Pages → Run workflow**。
+
+如果以后希望 `main` 分支的每次更新都自动发布，可在该工作流中添加针对 `main` 的 `push` 触发器。独立的质量检查工作流仍会检查推送和 Pull Request，但不会发布网站。
 
 工作流会自动推导以下两类 GitHub Pages 地址的公开域名和路径：
 

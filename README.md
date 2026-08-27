@@ -15,7 +15,7 @@ The template contains no personal information or branding from the reference pro
 - RSS, Sitemap, robots discovery, canonical URLs, and article metadata
 - Light and dark themes with persistent preference and correct browser theme color
 - Keyboard navigation, visible focus, reduced-motion support, semantic landmarks, and mobile touch targets
-- GitHub Pages deployment, pull-request quality checks, and route-level tests
+- Optional manual GitHub Pages deployment, pull-request quality checks, and route-level tests
 - No analytics, remote font requests, database, or client framework runtime
 
 ## Included Pages
@@ -132,7 +132,9 @@ The template intentionally omits a generic social-preview image. Add a site-spec
 
 ## GitHub Pages
 
-The repository includes `.github/workflows/pages.yml`. After creating a repository, choose **GitHub Actions** under **Settings → Pages → Build and deployment**, then push to `main`.
+The repository includes `.github/workflows/pages.yml`, but deployment is manual by default so a newly created template repository does not publish example content automatically. To deploy, choose **GitHub Actions** under **Settings → Pages → Build and deployment**, then open **Actions → Deploy to GitHub Pages → Run workflow**.
+
+If you later want every change on `main` to publish automatically, add a `push` trigger for the `main` branch to that workflow. The separate quality workflow continues to test pushes and pull requests without publishing the site.
 
 The workflow automatically derives the correct public origin and path for both common URL formats:
 
@@ -155,7 +157,7 @@ src/data/site.ts      Site content and variant configuration
 src/layouts/          HTML shell, SEO metadata, and page frames
 src/pages/            Root route, two site variants, article pages, and 404
 src/styles/           Shared design system and responsive styles
-.github/workflows/    GitHub Pages build and deployment
+.github/workflows/    Quality checks and optional GitHub Pages deployment
 tests/                Static-build route and metadata checks
 ```
 
