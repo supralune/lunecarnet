@@ -24,7 +24,7 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta id="theme-color" name="theme-color" content="#f8f7f3" />
+    <meta id="theme-color" name="theme-color" content="#ffffff" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title={`${blog.title} RSS`} href={withBase("/rss.xml")} />
     <meta property="og:type" content={type} />
@@ -44,7 +44,7 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
       try { savedTheme = localStorage.getItem("lunecarnet-theme"); } catch {}
       const dark = savedTheme === "dark" || (savedTheme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.dataset.theme = dark ? "dark" : "light";
-      document.querySelector("#theme-color")?.setAttribute("content", dark ? "#191b1c" : "#f8f7f3");
+      document.querySelector("#theme-color")?.setAttribute("content", dark ? "#191b1c" : "#ffffff");
     </script>
   </head>
   <body class={pageClass} id="top">
@@ -55,7 +55,7 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
       const themeColor = document.querySelector("#theme-color");
       const syncThemeControls = () => {
         const dark = root.dataset.theme === "dark";
-        themeColor?.setAttribute("content", dark ? "#191b1c" : "#f8f7f3");
+        themeColor?.setAttribute("content", dark ? "#191b1c" : "#ffffff");
         document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
           button.setAttribute("aria-label", dark ? "Use light theme" : "Use dark theme");
           button.setAttribute("aria-pressed", String(dark));
