@@ -7,6 +7,7 @@ import TemplateGuide from "./TemplateGuide.astro";
 import { templatePath } from "../config/runtime";
 import type { AcademicConfig, IdentityConfig, NewsItem, Project, Publication } from "../types";
 import { withBase } from "../lib/url";
+import { resolveMessages, type MessageOverrides } from "../messages";
 
 interface Props {
   academic: AcademicConfig;
@@ -15,26 +16,28 @@ interface Props {
   projects: Project[];
   news: NewsItem[];
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 }
-const { academic, identity, publications, projects, news, showEditingGuides = false } = Astro.props;
+const { academic, identity, publications, projects, news, showEditingGuides = false, messages } = Astro.props;
 const selectedPublications = publications.filter((publication) => publication.selected);
+const ui = resolveMessages(academic.language, messages);
 ---
 
 <div class="site-shell academic-shell">
-  <AcademicHeader academic={academic} active="home">
+  <AcademicHeader academic={academic} active="home" messages={messages}>
     <slot name="header-actions" slot="actions" />
   </AcademicHeader>
   <div class="page-layout">
     <main class="main-content" id="main">
       <section class="academic-hero">
-        <p class="eyebrow">RESEARCH PROFILE</p>
+        <p class="eyebrow">{ui.researchProfile}</p>
         <h1>{academic.headline}</h1>
         <p>{academic.bio}</p>
         <div class="topic-list">{academic.topics.map((topic) => <span>{topic}</span>)}</div>
         <div class="hero-actions">
-          {academic.scholar ? <a class="button primary" href={academic.scholar} target="_blank" rel="noreferrer">Google Scholar</a> : showEditingGuides && <span class="button primary disabled">Add Scholar URL</span>}
-          <a class="button" href={`mailto:${identity.email}`}>Email me</a>
-          {academic.cvUrl ? <a class="button" href={academic.cvUrl}>Download CV</a> : showEditingGuides && <span class="button disabled">Add CV URL</span>}
+          {academic.scholar ? <a class="button primary" href={academic.scholar} target="_blank" rel="noreferrer">{ui.googleScholar}</a> : showEditingGuides && <span class="button primary disabled">{ui.addScholarUrl}</span>}
+          <a class="button" href={`mailto:${identity.email}`}>{ui.emailMe}</a>
+          {academic.cvUrl ? <a class="button" href={academic.cvUrl}>{ui.downloadCv}</a> : showEditingGuides && <span class="button disabled">{ui.addCvUrl}</span>}
         </div>
       </section>
 
@@ -45,15 +48,15 @@ const selectedPublications = publications.filter((publication) => publication.se
       </TemplateGuide>
 
       <section class="content-section" id="publications">
-        <div class="section-heading ruled"><h2>Selected Publications</h2><a class="section-more" href={withBase(templatePath("academic", "/publications/"))}>View all →</a></div>
-        <p class="publication-legend"><span class="self-author">Your Name</span> indicates the profile owner; <sup>*</sup> indicates the corresponding author.</p>
+        <div class="section-heading ruled"><h2>{ui.selectedPublications}</h2><a class="section-more" href={withBase(templatePath("academic", "/publications/"))}>{ui.viewAll}</a></div>
+        <p class="publication-legend">{ui.publicationLegend}</p>
         <div class="publication-list">
-          {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} showEditingGuides={showEditingGuides} />)}
+          {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages} />)}
         </div>
       </section>
 
       <section class="content-section" id="projects">
-        <div class="section-heading ruled"><h2>Selected Projects</h2><a class="section-more" href={withBase(templatePath("academic", "/projects/"))}>View all →</a></div>
+        <div class="section-heading ruled"><h2>{ui.selectedProjects}</h2><a class="section-more" href={withBase(templatePath("academic", "/projects/"))}>{ui.viewAll}</a></div>
         {projects.map((project) => (
           <article class="project-row">
             <div class="project-title"><h3>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h3><span>{project.period}</span></div>
@@ -64,22 +67,22 @@ const selectedPublications = publications.filter((publication) => publication.se
       </section>
 
       <section class="content-section" id="about">
-        <div class="section-heading ruled"><h2>About</h2><a class="section-more" href={withBase(templatePath("academic", "/about/"))}>Full profile →</a></div>
+        <div class="section-heading ruled"><h2>{ui.about}</h2><a class="section-more" href={withBase(templatePath("academic", "/about/"))}>{ui.fullProfile}</a></div>
         <p class="about-copy">{academic.longBio}</p>
       </section>
 
       <section class="content-section">
-        <div class="section-heading ruled"><h2>Latest News</h2><span>UPDATES</span></div>
+        <div class="section-heading ruled"><h2>{ui.latestNews}</h2><span>{ui.updates}</span></div>
         <div class="news-list">{news.map((item) => <div><time>{item.date}</time><p>{item.text}</p></div>)}</div>
       </section>
       <slot />
     </main>
 
-    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides}>
+    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
       <slot name="sidebar" />
     </AcademicSidebar>
   </div>
-  <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides}>
+  <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages}>
     <slot name="footer-extra" slot="extra" />
   </SiteFooter>
 </div>

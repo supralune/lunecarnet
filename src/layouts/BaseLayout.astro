@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { withBase } from "../lib/url";
+import { resolveMessages, type MessageOverrides } from "../messages";
 
 interface Props {
   title: string;
@@ -15,6 +16,7 @@ interface Props {
   skipToContentLabel?: string;
   lightThemeColor?: string;
   darkThemeColor?: string;
+  messages?: MessageOverrides;
 }
 
 const {
@@ -29,8 +31,10 @@ const {
   locale = lang === "en" ? "en_US" : lang.replace("-", "_"),
   skipToContentLabel = "Skip to content",
   lightThemeColor = "#ffffff",
-  darkThemeColor = "#191b1c"
+  darkThemeColor = "#191b1c",
+  messages
 } = Astro.props;
+const ui = resolveMessages(lang, messages);
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : undefined;
 ---
@@ -67,7 +71,7 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
     </script>
   </head>
   <body class={pageClass} id="top">
-    <a class="skip-link" href="#main">{skipToContentLabel}</a>
+    <a class="skip-link" href="#main">{skipToContentLabel === "Skip to content" ? ui.skipToContent : skipToContentLabel}</a>
     <slot />
     <script is:inline>
       const root = document.documentElement;
@@ -76,7 +80,7 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
         const dark = root.dataset.theme === "dark";
         themeColor?.setAttribute("content", dark ? themeColor.dataset.dark : themeColor.dataset.light);
         document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
-          button.setAttribute("aria-label", dark ? "Use light theme" : "Use dark theme");
+          button.setAttribute("aria-label", dark ? button.dataset.lightLabel : button.dataset.darkLabel);
           button.setAttribute("aria-pressed", String(dark));
         });
       };

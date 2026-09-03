@@ -7,7 +7,7 @@ Lunecarnet 既可以作为 GitHub Template 复制，也可以作为可版本化�
 仓库发布版本 tag 后，在个人站中安装固定版本：
 
 ```bash
-npm install github:supralune/lunecarnet#v0.1.1
+npm install github:supralune/lunecarnet#v0.2.0
 ```
 
 `package.json` 会包含：
@@ -15,23 +15,19 @@ npm install github:supralune/lunecarnet#v0.1.1
 ```json
 {
   "dependencies": {
-    "@lunecarnet/astro": "github:supralune/lunecarnet#v0.1.1"
+    "@lunecarnet/astro": "github:supralune/lunecarnet#v0.2.0"
   }
 }
 ```
 
 不要在正式站中跟随 `#main`。固定 tag 可以让构建可复现，并允许你主动决定升级时间。
 
-> 当前根仓库保留了示例站的 `build` 脚本，因此 npm 从 Git 安装时会额外构建一次仓库。以后发布到 npm registry 后，这一步不会发生；组件的导入方式不需要改变。
-
 ## 配置构建模式
 
-依赖中的路由工具需要知道当前使用博客、学术或组合模式。在个人站的 `astro.config.mjs` 中声明：
+单独使用博客或学术模板时不需要声明构建模式，页面默认使用根级路由。只有在同一个站点同时提供两套模板时，才需要在 `astro.config.mjs` 中声明 `both`：
 
 ```js
 import { defineConfig } from "astro/config";
-
-const siteMode = "blog"; // "blog" | "academic" | "both"
 
 export default defineConfig({
   site: "https://example.com",
@@ -39,7 +35,7 @@ export default defineConfig({
   trailingSlash: "always",
   vite: {
     define: {
-      "import.meta.env.SITE_MODE": JSON.stringify(siteMode)
+      "import.meta.env.SITE_MODE": JSON.stringify("both")
     }
   }
 });
@@ -92,25 +88,13 @@ export default defineBlogConfig({
 ```astro
 ---
 // src/pages/index.astro
-import {
-  BaseLayout,
-  BlogHome,
-  getPublishedPosts,
-  templatePath
-} from "@lunecarnet/astro";
+import { BlogHomePage, getPublishedPosts } from "@lunecarnet/astro";
 import site from "../config/site";
 
 const posts = await getPublishedPosts();
-const { blog } = site;
 ---
 
-<BaseLayout
-  title={`${blog.title} · Blog`}
-  description={blog.description}
-  lang={blog.language}
-  pageClass="blog-page"
-  feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }}
->
+<BlogHomePage posts={posts} {...site}>
   <style is:inline slot="head">
     :root {
       --lc-color-accent: #6e5a9b;
@@ -121,15 +105,43 @@ const { blog } = site;
       --lc-color-accent: #b6a5df;
     }
   </style>
-  <BlogHome posts={posts} {...site} />
-</BaseLayout>
+</BlogHomePage>
 ```
 
-博客仍需在个人站定义名为 `posts` 的 Astro content collection。可以从本仓库的 `src/content.config.ts` 复制初始 schema；Markdown 永远保留在个人站，不进入主题依赖。
+其他页面同样使用完整页面组件，例如 `BlogArchivePage`、`BlogCategoriesPage`、`BlogSearchPage`、`BlogAboutPage`、`AcademicPublicationsPage`、`AcademicProjectsPage` 和 `AcademicAboutPage`。个人站仍然拥有 URL 文件，但不再复制页面结构。
+
+博客仍需在个人站定义名为 `posts` 的 Astro content collection。Schema 可以直接从主题导入，Markdown 永远保留在个人站：
+
+```ts
+import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
+import { postSchema } from "@lunecarnet/astro/content";
+
+const posts = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/posts" }),
+  schema: postSchema
+});
+
+export const collections = { posts };
+```
+
+## 界面语言
+
+`blog.language` 或 `academic.language` 以 `zh` 开头时，模板自动使用内置中文界面；其他语言默认使用英文。只需覆盖个别文案时，在站点配置中添加 `messages`：
+
+```ts
+export default defineBlogConfig({
+  // identity、blog 等配置……
+  messages: {
+    latestNotes: "最近更新",
+    readArticle: "继续阅读"
+  }
+});
+```
 
 ## 不修改模板也能扩展页面
 
-高级组件提供以下命名插槽：
+完整页面组件提供以下命名插槽：
 
 - `head`：额外 meta、验证标签和样式覆盖；由 `BaseLayout` 提供。
 - `header-actions`：语言切换、额外社交入口等。
@@ -138,7 +150,7 @@ const { blog } = site;
 - `footer-extra`：追加 Footer 内容。
 - 默认插槽：在首页默认区块后追加内容。
 
-样式优先覆盖 `--lc-*` 变量。不要复制或直接修改依赖中的 `global.css`，否则会重新产生两份样式维护成本。公开变量位于 `@lunecarnet/astro/tokens.css`。
+样式优先覆盖 `--lc-*` 变量。不要复制或直接修改依赖中的 `global.css`，否则会重新产生两份样式维护成本。公开变量位于 `@lunecarnet/astro/tokens.css`。组件样式位于 `lunecarnet` cascade layer 中，个人站未分层的样式可以稳定覆盖它，而不需要堆叠高优先级选择器。
 
 ## 升级
 

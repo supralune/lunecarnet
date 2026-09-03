@@ -1,33 +1,6 @@
 ---
-import { AcademicPageLayout, TemplateGuide } from "@lunecarnet/astro";
-import { projects } from "@/config/academic";
-import { showEditingGuides } from "@/config/shared";
+import { AcademicProjectsPage } from "@lunecarnet/astro";
 import { academicTemplate } from "@/config/site";
 ---
 
-<AcademicPageLayout title="Projects" description="Selected research and open-source projects." active="projects" {...academicTemplate}>
-  <header class="page-heading">
-    <p class="eyebrow">PROJECTS · SELECTED WORK</p>
-    <h1>Projects</h1>
-    <p>Use this page for research systems, open-source software, datasets, demos, or long-running collaborations.</p>
-  </header>
-
-  <TemplateGuide title="Project guidance" enabled={showEditingGuides}>
-    <p>For each project, state the problem, your contribution, and a verifiable result. When a <code>link</code> is provided, the project title becomes clickable.</p>
-  </TemplateGuide>
-
-  <div class="project-grid">
-    {projects.map((project, index) => (
-      <article class="project-card">
-        <p class="project-index">PROJECT {String(index + 1).padStart(2, "0")}</p>
-        <div class="project-title">
-          <h2>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h2>
-          <span>{project.period}</span>
-        </div>
-        <p>{project.description}</p>
-        <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
-        {!project.link && showEditingGuides && <p class="fill-caption">Add a project link to make the title clickable.</p>}
-      </article>
-    ))}
-  </div>
-</AcademicPageLayout>
+<AcademicProjectsPage {...academicTemplate} />

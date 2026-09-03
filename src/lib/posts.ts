@@ -20,9 +20,9 @@ export function formatDate(date: Date, locale = "en-US") {
   }).format(date);
 }
 
-export function dateParts(date: Date) {
+export function dateParts(date: Date, locale = "en") {
   return {
     day: String(date.getDate()).padStart(2, "0"),
-    month: new Intl.DateTimeFormat("en", { month: "short" }).format(date).toUpperCase()
+    month: new Intl.DateTimeFormat(locale, { month: "short" }).format(date).toUpperCase()
   };
 }

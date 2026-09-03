@@ -1,36 +1,8 @@
 ---
-import { BlogPageLayout, EmptyState, getPublishedPosts, postPath, TemplateGuide, withBase } from "@lunecarnet/astro";
+import { BlogCategoriesPage, getPublishedPosts } from "@lunecarnet/astro";
 import { blogTemplate } from "@/config/site";
-import { showEditingGuides } from "@/config/shared";
 
 const posts = await getPublishedPosts();
-const categories = [...new Set(posts.map((post) => post.data.category))].map((name) => ({
-  name,
-  posts: posts.filter((post) => post.data.category === name)
-}));
 ---
 
-<BlogPageLayout title="Categories" description="Browse blog notes by topic." active="categories" posts={posts} {...blogTemplate}>
-  <header class="page-heading">
-    <p class="eyebrow">CATEGORIES · {categories.length} TOPICS</p>
-    <h1>Categories</h1>
-    <p>Categories come from each note's <code>category</code> field. Entries with the same name are grouped automatically.</p>
-  </header>
-
-  <TemplateGuide title="Category guidance" enabled={showEditingGuides}>
-    <p>Edit the <code>category</code> and <code>tags</code> fields at the top of each note. Four to eight stable, specific categories usually work well.</p>
-  </TemplateGuide>
-
-  <div class="category-groups">
-    {categories.length > 0 ? categories.map((category, index) => (
-      <section class="category-group" id={`category-${index + 1}`}>
-        <div class="category-group-title"><h2>{category.name}</h2><span>{category.posts.length} {category.posts.length === 1 ? "note" : "notes"}</span></div>
-        <ol>
-          {category.posts.map((post) => (
-            <li><a href={withBase(postPath(post))}>{post.data.title}</a><span>{post.data.description}</span></li>
-          ))}
-        </ol>
-      </section>
-    )) : <EmptyState title="No categories yet" description="Add a category to the frontmatter of your first note and it will be grouped here automatically." />}
-  </div>
-</BlogPageLayout>
+<BlogCategoriesPage posts={posts} {...blogTemplate} />

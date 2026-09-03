@@ -1,8 +1,10 @@
 ---
 import type { Publication } from "../types";
+import { resolveMessages, type MessageOverrides } from "../messages";
 
-interface Props { publication: Publication; highlight?: boolean; showEditingGuides?: boolean }
-const { publication, highlight = false, showEditingGuides = false } = Astro.props;
+interface Props { publication: Publication; highlight?: boolean; showEditingGuides?: boolean; locale?: string; messages?: MessageOverrides }
+const { publication, highlight = false, showEditingGuides = false, locale = "en", messages } = Astro.props;
+const ui = resolveMessages(locale, messages);
 ---
 
 <article class="publication">
@@ -14,7 +16,7 @@ const { publication, highlight = false, showEditingGuides = false } = Astro.prop
         <>
           {index > 0 && ", "}
           <span class:list={{ "self-author": author.self }}>{author.name}</span>
-          {author.corresponding && <sup class="corresponding-mark" title="Corresponding author">*</sup>}
+          {author.corresponding && <sup class="corresponding-mark" title={ui.correspondingAuthor}>*</sup>}
         </>
       ))}
     </p>

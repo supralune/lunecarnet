@@ -1,11 +1,12 @@
 ---
 import SiteHeader from "./SiteHeader.astro";
 import type { AcademicConfig } from "../types";
+import type { MessageOverrides } from "../messages";
 
-interface Props { academic: AcademicConfig; active?: string }
-const { academic, active = "home" } = Astro.props;
+interface Props { academic: AcademicConfig; active?: string; messages?: MessageOverrides }
+const { academic, active = "home", messages } = Astro.props;
 ---
 
-<SiteHeader variant="academic" title={academic.title} description={academic.description} navigation={academic.nav} active={active}>
+<SiteHeader variant="academic" title={academic.title} description={academic.description} navigation={academic.nav} active={active} locale={academic.language} messages={messages}>
   <slot name="actions" slot="actions" />
 </SiteHeader>

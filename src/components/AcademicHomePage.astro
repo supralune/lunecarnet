@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { templatePath } from "../config/runtime";
+import type { AcademicTemplateConfig } from "../types";
+import AcademicHome from "./AcademicHome.astro";
+
+type Props = AcademicTemplateConfig;
+const { academic, identity, publications, projects, news, showEditingGuides = false, messages } = Astro.props;
+const siteOrigin = Astro.site ?? Astro.url.origin;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: identity.name,
+  description: academic.bio,
+  url: new URL(import.meta.env.BASE_URL.replace(/\/$/, "") + templatePath("academic"), siteOrigin).toString(),
+  email: `mailto:${identity.email}`,
+  affiliation: { "@type": "Organization", name: academic.role },
+  sameAs: [identity.github, academic.scholar, academic.orcid].filter(Boolean)
+};
+---
+
+<BaseLayout title={`${academic.title} · Academic`} description={academic.description} lang={academic.language} pageClass="academic-page" schema={schema} messages={messages}>
+  <slot name="head" slot="head" />
+  <AcademicHome academic={academic} identity={identity} publications={publications} projects={projects} news={news} showEditingGuides={showEditingGuides} messages={messages}>
+    <slot name="header-actions" slot="header-actions" />
+    <slot name="after-hero" slot="after-hero" />
+    <slot name="sidebar" slot="sidebar" />
+    <slot name="footer-extra" slot="footer-extra" />
+    <slot />
+  </AcademicHome>
+</BaseLayout>

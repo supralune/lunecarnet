@@ -20,9 +20,13 @@ The public design tokens live in `src/styles/tokens.css`. Consumer sites should 
 - `--lc-color-line` and `--lc-color-line-soft` organize information without heavy containers.
 - `--lc-color-accent`, `--lc-color-accent-deep`, and `--lc-color-accent-pale` handle interaction and emphasis.
 - `--lc-font-serif` is used for titles and long-form reading; `--lc-font-sans` supports navigation and metadata.
+- `--lc-font-size-body`, `--lc-line-height-body`, `--lc-font-size-prose`, and `--lc-line-height-prose` control the two primary reading scales.
 - `--lc-site-width`, `--lc-article-width`, `--lc-sidebar-width`, and `--lc-layout-gap` expose the primary layout proportions.
+- `--lc-section-space`, `--lc-card-padding`, and `--lc-motion-duration` expose frequently customized rhythm and interaction values.
 
 When extending the template, reuse these roles before adding colors or arbitrary component values.
+
+Component and foundation rules are placed in the `lunecarnet` cascade layer. Consumer styles can remain unlayered and therefore override theme rules predictably; stable customization should still prefer the public tokens over internal class selectors.
 
 ## Layout Rules
 

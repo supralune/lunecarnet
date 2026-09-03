@@ -1,10 +1,12 @@
 ---
 import { dateParts, formatDate, postPath, type Post } from "../lib/posts";
 import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
 
-interface Props { post: Post; featured?: boolean }
-const { post, featured = false } = Astro.props;
-const date = dateParts(post.data.publishDate);
+interface Props { post: Post; featured?: boolean; locale?: string; messages?: MessageOverrides }
+const { post, featured = false, locale = "en", messages } = Astro.props;
+const date = dateParts(post.data.publishDate, locale);
+const ui = resolveMessages(locale, messages);
 ---
 
 <article class:list={["post-item", { featured }]}>
@@ -13,14 +15,14 @@ const date = dateParts(post.data.publishDate);
     <span class="month">{date.month}</span>
   </time>
   <div class="post-body">
-    <p class="post-kicker">{post.data.category}{featured && <span>FEATURED</span>}</p>
+    <p class="post-kicker">{post.data.category}{featured && <span>{ui.featured}</span>}</p>
     <h2><a href={withBase(postPath(post))}>{post.data.title}</a></h2>
     <p>{post.data.description}</p>
     <div class="post-meta">
-      <span>{formatDate(post.data.publishDate)}</span>
+      <span>{formatDate(post.data.publishDate, locale)}</span>
       <span class="meta-divider">/</span>
-      <span>{post.data.readingTime} min read</span>
-      <a class="read-more" href={withBase(postPath(post))}>Read article <span aria-hidden="true">→</span></a>
+      <span>{formatMessage(ui.minuteRead, { count: post.data.readingTime })}</span>
+      <a class="read-more" href={withBase(postPath(post))}>{ui.readArticle} <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </article>

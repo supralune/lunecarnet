@@ -6,6 +6,7 @@ import { templatePath } from "../config/runtime";
 import BaseLayout from "./BaseLayout.astro";
 import type { Post } from "../lib/posts";
 import type { BlogConfig, IdentityConfig } from "../types";
+import type { MessageOverrides } from "../messages";
 
 interface Props {
   title: string;
@@ -15,22 +16,23 @@ interface Props {
   blog: BlogConfig;
   identity: IdentityConfig;
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 }
 
-const { title, description, active, posts, blog, identity, showEditingGuides = false } = Astro.props;
+const { title, description, active, posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
 ---
 
-<BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page" feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }}>
+<BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page" feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
   <slot name="head" slot="head" />
   <div class="site-shell blog-shell">
-    <BlogHeader blog={blog} active={active}>
+    <BlogHeader blog={blog} active={active} messages={messages}>
       <slot name="header-actions" slot="actions" />
     </BlogHeader>
     <div class="page-layout">
       <main class="main-content inner-content" id="main"><slot /></main>
-      <BlogSidebar posts={posts} blog={blog}><slot name="sidebar" /></BlogSidebar>
+      <BlogSidebar posts={posts} blog={blog} messages={messages}><slot name="sidebar" /></BlogSidebar>
     </div>
-    <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides}>
+    <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
       <slot name="footer-extra" slot="extra" />
     </SiteFooter>
   </div>

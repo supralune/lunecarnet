@@ -2,18 +2,20 @@
 import { templatePath } from "../config/runtime";
 import type { IdentityConfig, SiteVariant } from "../types";
 import { withBase } from "../lib/url";
-interface Props { variant: SiteVariant; identity: IdentityConfig; showEditingGuides?: boolean }
-const { variant, identity, showEditingGuides = false } = Astro.props;
+import { resolveMessages, type MessageOverrides } from "../messages";
+interface Props { variant: SiteVariant; identity: IdentityConfig; showEditingGuides?: boolean; locale?: string; messages?: MessageOverrides }
+const { variant, identity, showEditingGuides = false, locale = "en", messages } = Astro.props;
+const ui = resolveMessages(locale, messages);
 ---
 
 <footer class="site-footer">
   <span>© {new Date().getFullYear()} {identity.name}</span>
   <span class="footer-links">
-    <a href={`mailto:${identity.email}`}>Email</a>
+    <a href={`mailto:${identity.email}`}>{ui.email}</a>
     <i aria-hidden="true">/</i>
-    {identity.github ? <><a href={identity.github} target="_blank" rel="noreferrer">GitHub</a><i aria-hidden="true">/</i></> : showEditingGuides && <><span>Add GitHub URL</span><i aria-hidden="true">/</i></>}
-    {variant === "blog" && <><a href={withBase(templatePath("blog", "/rss.xml"))}>RSS</a><i aria-hidden="true">/</i></>}
-    <span>{variant === "blog" ? "Notes made to last" : "Research made legible"}</span>
+    {identity.github ? <><a href={identity.github} target="_blank" rel="noreferrer">{ui.github}</a><i aria-hidden="true">/</i></> : showEditingGuides && <><span>{ui.addGithubUrl}</span><i aria-hidden="true">/</i></>}
+    {variant === "blog" && <><a href={withBase(templatePath("blog", "/rss.xml"))}>{ui.rss}</a><i aria-hidden="true">/</i></>}
+    <span>{variant === "blog" ? ui.blogTagline : ui.academicTagline}</span>
     <slot name="extra" />
   </span>
 </footer>

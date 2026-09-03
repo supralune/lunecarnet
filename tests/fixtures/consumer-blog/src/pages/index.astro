@@ -1,0 +1,10 @@
+---
+import { BlogHomePage, getPublishedPosts } from "@lunecarnet/astro";
+import site from "../config";
+
+const posts = await getPublishedPosts();
+---
+
+<BlogHomePage posts={posts} {...site}>
+  <style is:inline slot="head">:root { --lc-color-accent: #7654a8; }</style>
+</BlogHomePage>

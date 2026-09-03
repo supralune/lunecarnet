@@ -4,6 +4,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import AcademicHeader from "../components/AcademicHeader.astro";
 import BaseLayout from "./BaseLayout.astro";
 import type { AcademicConfig, IdentityConfig, Project, Publication } from "../types";
+import type { MessageOverrides } from "../messages";
 
 interface Props {
   title: string;
@@ -14,24 +15,25 @@ interface Props {
   projects: Project[];
   publications: Publication[];
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 }
 
-const { title, description, active, academic, identity, projects, publications, showEditingGuides = false } = Astro.props;
+const { title, description, active, academic, identity, projects, publications, showEditingGuides = false, messages } = Astro.props;
 ---
 
-<BaseLayout title={`${title} · ${academic.title}`} description={description} lang={academic.language} pageClass="academic-page">
+<BaseLayout title={`${title} · ${academic.title}`} description={description} lang={academic.language} pageClass="academic-page" messages={messages}>
   <slot name="head" slot="head" />
   <div class="site-shell academic-shell">
-    <AcademicHeader academic={academic} active={active}>
+    <AcademicHeader academic={academic} active={active} messages={messages}>
       <slot name="header-actions" slot="actions" />
     </AcademicHeader>
     <div class="page-layout">
       <main class="main-content inner-content" id="main"><slot /></main>
-      <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides}>
+      <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
         <slot name="sidebar" />
       </AcademicSidebar>
     </div>
-    <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides}>
+    <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages}>
       <slot name="footer-extra" slot="extra" />
     </SiteFooter>
   </div>

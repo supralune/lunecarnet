@@ -9,24 +9,27 @@ import { templatePath } from "../config/runtime";
 import type { Post } from "../lib/posts";
 import type { BlogConfig, IdentityConfig } from "../types";
 import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
 
 interface Props {
   posts: Post[];
   blog: BlogConfig;
   identity: IdentityConfig;
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 }
-const { posts, blog, identity, showEditingGuides = false } = Astro.props;
+const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const ui = resolveMessages(blog.language, messages);
 ---
 
 <div class="site-shell blog-shell">
-  <BlogHeader blog={blog} active="home">
+  <BlogHeader blog={blog} active="home" messages={messages}>
     <slot name="header-actions" slot="actions" />
   </BlogHeader>
   <div class="page-layout">
     <main class="main-content" id="main">
       <section class="blog-hero">
-        <p class="eyebrow">PERSONAL NOTES · SINCE {blog.foundedYear}</p>
+        <p class="eyebrow">{formatMessage(ui.blogHeroEyebrow, { year: blog.foundedYear })}</p>
         <h1>{blog.hero}</h1>
         <p>{blog.intro}</p>
       </section>
@@ -39,23 +42,23 @@ const { posts, blog, identity, showEditingGuides = false } = Astro.props;
 
       <section id="notes" class="content-section">
         <div class="section-heading">
-          <h2>Latest Notes</h2>
-          <a class="section-more" href={withBase(templatePath("blog", "/archive/"))}>View archive →</a>
+          <h2>{ui.latestNotes}</h2>
+          <a class="section-more" href={withBase(templatePath("blog", "/archive/"))}>{ui.viewArchive}</a>
         </div>
         <div class="post-list">
           {posts.length > 0
-            ? posts.map((post, index) => <PostItem post={post} featured={index === 0 && post.data.featured} />)
-            : <EmptyState title="No notes published yet" description="Add your first Markdown file to src/content/posts/ and it will appear here automatically." />}
+            ? posts.map((post, index) => <PostItem post={post} featured={index === 0 && post.data.featured} locale={blog.language} messages={messages} />)
+            : <EmptyState title={ui.noNotesTitle} description={ui.noNotesDescription} />}
         </div>
       </section>
       <slot />
     </main>
 
-    <BlogSidebar posts={posts} blog={blog}>
+    <BlogSidebar posts={posts} blog={blog} messages={messages}>
       <slot name="sidebar" />
     </BlogSidebar>
   </div>
-  <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides}>
+  <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
     <slot name="footer-extra" slot="extra" />
   </SiteFooter>
 </div>

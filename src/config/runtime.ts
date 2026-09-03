@@ -1,12 +1,12 @@
 import type { SiteVariant } from "../types";
 
-export type SiteMode = SiteVariant | "both";
+export type SiteMode = SiteVariant | "both" | "single";
 
 const configuredMode = import.meta.env.SITE_MODE as SiteMode | undefined;
 
-export const siteMode: SiteMode = configuredMode === "blog" || configuredMode === "academic"
+export const siteMode: SiteMode = configuredMode === "blog" || configuredMode === "academic" || configuredMode === "both"
   ? configuredMode
-  : "both";
+  : "single";
 
 export const isCombinedSite = siteMode === "both";
 

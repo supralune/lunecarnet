@@ -38,7 +38,7 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 - `academic`：学术主页位于 `/`，Publications、Projects 和 About 使用根级路由；不会构建博客页面或 RSS。
 - `both`：`/` 是模板选择页，完整模板分别位于 `/blog/` 和 `/academic/`；文章与 RSS 也收纳在 `/blog/` 下。
 
-模板组件只有一份。`sites/blog/` 和 `sites/academic/` 只提供很薄的独立路由入口，因此修复或改进模板时不需要维护两份页面实现。
+模板组件只有一份。首页、归档、分类、搜索、About、论文和项目等完整页面视图都由公开组件提供；`sites/blog/`、`sites/academic/` 和实际个人站只保留很薄的路由入口，因此修复页面结构或样式时不需要维护两份实现。
 
 除了复制模板，仓库现在也提供 `@lunecarnet/astro` 包入口。独立个人站可以直接依赖 GitHub version tag，让组件和基础样式随上游版本升级，同时把个人配置、Markdown 和少量样式覆盖留在自己的仓库。完整说明参见 [`docs/DEPENDENCY_USAGE.zh-CN.md`](./docs/DEPENDENCY_USAGE.zh-CN.md)。
 
@@ -93,6 +93,8 @@ npm test
 - `src/config/site.ts`：把个人数据组合成传给可复用组件的类型安全配置。
 - `src/config/runtime.ts`：三种构建模式的路径解析；通常不需要修改。
 
+将 `blog.language` 或 `academic.language` 设为 `zh-CN` 会启用内置中文界面。也可以在模板配置的 `messages` 字段中按键覆盖少量文案，而无需复制组件。
+
 原来的 `src/data/site.ts` 保留为兼容导出，已有定制代码不会立刻失效；新代码应使用上述聚焦配置文件。
 
 ## 论文作者标注
@@ -139,7 +141,7 @@ Start the article here. Section headings should normally begin at `##`.
 
 ## 设计与样式
 
-颜色、字体、间距和响应式规则集中在 `src/styles/global.css`。可供下游稳定覆盖的 `--lc-*` 设计变量定义在 `src/styles/tokens.css`；已有的短变量名继续作为兼容别名。模板使用系统字体，不请求第三方字体，也不依赖必须保留的图片资源。
+颜色、字体、正文排版、间距和响应式规则集中在 `src/styles/global.css`。可供下游稳定覆盖的 `--lc-*` 设计变量定义在 `src/styles/tokens.css`；模板内部只使用命名空间变量，已有的短变量名仅作为兼容别名保留。模板使用系统字体，不请求第三方字体，也不依赖必须保留的图片资源。
 
 设计原则和变量说明参见 [`DESIGN.md`](./DESIGN.md)。
 

@@ -17,12 +17,19 @@
   --lc-color-green: #24745f;
   --lc-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", STSong, Georgia, serif;
   --lc-font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --lc-font-size-body: 14px;
+  --lc-line-height-body: 1.75;
+  --lc-font-size-prose: 16px;
+  --lc-line-height-prose: 1.9;
   --lc-site-width: 1140px;
   --lc-article-width: 760px;
   --lc-sidebar-width: 260px;
   --lc-layout-gap: 52px;
   --lc-page-gutter: 112px;
+  --lc-section-space: 39px;
+  --lc-card-padding: 18px;
   --lc-radius-sm: 3px;
+  --lc-motion-duration: .16s;
 
   /* Backward-compatible aliases for existing custom styles. */
   --paper: var(--lc-color-paper);

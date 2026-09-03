@@ -1,5 +1,6 @@
 ---
 import type { AcademicConfig, IdentityConfig, Project, Publication } from "../types";
+import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
 
 interface Props {
   academic: AcademicConfig;
@@ -7,9 +8,11 @@ interface Props {
   projects: Project[];
   publications: Publication[];
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 }
-const { academic, identity, projects, publications, showEditingGuides = false } = Astro.props;
+const { academic, identity, projects, publications, showEditingGuides = false, messages } = Astro.props;
 const selectedPublicationCount = publications.filter((publication) => publication.selected).length;
+const ui = resolveMessages(academic.language, messages);
 ---
 
 <aside class="sidebar academic-sidebar">
@@ -20,23 +23,23 @@ const selectedPublicationCount = publications.filter((publication) => publicatio
     <h2>{identity.name}</h2>
     <p>{academic.role}</p>
     <dl>
-      <div><dt>Email</dt><dd><a href={`mailto:${identity.email}`}>{identity.email}</a></dd></div>
-      {(identity.github || showEditingGuides) && <div><dt>GitHub</dt><dd>{identity.github ? <a href={identity.github} target="_blank" rel="noreferrer">Profile</a> : <span class="placeholder-link">Add profile URL</span>}</dd></div>}
-      {(academic.orcid || showEditingGuides) && <div><dt>ORCID</dt><dd>{academic.orcid ? <a href={academic.orcid} target="_blank" rel="noreferrer">Record</a> : <span class="placeholder-link">Add ORCID URL</span>}</dd></div>}
-      <div><dt>Based</dt><dd>{identity.location}</dd></div>
+      <div><dt>{ui.email}</dt><dd><a href={`mailto:${identity.email}`}>{identity.email}</a></dd></div>
+      {(identity.github || showEditingGuides) && <div><dt>{ui.github}</dt><dd>{identity.github ? <a href={identity.github} target="_blank" rel="noreferrer">{ui.profile}</a> : <span class="placeholder-link">{ui.addProfileUrl}</span>}</dd></div>}
+      {(academic.orcid || showEditingGuides) && <div><dt>ORCID</dt><dd>{academic.orcid ? <a href={academic.orcid} target="_blank" rel="noreferrer">{ui.record}</a> : <span class="placeholder-link">{ui.addOrcidUrl}</span>}</dd></div>}
+      {identity.location && <div><dt>{ui.based}</dt><dd>{identity.location}</dd></div>}
     </dl>
   </section>
   <slot name="after-profile" />
   <section class="widget">
-    <h2>Research Areas</h2>
+    <h2>{ui.researchAreas}</h2>
     <div class="area-list">{academic.topics.map((topic) => <span>{topic}</span>)}</div>
   </section>
   <section class="widget">
-    <h2>At a glance</h2>
+    <h2>{ui.atAGlance}</h2>
     <ul class="plain-list">
-      <li>{selectedPublicationCount} selected publications</li>
-      <li>{projects.length} active projects</li>
-      <li>{academic.availability}</li>
+      <li>{formatMessage(ui.selectedPublicationCount, { count: selectedPublicationCount })}</li>
+      <li>{formatMessage(ui.activeProjectCount, { count: projects.length })}</li>
+      {academic.availability && <li>{academic.availability}</li>}
     </ul>
   </section>
   <slot />

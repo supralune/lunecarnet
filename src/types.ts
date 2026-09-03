@@ -1,3 +1,5 @@
+import type { MessageOverrides } from "./messages";
+
 export type SiteVariant = "blog" | "academic";
 
 export type NavigationItem = {
@@ -10,8 +12,8 @@ export type IdentityConfig = {
   name: string;
   initials: string;
   email: string;
-  github: string;
-  location: string;
+  github?: string;
+  location?: string;
   avatar?: string;
 };
 
@@ -39,10 +41,10 @@ export type AcademicConfig = {
   bio: string;
   longBio: string;
   topics: string[];
-  scholar: string;
-  orcid: string;
-  cvUrl: string;
-  availability: string;
+  scholar?: string;
+  orcid?: string;
+  cvUrl?: string;
+  availability?: string;
   nav: NavigationItem[];
 };
 
@@ -59,7 +61,7 @@ export type Publication = {
   venue: string;
   badge?: string;
   selected?: boolean;
-  links: Array<{ label: string; href: string }>;
+  links: Array<{ label: string; href?: string }>;
 };
 
 export type Project = {
@@ -67,7 +69,7 @@ export type Project = {
   period: string;
   description: string;
   tags: string[];
-  link: string;
+  link?: string;
 };
 
 export type NewsItem = { date: string; text: string };
@@ -77,6 +79,7 @@ export type BlogTemplateConfig = {
   blog: BlogConfig;
   identity: IdentityConfig;
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 };
 
 export type AcademicTemplateConfig = {
@@ -89,6 +92,7 @@ export type AcademicTemplateConfig = {
   honors: RecordItem[];
   service: string[];
   showEditingGuides?: boolean;
+  messages?: MessageOverrides;
 };
 
 /** Preserve literal values while checking a consumer-owned template configuration. */

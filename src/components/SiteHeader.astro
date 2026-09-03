@@ -2,6 +2,7 @@
 import { isCombinedSite, templatePath } from "../config/runtime";
 import type { NavigationItem, SiteVariant } from "../types";
 import { withBase } from "../lib/url";
+import { resolveMessages, type MessageOverrides } from "../messages";
 
 interface Props {
   variant: SiteVariant;
@@ -13,6 +14,8 @@ interface Props {
   menuLabel?: string;
   primaryNavigationLabel?: string;
   variantNavigationLabel?: string;
+  locale?: string;
+  messages?: MessageOverrides;
 }
 const {
   variant,
@@ -23,8 +26,11 @@ const {
   searchLabel = "Search notes",
   menuLabel = "Menu",
   primaryNavigationLabel = "Primary navigation",
-  variantNavigationLabel = "Template variant"
+  variantNavigationLabel,
+  locale = "en",
+  messages
 } = Astro.props;
+const ui = resolveMessages(locale, messages);
 const homePath = templatePath(variant);
 const navigationId = `${variant}-navigation`;
 ---
@@ -37,26 +43,26 @@ const navigationId = `${variant}-navigation`;
     </div>
     <div class="header-tools">
       {isCombinedSite && (
-        <nav class="variant-switcher" aria-label={variantNavigationLabel}>
-          <a class:list={{ active: variant === "blog" }} aria-current={variant === "blog" ? "page" : undefined} href={withBase(templatePath("blog"))}>Blog</a>
-          <a class:list={{ active: variant === "academic" }} aria-current={variant === "academic" ? "page" : undefined} href={withBase(templatePath("academic"))}>Academic</a>
+        <nav class="variant-switcher" aria-label={variantNavigationLabel ?? ui.variantNavigation}>
+          <a class:list={{ active: variant === "blog" }} aria-current={variant === "blog" ? "page" : undefined} href={withBase(templatePath("blog"))}>{ui.blogVariant}</a>
+          <a class:list={{ active: variant === "academic" }} aria-current={variant === "academic" ? "page" : undefined} href={withBase(templatePath("academic"))}>{ui.academicVariant}</a>
         </nav>
       )}
       <div class="utility-actions">
-        {variant === "blog" && <a class="utility-link search-link" href={withBase(templatePath("blog", "/search/"))}><span aria-hidden="true">⌕</span><span class="sr-only">{searchLabel}</span></a>}
+        {variant === "blog" && <a class="utility-link search-link" href={withBase(templatePath("blog", "/search/"))}><span aria-hidden="true">⌕</span><span class="sr-only">{searchLabel === "Search notes" ? ui.searchNotes : searchLabel}</span></a>}
         <slot name="actions" />
-        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Use dark theme" aria-pressed="false">
+        <button class="theme-toggle" type="button" data-theme-toggle data-light-label={ui.useLightTheme} data-dark-label={ui.useDarkTheme} aria-label={ui.useDarkTheme} aria-pressed="false">
           <span class="theme-light" aria-hidden="true">☼</span>
           <span class="theme-dark" aria-hidden="true">◐</span>
         </button>
         <button class="nav-toggle" type="button" data-nav-toggle aria-controls={navigationId} aria-expanded="false">
-          <span aria-hidden="true">{menuLabel}</span>
-          <span class="sr-only">Toggle navigation</span>
+          <span aria-hidden="true">{menuLabel === "Menu" ? ui.menu : menuLabel}</span>
+          <span class="sr-only">{ui.toggleNavigation}</span>
         </button>
       </div>
     </div>
   </div>
-  <nav class="nav-menu" id={navigationId} data-nav-menu aria-label={primaryNavigationLabel}>
+  <nav class="nav-menu" id={navigationId} data-nav-menu aria-label={primaryNavigationLabel === "Primary navigation" ? ui.primaryNavigation : primaryNavigationLabel}>
     {navigation.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(templatePath(variant, item.href))}>{item.label}</a>)}
   </nav>
 </header>

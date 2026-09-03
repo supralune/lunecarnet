@@ -1,6 +1,6 @@
 {
   "name": "@lunecarnet/astro",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Reusable Astro components and design system for personal blogs and academic profiles.",
   "private": true,
   "type": "module",
@@ -14,6 +14,7 @@
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/global.css",
     "./tokens.css": "./src/styles/tokens.css",
+    "./content": "./src/content.ts",
     "./components/*": "./src/components/*.astro",
     "./layouts/*": "./src/layouts/*.astro"
   },
@@ -24,6 +25,8 @@
     "src/lib",
     "src/styles",
     "src/index.ts",
+    "src/content.ts",
+    "src/messages.ts",
     "src/types.ts",
     "docs/DEPENDENCY_USAGE.zh-CN.md",
     "LICENSE",

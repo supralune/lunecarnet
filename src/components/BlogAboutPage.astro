@@ -1,0 +1,34 @@
+---
+import BlogPageLayout from "../layouts/BlogPageLayout.astro";
+import type { Post } from "../lib/posts";
+import { resolveMessages } from "../messages";
+import type { BlogTemplateConfig } from "../types";
+
+interface Props extends BlogTemplateConfig { posts: Post[] }
+const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const ui = resolveMessages(blog.language, messages);
+---
+
+<BlogPageLayout title={ui.blogAboutTitle} description={ui.blogAboutDescription} active="about" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+  <slot name="head" slot="head" />
+  <slot name="header-actions" slot="header-actions" />
+  <header class="page-heading">
+    <p class="eyebrow">{ui.blogAboutEyebrow}</p>
+    <h1>{ui.blogAboutHeading}</h1>
+    <p>{ui.blogAboutIntro}</p>
+  </header>
+  <div class="prose-page">
+    <section><h2>{ui.whyIWrite}</h2><p>{blog.about}</p><p>{blog.writingPurpose}</p></section>
+    <section><h2>{ui.whatICover}</h2><p>{blog.coverage}</p></section>
+    <section><h2>{ui.aboutAuthor}</h2><p><strong>{identity.name}</strong></p><p>{blog.authorBio}</p></section>
+    <section>
+      <h2>{ui.contact}</h2>
+      <p>{blog.contactNote}</p>
+      <p>{ui.publicEmail}: <a href={`mailto:${identity.email}`}>{identity.email}</a></p>
+      {identity.github && <p>{ui.github}: <a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></p>}
+    </section>
+    <slot />
+  </div>
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</BlogPageLayout>

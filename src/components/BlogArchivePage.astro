@@ -1,0 +1,51 @@
+---
+import BlogPageLayout from "../layouts/BlogPageLayout.astro";
+import EmptyState from "./EmptyState.astro";
+import TemplateGuide from "./TemplateGuide.astro";
+import { formatDate, postPath, type Post } from "../lib/posts";
+import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages } from "../messages";
+import type { BlogTemplateConfig } from "../types";
+
+interface Props extends BlogTemplateConfig { posts: Post[] }
+const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const ui = resolveMessages(blog.language, messages);
+const grouped = Object.entries(posts.reduce<Record<string, Post[]>>((years, post) => {
+  const year = String(post.data.publishDate.getFullYear());
+  (years[year] ??= []).push(post);
+  return years;
+}, {})).sort(([a], [b]) => Number(b) - Number(a));
+---
+
+<BlogPageLayout title={ui.archiveTitle} description={ui.archiveDescription} active="archive" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+  <slot name="head" slot="head" />
+  <slot name="header-actions" slot="header-actions" />
+  <header class="page-heading">
+    <p class="eyebrow">{formatMessage(ui.archiveEyebrow, { count: posts.length })}</p>
+    <h1>{ui.archiveTitle}</h1>
+    <p>{ui.archiveIntro}</p>
+  </header>
+
+  <TemplateGuide title={ui.archiveGuideTitle} enabled={showEditingGuides}><p>{ui.archiveGuide}</p></TemplateGuide>
+
+  <div class="archive-groups">
+    {grouped.length > 0 ? grouped.map(([year, yearPosts]) => (
+      <section class="archive-year">
+        <div class="archive-year-label">
+          <h2>{year}</h2>
+          <span>{formatMessage(yearPosts.length === 1 ? ui.noteCountOne : ui.noteCountMany, { count: yearPosts.length })}</span>
+        </div>
+        <ol>{yearPosts.map((post) => (
+          <li>
+            <time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate, blog.language)}</time>
+            <a href={withBase(postPath(post))}>{post.data.title}</a>
+            <span>{post.data.category}</span>
+          </li>
+        ))}</ol>
+      </section>
+    )) : <EmptyState title={ui.archiveEmptyTitle} description={ui.archiveEmptyDescription} />}
+  </div>
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</BlogPageLayout>

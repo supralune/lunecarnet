@@ -1,0 +1,46 @@
+---
+import BlogPageLayout from "../layouts/BlogPageLayout.astro";
+import EmptyState from "./EmptyState.astro";
+import TemplateGuide from "./TemplateGuide.astro";
+import { postPath, type Post } from "../lib/posts";
+import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages } from "../messages";
+import type { BlogTemplateConfig } from "../types";
+
+interface Props extends BlogTemplateConfig { posts: Post[] }
+const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const ui = resolveMessages(blog.language, messages);
+const categories = [...new Set(posts.map((post) => post.data.category))].map((name) => ({
+  name,
+  posts: posts.filter((post) => post.data.category === name)
+}));
+---
+
+<BlogPageLayout title={ui.categoriesTitle} description={ui.categoriesDescription} active="categories" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+  <slot name="head" slot="head" />
+  <slot name="header-actions" slot="header-actions" />
+  <header class="page-heading">
+    <p class="eyebrow">{formatMessage(ui.categoriesEyebrow, { count: categories.length })}</p>
+    <h1>{ui.categoriesTitle}</h1>
+    <p>{ui.categoriesIntro}</p>
+  </header>
+
+  <TemplateGuide title={ui.categoriesGuideTitle} enabled={showEditingGuides}><p>{ui.categoriesGuide}</p></TemplateGuide>
+
+  <div class="category-groups">
+    {categories.length > 0 ? categories.map((category, index) => (
+      <section class="category-group" id={`category-${index + 1}`}>
+        <div class="category-group-title">
+          <h2>{category.name}</h2>
+          <span>{formatMessage(category.posts.length === 1 ? ui.noteCountOne : ui.noteCountMany, { count: category.posts.length })}</span>
+        </div>
+        <ol>{category.posts.map((post) => (
+          <li><a href={withBase(postPath(post))}>{post.data.title}</a><span>{post.data.description}</span></li>
+        ))}</ol>
+      </section>
+    )) : <EmptyState title={ui.categoriesEmptyTitle} description={ui.categoriesEmptyDescription} />}
+  </div>
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</BlogPageLayout>

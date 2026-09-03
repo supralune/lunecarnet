@@ -1,22 +1,6 @@
 ---
-import { AcademicHome, BaseLayout, templatePath } from "@lunecarnet/astro";
-import { academic } from "@/config/academic";
+import { AcademicHomePage } from "@lunecarnet/astro";
 import { academicTemplate } from "@/config/site";
-import { identity } from "@/config/shared";
-
-const siteOrigin = Astro.site ?? Astro.url.origin;
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: identity.name,
-  description: academic.bio,
-  url: new URL(import.meta.env.BASE_URL.replace(/\/$/, "") + templatePath("academic"), siteOrigin).toString(),
-  email: `mailto:${identity.email}`,
-  affiliation: { "@type": "Organization", name: academic.role },
-  sameAs: [identity.github, academic.scholar, academic.orcid].filter(Boolean)
-};
 ---
 
-<BaseLayout title={`${academic.title} · Academic`} description={academic.description} lang={academic.language} pageClass="academic-page" schema={schema}>
-  <AcademicHome {...academicTemplate} />
-</BaseLayout>
+<AcademicHomePage {...academicTemplate} />

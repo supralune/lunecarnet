@@ -1,0 +1,36 @@
+---
+import AcademicPageLayout from "../layouts/AcademicPageLayout.astro";
+import { formatMessage, resolveMessages } from "../messages";
+import type { AcademicTemplateConfig } from "../types";
+
+type Props = AcademicTemplateConfig;
+const { academic, identity, publications, projects, showEditingGuides = false, messages } = Astro.props;
+const ui = resolveMessages(academic.language, messages);
+---
+
+<AcademicPageLayout title={ui.projectsTitle} description={ui.projectsDescription} active="projects" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+  <slot name="head" slot="head" />
+  <slot name="header-actions" slot="header-actions" />
+  <header class="page-heading">
+    <p class="eyebrow">{ui.projectsEyebrow}</p>
+    <h1>{ui.projectsTitle}</h1>
+    <p>{ui.projectsIntro}</p>
+  </header>
+  <div class="project-grid">
+    {projects.map((project, index) => (
+      <article class="project-card">
+        <p class="project-index">{formatMessage(ui.projectNumber, { number: String(index + 1).padStart(2, "0") })}</p>
+        <div class="project-title">
+          <h2>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h2>
+          <span>{project.period}</span>
+        </div>
+        <p>{project.description}</p>
+        <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
+        {!project.link && showEditingGuides && <p class="fill-caption">{ui.addProjectLink}</p>}
+      </article>
+    ))}
+  </div>
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</AcademicPageLayout>

@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { templatePath } from "../config/runtime";
+import type { Post } from "../lib/posts";
+import type { BlogTemplateConfig } from "../types";
+import BlogHome from "./BlogHome.astro";
+
+interface Props extends BlogTemplateConfig { posts: Post[] }
+const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const siteOrigin = Astro.site ?? Astro.url.origin;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: blog.title,
+  description: blog.description,
+  url: new URL(import.meta.env.BASE_URL.replace(/\/$/, "") + templatePath("blog"), siteOrigin).toString()
+};
+---
+
+<BaseLayout title={`${blog.title} · Blog`} description={blog.description} lang={blog.language} pageClass="blog-page" schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
+  <slot name="head" slot="head" />
+  <BlogHome posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+    <slot name="header-actions" slot="header-actions" />
+    <slot name="after-hero" slot="after-hero" />
+    <slot name="sidebar" slot="sidebar" />
+    <slot name="footer-extra" slot="footer-extra" />
+    <slot />
+  </BlogHome>
+</BaseLayout>

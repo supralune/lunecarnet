@@ -37,7 +37,7 @@ The screenshots show the light theme with the optional editing guides enabled.
 - `academic` — The academic profile lives at `/`, with root-level Publications, Projects, and About routes. Blog pages and RSS are not built.
 - `both` — `/` becomes a template chooser. The complete templates live under `/blog/` and `/academic/`, including blog posts and RSS.
 
-There is only one implementation of each template. `sites/blog/` and `sites/academic/` are thin standalone route entrypoints, so fixes and improvements are not duplicated.
+There is only one implementation of each template. Complete home, archive, category, search, About, publication, and project page views are exported components. `sites/blog/`, `sites/academic/`, and consumer sites keep only thin route entrypoints, so page and style improvements are not duplicated.
 
 The repository also exposes an `@lunecarnet/astro` package entrypoint. A separate personal site can depend directly on a versioned GitHub tag, receive upstream component and style updates, and keep its identity, content, and small token overrides locally. See the [Chinese dependency guide](./docs/DEPENDENCY_USAGE.zh-CN.md) for the complete setup.
 
@@ -96,6 +96,8 @@ Most changes happen in focused configuration files:
 
 The original `src/data/site.ts` remains as a compatibility barrel. New code should import from the focused config files.
 
+Setting `blog.language` or `academic.language` to `zh-CN` enables the bundled Chinese interface. Individual interface strings can be overridden through the typed `messages` field without copying components.
+
 Example note:
 
 ```md
@@ -125,7 +127,7 @@ authors: [
 
 `self: true` underlines the profile owner's name. `corresponding: true` appends `*` to a corresponding author. Both flags can be used on the same person.
 
-Colors, typography, spacing, and responsive rules are centralized in `src/styles/global.css`. Stable downstream overrides use the public `--lc-*` properties in `src/styles/tokens.css`; the original short token names remain as compatibility aliases. The template uses system fonts, makes no third-party font requests, and has no required image assets. The rationale behind the design system is documented in [`DESIGN.md`](./DESIGN.md).
+Colors, typography, spacing, and responsive rules are centralized in `src/styles/global.css`. Stable downstream overrides use the public `--lc-*` properties in `src/styles/tokens.css`; theme internals use only namespaced properties, while the original short names remain as compatibility aliases. The template uses system fonts, makes no third-party font requests, and has no required image assets. The rationale behind the design system is documented in [`DESIGN.md`](./DESIGN.md).
 
 Editing prompts are separate from the general placeholder content. Keep `showEditingGuides` enabled while customizing, then disable it before publication. Empty publication and project URLs never produce broken `#` links.
 
