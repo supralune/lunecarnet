@@ -1,21 +1,20 @@
 ---
-import TemplateGuide from "@/components/TemplateGuide.astro";
+import { BlogPageLayout, getPublishedPosts, TemplateGuide } from "@lunecarnet/astro";
 import { blog } from "@/config/blog";
 import { identity, showEditingGuides } from "@/config/shared";
-import BlogPageLayout from "@/layouts/BlogPageLayout.astro";
-import { getPublishedPosts } from "@/lib/posts";
+import { blogTemplate } from "@/config/site";
 
 const posts = await getPublishedPosts();
 ---
 
-<BlogPageLayout title="About" description="About the blog and its author." active="about" posts={posts}>
+<BlogPageLayout title="About" description="About the blog and its author." active="about" posts={posts} {...blogTemplate}>
   <header class="page-heading">
     <p class="eyebrow">ABOUT · BLOG & AUTHOR</p>
     <h1>About This Blog</h1>
     <p>A little context about these notes, the subjects behind them, and the person writing them.</p>
   </header>
 
-  <TemplateGuide title="About-page guidance">
+  <TemplateGuide title="About-page guidance" enabled={showEditingGuides}>
     <p>Replace the example paragraphs below with your writing philosophy, recurring topics, brief biography, and public contact details.</p>
   </TemplateGuide>
 

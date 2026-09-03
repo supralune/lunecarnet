@@ -1,26 +1,38 @@
 ---
-import AcademicSidebar from "@/components/AcademicSidebar.astro";
-import SiteFooter from "@/components/SiteFooter.astro";
-import AcademicHeader from "@/components/AcademicHeader.astro";
-import { academic } from "@/config/academic";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import AcademicSidebar from "../components/AcademicSidebar.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import AcademicHeader from "../components/AcademicHeader.astro";
+import BaseLayout from "./BaseLayout.astro";
+import type { AcademicConfig, IdentityConfig, Project, Publication } from "../types";
 
 interface Props {
   title: string;
   description: string;
   active: "publications" | "projects" | "about";
+  academic: AcademicConfig;
+  identity: IdentityConfig;
+  projects: Project[];
+  publications: Publication[];
+  showEditingGuides?: boolean;
 }
 
-const { title, description, active } = Astro.props;
+const { title, description, active, academic, identity, projects, publications, showEditingGuides = false } = Astro.props;
 ---
 
 <BaseLayout title={`${title} · ${academic.title}`} description={description} lang={academic.language} pageClass="academic-page">
+  <slot name="head" slot="head" />
   <div class="site-shell academic-shell">
-    <AcademicHeader active={active} />
+    <AcademicHeader academic={academic} active={active}>
+      <slot name="header-actions" slot="actions" />
+    </AcademicHeader>
     <div class="page-layout">
       <main class="main-content inner-content" id="main"><slot /></main>
-      <AcademicSidebar />
+      <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides}>
+        <slot name="sidebar" />
+      </AcademicSidebar>
     </div>
-    <SiteFooter variant="academic" />
+    <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides}>
+      <slot name="footer-extra" slot="extra" />
+    </SiteFooter>
   </div>
 </BaseLayout>

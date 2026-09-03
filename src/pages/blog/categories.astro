@@ -1,9 +1,7 @@
 ---
-import BlogPageLayout from "@/layouts/BlogPageLayout.astro";
-import TemplateGuide from "@/components/TemplateGuide.astro";
-import EmptyState from "@/components/EmptyState.astro";
-import { getPublishedPosts, postPath } from "@/lib/posts";
-import { withBase } from "@/lib/url";
+import { BlogPageLayout, EmptyState, getPublishedPosts, postPath, TemplateGuide, withBase } from "@lunecarnet/astro";
+import { blogTemplate } from "@/config/site";
+import { showEditingGuides } from "@/config/shared";
 
 const posts = await getPublishedPosts();
 const categories = [...new Set(posts.map((post) => post.data.category))].map((name) => ({
@@ -12,14 +10,14 @@ const categories = [...new Set(posts.map((post) => post.data.category))].map((na
 }));
 ---
 
-<BlogPageLayout title="Categories" description="Browse blog notes by topic." active="categories" posts={posts}>
+<BlogPageLayout title="Categories" description="Browse blog notes by topic." active="categories" posts={posts} {...blogTemplate}>
   <header class="page-heading">
     <p class="eyebrow">CATEGORIES · {categories.length} TOPICS</p>
     <h1>Categories</h1>
     <p>Categories come from each note's <code>category</code> field. Entries with the same name are grouped automatically.</p>
   </header>
 
-  <TemplateGuide title="Category guidance">
+  <TemplateGuide title="Category guidance" enabled={showEditingGuides}>
     <p>Edit the <code>category</code> and <code>tags</code> fields at the top of each note. Four to eight stable, specific categories usually work well.</p>
   </TemplateGuide>
 

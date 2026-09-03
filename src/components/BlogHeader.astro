@@ -1,9 +1,11 @@
 ---
-import SiteHeader from "@/components/SiteHeader.astro";
-import { blog } from "@/config/blog";
+import SiteHeader from "./SiteHeader.astro";
+import type { BlogConfig } from "../types";
 
-interface Props { active?: string }
-const { active = "home" } = Astro.props;
+interface Props { blog: BlogConfig; active?: string }
+const { blog, active = "home" } = Astro.props;
 ---
 
-<SiteHeader variant="blog" title={blog.title} description={blog.description} navigation={blog.nav} active={active} />
+<SiteHeader variant="blog" title={blog.title} description={blog.description} navigation={blog.nav} active={active}>
+  <slot name="actions" slot="actions" />
+</SiteHeader>

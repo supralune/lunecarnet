@@ -1,9 +1,7 @@
 ---
-import BlogPageLayout from "@/layouts/BlogPageLayout.astro";
-import TemplateGuide from "@/components/TemplateGuide.astro";
-import EmptyState from "@/components/EmptyState.astro";
-import { formatDate, getPublishedPosts, postPath, type Post } from "@/lib/posts";
-import { withBase } from "@/lib/url";
+import { BlogPageLayout, EmptyState, formatDate, getPublishedPosts, postPath, TemplateGuide, withBase, type Post } from "@lunecarnet/astro";
+import { blogTemplate } from "@/config/site";
+import { showEditingGuides } from "@/config/shared";
 
 const posts = await getPublishedPosts();
 const grouped = Object.entries(posts.reduce<Record<string, Post[]>>((years, post) => {
@@ -13,14 +11,14 @@ const grouped = Object.entries(posts.reduce<Record<string, Post[]>>((years, post
 }, {})).sort(([a], [b]) => Number(b) - Number(a));
 ---
 
-<BlogPageLayout title="Archive" description="Browse all published notes by year." active="archive" posts={posts}>
+<BlogPageLayout title="Archive" description="Browse all published notes by year." active="archive" posts={posts} {...blogTemplate}>
   <header class="page-heading">
     <p class="eyebrow">ARCHIVE · {posts.length} NOTES</p>
     <h1>Archive</h1>
     <p>All notes are grouped by publication year. Dates and categories are read automatically from each Markdown file.</p>
   </header>
 
-  <TemplateGuide title="Automatic archive">
+  <TemplateGuide title="Automatic archive" enabled={showEditingGuides}>
     <p>You do not need to maintain this page manually. Add or remove files in <code>src/content/posts/</code>, and the years and entries update automatically.</p>
   </TemplateGuide>
 

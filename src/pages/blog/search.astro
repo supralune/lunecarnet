@@ -1,8 +1,6 @@
 ---
-import BlogPageLayout from "@/layouts/BlogPageLayout.astro";
-import { getPublishedPosts, postPath } from "@/lib/posts";
-import { templatePath } from "@/config/runtime";
-import { withBase } from "@/lib/url";
+import { BlogPageLayout, getPublishedPosts, postPath, templatePath, withBase } from "@lunecarnet/astro";
+import { blogTemplate } from "@/config/site";
 
 const posts = await getPublishedPosts();
 const searchIndex = posts.map((post) => ({
@@ -17,7 +15,7 @@ const searchIndex = posts.map((post) => ({
 const serializedIndex = JSON.stringify(searchIndex).replace(/</g, "\\u003c");
 ---
 
-<BlogPageLayout title="Search" description="Search all published notes." active="search" posts={posts}>
+<BlogPageLayout title="Search" description="Search all published notes." active="search" posts={posts} {...blogTemplate}>
   <header class="page-heading">
     <p class="eyebrow">SEARCH · {posts.length} NOTES</p>
     <h1>Search Notes</h1>

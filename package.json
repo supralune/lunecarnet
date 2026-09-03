@@ -1,8 +1,37 @@
 {
-  "name": "lunecarnet",
-  "version": "1.0.0",
+  "name": "@lunecarnet/astro",
+  "version": "0.1.0",
+  "description": "Reusable Astro components and design system for personal blogs and academic profiles.",
   "private": true,
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/supralune/lunecarnet.git"
+  },
+  "keywords": ["astro", "astro-component", "blog", "academic", "theme"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/global.css",
+    "./tokens.css": "./src/styles/tokens.css",
+    "./components/*": "./src/components/*.astro",
+    "./layouts/*": "./src/layouts/*.astro"
+  },
+  "files": [
+    "src/components",
+    "src/config/runtime.ts",
+    "src/layouts",
+    "src/lib",
+    "src/styles",
+    "src/index.ts",
+    "src/types.ts",
+    "docs/DEPENDENCY_USAGE.zh-CN.md",
+    "LICENSE",
+    "README.md",
+    "README.zh-CN.md"
+  ],
+  "sideEffects": ["**/*.css"],
+  "engines": { "node": ">=22" },
   "scripts": {
     "dev": "node scripts/run-astro.mjs both dev",
     "dev:blog": "node scripts/run-astro.mjs blog dev",
@@ -21,5 +50,8 @@
     "@astrojs/check": "^0.9.4",
     "astro": "^7.2.4",
     "typescript": "^5.9.0"
+  },
+  "peerDependencies": {
+    "astro": "^7.0.0"
   }
 }

@@ -1,6 +1,6 @@
 ---
-import "@/styles/global.css";
-import { withBase } from "@/lib/url";
+import "../styles/global.css";
+import { withBase } from "../lib/url";
 
 interface Props {
   title: string;
@@ -11,9 +11,26 @@ interface Props {
   publishedTime?: Date;
   schema?: Record<string, unknown>;
   feed?: { title: string; href: string };
+  locale?: string;
+  skipToContentLabel?: string;
+  lightThemeColor?: string;
+  darkThemeColor?: string;
 }
 
-const { title, description, lang = "en", pageClass = "", type = "website", publishedTime, schema, feed } = Astro.props;
+const {
+  title,
+  description,
+  lang = "en",
+  pageClass = "",
+  type = "website",
+  publishedTime,
+  schema,
+  feed,
+  locale = lang === "en" ? "en_US" : lang.replace("-", "_"),
+  skipToContentLabel = "Skip to content",
+  lightThemeColor = "#ffffff",
+  darkThemeColor = "#191b1c"
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : undefined;
 ---
@@ -24,19 +41,20 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta id="theme-color" name="theme-color" content="#ffffff" />
+    <meta id="theme-color" name="theme-color" content={lightThemeColor} data-light={lightThemeColor} data-dark={darkThemeColor} />
     <link rel="canonical" href={canonical} />
     {feed && <link rel="alternate" type="application/rss+xml" title={feed.title} href={withBase(feed.href)} />}
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={locale} />
     {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {serializedSchema && <script is:inline type="application/ld+json" set:html={serializedSchema}></script>}
+    <slot name="head" />
     <title>{title}</title>
     <script is:inline>
       document.documentElement.classList.add("js");
@@ -44,18 +62,19 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
       try { savedTheme = localStorage.getItem("lunecarnet-theme"); } catch {}
       const dark = savedTheme === "dark" || (savedTheme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.dataset.theme = dark ? "dark" : "light";
-      document.querySelector("#theme-color")?.setAttribute("content", dark ? "#191b1c" : "#ffffff");
+      const themeMeta = document.querySelector("#theme-color");
+      themeMeta?.setAttribute("content", dark ? themeMeta.dataset.dark : themeMeta.dataset.light);
     </script>
   </head>
   <body class={pageClass} id="top">
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{skipToContentLabel}</a>
     <slot />
     <script is:inline>
       const root = document.documentElement;
       const themeColor = document.querySelector("#theme-color");
       const syncThemeControls = () => {
         const dark = root.dataset.theme === "dark";
-        themeColor?.setAttribute("content", dark ? "#191b1c" : "#ffffff");
+        themeColor?.setAttribute("content", dark ? themeColor.dataset.dark : themeColor.dataset.light);
         document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
           button.setAttribute("aria-label", dark ? "Use light theme" : "Use dark theme");
           button.setAttribute("aria-pressed", String(dark));

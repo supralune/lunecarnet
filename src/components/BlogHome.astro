@@ -1,21 +1,28 @@
 ---
-import PostItem from "@/components/PostItem.astro";
-import BlogSidebar from "@/components/BlogSidebar.astro";
-import EmptyState from "@/components/EmptyState.astro";
-import SiteFooter from "@/components/SiteFooter.astro";
-import BlogHeader from "@/components/BlogHeader.astro";
-import TemplateGuide from "@/components/TemplateGuide.astro";
-import { blog } from "@/config/blog";
-import { templatePath } from "@/config/runtime";
-import type { Post } from "@/lib/posts";
-import { withBase } from "@/lib/url";
+import PostItem from "./PostItem.astro";
+import BlogSidebar from "./BlogSidebar.astro";
+import EmptyState from "./EmptyState.astro";
+import SiteFooter from "./SiteFooter.astro";
+import BlogHeader from "./BlogHeader.astro";
+import TemplateGuide from "./TemplateGuide.astro";
+import { templatePath } from "../config/runtime";
+import type { Post } from "../lib/posts";
+import type { BlogConfig, IdentityConfig } from "../types";
+import { withBase } from "../lib/url";
 
-interface Props { posts: Post[] }
-const { posts } = Astro.props;
+interface Props {
+  posts: Post[];
+  blog: BlogConfig;
+  identity: IdentityConfig;
+  showEditingGuides?: boolean;
+}
+const { posts, blog, identity, showEditingGuides = false } = Astro.props;
 ---
 
 <div class="site-shell blog-shell">
-  <BlogHeader active="home" />
+  <BlogHeader blog={blog} active="home">
+    <slot name="header-actions" slot="actions" />
+  </BlogHeader>
   <div class="page-layout">
     <main class="main-content" id="main">
       <section class="blog-hero">
@@ -24,7 +31,9 @@ const { posts } = Astro.props;
         <p>{blog.intro}</p>
       </section>
 
-      <TemplateGuide compact>
+      <slot name="after-hero" />
+
+      <TemplateGuide compact enabled={showEditingGuides}>
         <p>Replace the blog fields in <code>src/config/blog.ts</code> and identity fields in <code>src/config/shared.ts</code>, then set <code>showEditingGuides</code> to <code>false</code>.</p>
       </TemplateGuide>
 
@@ -39,9 +48,14 @@ const { posts } = Astro.props;
             : <EmptyState title="No notes published yet" description="Add your first Markdown file to src/content/posts/ and it will appear here automatically." />}
         </div>
       </section>
+      <slot />
     </main>
 
-    <BlogSidebar posts={posts} />
+    <BlogSidebar posts={posts} blog={blog}>
+      <slot name="sidebar" />
+    </BlogSidebar>
   </div>
-  <SiteFooter variant="blog" />
+  <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides}>
+    <slot name="footer-extra" slot="extra" />
+  </SiteFooter>
 </div>

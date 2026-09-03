@@ -1,9 +1,9 @@
 ---
-import { templatePath } from "@/config/runtime";
-import { identity, showEditingGuides, type SiteVariant } from "@/config/shared";
-import { withBase } from "@/lib/url";
-interface Props { variant: SiteVariant }
-const { variant } = Astro.props;
+import { templatePath } from "../config/runtime";
+import type { IdentityConfig, SiteVariant } from "../types";
+import { withBase } from "../lib/url";
+interface Props { variant: SiteVariant; identity: IdentityConfig; showEditingGuides?: boolean }
+const { variant, identity, showEditingGuides = false } = Astro.props;
 ---
 
 <footer class="site-footer">
@@ -14,5 +14,6 @@ const { variant } = Astro.props;
     {identity.github ? <><a href={identity.github} target="_blank" rel="noreferrer">GitHub</a><i aria-hidden="true">/</i></> : showEditingGuides && <><span>Add GitHub URL</span><i aria-hidden="true">/</i></>}
     {variant === "blog" && <><a href={withBase(templatePath("blog", "/rss.xml"))}>RSS</a><i aria-hidden="true">/</i></>}
     <span>{variant === "blog" ? "Notes made to last" : "Research made legible"}</span>
+    <slot name="extra" />
   </span>
 </footer>

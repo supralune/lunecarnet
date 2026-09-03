@@ -1,4 +1,4 @@
-import type { SiteVariant } from "@/config/shared";
+import type { SiteVariant } from "../types";
 
 export type SiteMode = SiteVariant | "both";
 

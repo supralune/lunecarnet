@@ -1,16 +1,22 @@
 ---
-import SiteFooter from "@/components/SiteFooter.astro";
-import BlogHeader from "@/components/BlogHeader.astro";
-import { blog } from "@/config/blog";
-import { templatePath } from "@/config/runtime";
-import { identity } from "@/config/shared";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { formatDate, postPath, type Post } from "@/lib/posts";
-import { withBase } from "@/lib/url";
+import SiteFooter from "./SiteFooter.astro";
+import BlogHeader from "./BlogHeader.astro";
+import { templatePath } from "../config/runtime";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate, postPath, type Post } from "../lib/posts";
+import type { BlogConfig, IdentityConfig } from "../types";
+import { withBase } from "../lib/url";
 import { render } from "astro:content";
 
-interface Props { post: Post; previous?: Post; next?: Post }
-const { post, previous, next } = Astro.props;
+interface Props {
+  post: Post;
+  previous?: Post;
+  next?: Post;
+  blog: BlogConfig;
+  identity: IdentityConfig;
+  showEditingGuides?: boolean;
+}
+const { post, previous, next, blog, identity, showEditingGuides = false } = Astro.props;
 const { Content, headings } = await render(post);
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 const schema = {
@@ -25,8 +31,11 @@ const schema = {
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} lang={blog.language} pageClass="blog-page" type="article" publishedTime={post.data.publishDate} schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }}>
+  <slot name="head" slot="head" />
   <div class="site-shell article-site">
-    <BlogHeader />
+    <BlogHeader blog={blog}>
+      <slot name="header-actions" slot="actions" />
+    </BlogHeader>
     <main class="article-main" id="main">
       <header class="article-header">
         <a href={withBase(templatePath("blog"))}>← Back to all notes</a>
@@ -52,6 +61,8 @@ const schema = {
         </nav>
       )}
     </main>
-    <SiteFooter variant="blog" />
+    <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides}>
+      <slot name="footer-extra" slot="extra" />
+    </SiteFooter>
   </div>
 </BaseLayout>

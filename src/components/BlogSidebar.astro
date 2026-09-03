@@ -1,15 +1,16 @@
 ---
-import { blog } from "@/config/blog";
-import { templatePath } from "@/config/runtime";
-import { postPath, type Post } from "@/lib/posts";
-import { withBase } from "@/lib/url";
+import { templatePath } from "../config/runtime";
+import { postPath, type Post } from "../lib/posts";
+import type { BlogConfig } from "../types";
+import { withBase } from "../lib/url";
 
-interface Props { posts: Post[] }
-const { posts } = Astro.props;
+interface Props { posts: Post[]; blog: BlogConfig }
+const { posts, blog } = Astro.props;
 const categories = [...new Set(posts.map((post) => post.data.category))];
 ---
 
 <aside class="sidebar blog-sidebar">
+  <slot name="before" />
   <section class="sidebar-card">
     <p class="eyebrow">ABOUT THIS PLACE</p>
     <p>{blog.about}</p>
@@ -39,4 +40,5 @@ const categories = [...new Set(posts.map((post) => post.data.category))];
       <a class="text-link" href={withBase(templatePath("blog", "/rss.xml"))}>Open RSS feed →</a>
     </div>
   </section>
+  <slot />
 </aside>

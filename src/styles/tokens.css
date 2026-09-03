@@ -1,0 +1,62 @@
+/* Public customization API. Override --lc-* variables in consumer sites. */
+:root {
+  color-scheme: light;
+  --lc-color-paper: #ffffff;
+  --lc-color-surface: #ffffff;
+  --lc-color-ink: #3f4447;
+  --lc-color-ink-strong: #23282b;
+  --lc-color-muted: #687074;
+  --lc-color-faint: #8a9092;
+  --lc-color-line: #dcdcd7;
+  --lc-color-line-soft: #ecece7;
+  --lc-color-accent: #2d6f9f;
+  --lc-color-accent-deep: #174d74;
+  --lc-color-accent-pale: #e7f0f6;
+  --lc-color-warm: #eeece4;
+  --lc-color-warm-ink: #68645a;
+  --lc-color-green: #24745f;
+  --lc-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", STSong, Georgia, serif;
+  --lc-font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --lc-site-width: 1140px;
+  --lc-article-width: 760px;
+  --lc-sidebar-width: 260px;
+  --lc-layout-gap: 52px;
+  --lc-page-gutter: 112px;
+  --lc-radius-sm: 3px;
+
+  /* Backward-compatible aliases for existing custom styles. */
+  --paper: var(--lc-color-paper);
+  --surface: var(--lc-color-surface);
+  --ink: var(--lc-color-ink);
+  --ink-strong: var(--lc-color-ink-strong);
+  --muted: var(--lc-color-muted);
+  --faint: var(--lc-color-faint);
+  --line: var(--lc-color-line);
+  --line-soft: var(--lc-color-line-soft);
+  --accent: var(--lc-color-accent);
+  --accent-deep: var(--lc-color-accent-deep);
+  --accent-pale: var(--lc-color-accent-pale);
+  --warm: var(--lc-color-warm);
+  --warm-ink: var(--lc-color-warm-ink);
+  --green: var(--lc-color-green);
+  --serif: var(--lc-font-serif);
+  --sans: var(--lc-font-sans);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --lc-color-paper: #191b1c;
+  --lc-color-surface: #1e2021;
+  --lc-color-ink: #c8cbcc;
+  --lc-color-ink-strong: #eef0ef;
+  --lc-color-muted: #9a9fa1;
+  --lc-color-faint: #7f8587;
+  --lc-color-line: #3a3d3e;
+  --lc-color-line-soft: #2c2f30;
+  --lc-color-accent: #82b7d7;
+  --lc-color-accent-deep: #a9d1e8;
+  --lc-color-accent-pale: #203746;
+  --lc-color-warm: #36342e;
+  --lc-color-warm-ink: #c6beae;
+  --lc-color-green: #83c7b4;
+}

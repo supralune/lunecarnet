@@ -1,24 +1,8 @@
-export type PublicationAuthor = { name: string; self?: boolean; corresponding?: boolean };
+import type { AcademicConfig, Project, Publication } from "../types";
 
-export type Publication = {
-  year: number;
-  title: string;
-  authors: PublicationAuthor[];
-  venue: string;
-  badge?: string;
-  selected?: boolean;
-  links: Array<{ label: string; href: string }>;
-};
+export type { Project, Publication, PublicationAuthor } from "../types";
 
-export type Project = {
-  title: string;
-  period: string;
-  description: string;
-  tags: string[];
-  link: string;
-};
-
-export const academic = {
+export const academic: AcademicConfig = {
   title: "Your Name",
   description: "Research Area One · Research Area Two · Research Area Three",
   language: "en",

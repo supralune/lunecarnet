@@ -1,18 +1,19 @@
 ---
 import { academic, education, honors, service } from "@/config/academic";
 import { identity } from "@/config/shared";
-import TemplateGuide from "@/components/TemplateGuide.astro";
-import AcademicPageLayout from "@/layouts/AcademicPageLayout.astro";
+import { AcademicPageLayout, TemplateGuide } from "@lunecarnet/astro";
+import { academicTemplate } from "@/config/site";
+import { showEditingGuides } from "@/config/shared";
 ---
 
-<AcademicPageLayout title="About" description="Biography, education, honors, and academic service." active="about">
+<AcademicPageLayout title="About" description="Biography, education, honors, and academic service." active="about" {...academicTemplate}>
   <header class="page-heading">
     <p class="eyebrow">ABOUT · CURRICULUM VITAE</p>
     <h1>About</h1>
     <p>A concise academic biography, followed by the records people most often look for.</p>
   </header>
 
-  <TemplateGuide title="Academic profile guidance">
+  <TemplateGuide title="Academic profile guidance" enabled={showEditingGuides}>
     <p>Prioritize information relevant to your current academic role. Education, honors, and service are maintained as arrays in <code>src/config/academic.ts</code>.</p>
   </TemplateGuide>
 

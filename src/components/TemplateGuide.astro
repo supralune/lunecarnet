@@ -1,11 +1,9 @@
 ---
-import { showEditingGuides } from "@/config/shared";
-
-interface Props { title?: string; compact?: boolean }
-const { title = "Template editing guide", compact = false } = Astro.props;
+interface Props { title?: string; compact?: boolean; enabled?: boolean }
+const { title = "Template editing guide", compact = false, enabled = true } = Astro.props;
 ---
 
-{showEditingGuides && (
+{enabled && (
   <aside class:list={["template-note", { compact }]} aria-label={title}>
     <strong>{title}</strong>
     <div><slot /></div>

@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-import { templatePath } from "@/config/runtime";
+import { templatePath } from "../config/runtime";
 
 export type Post = CollectionEntry<"posts">;
 

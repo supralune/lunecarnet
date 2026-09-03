@@ -1,6 +1,6 @@
 ---
-import { dateParts, formatDate, postPath, type Post } from "@/lib/posts";
-import { withBase } from "@/lib/url";
+import { dateParts, formatDate, postPath, type Post } from "../lib/posts";
+import { withBase } from "../lib/url";
 
 interface Props { post: Post; featured?: boolean }
 const { post, featured = false } = Astro.props;

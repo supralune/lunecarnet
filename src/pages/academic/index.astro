@@ -1,9 +1,8 @@
 ---
-import AcademicHome from "@/components/AcademicHome.astro";
+import { AcademicHome, BaseLayout, templatePath } from "@lunecarnet/astro";
 import { academic } from "@/config/academic";
-import { templatePath } from "@/config/runtime";
+import { academicTemplate } from "@/config/site";
 import { identity } from "@/config/shared";
-import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const siteOrigin = Astro.site ?? Astro.url.origin;
 const schema = {
@@ -19,5 +18,5 @@ const schema = {
 ---
 
 <BaseLayout title={`${academic.title} · Academic`} description={academic.description} lang={academic.language} pageClass="academic-page" schema={schema}>
-  <AcademicHome />
+  <AcademicHome {...academicTemplate} />
 </BaseLayout>

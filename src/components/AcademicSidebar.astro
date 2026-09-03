@@ -1,12 +1,22 @@
 ---
-import { academic, projects, publications } from "@/config/academic";
-import { identity, showEditingGuides } from "@/config/shared";
+import type { AcademicConfig, IdentityConfig, Project, Publication } from "../types";
+
+interface Props {
+  academic: AcademicConfig;
+  identity: IdentityConfig;
+  projects: Project[];
+  publications: Publication[];
+  showEditingGuides?: boolean;
+}
+const { academic, identity, projects, publications, showEditingGuides = false } = Astro.props;
 const selectedPublicationCount = publications.filter((publication) => publication.selected).length;
 ---
 
 <aside class="sidebar academic-sidebar">
   <section class="profile-card">
-    <div class="avatar" aria-hidden="true">{identity.initials}</div>
+    {identity.avatar
+      ? <img class="avatar avatar-image" src={identity.avatar} alt={`${identity.name} portrait`} />
+      : <div class="avatar" aria-hidden="true">{identity.initials}</div>}
     <h2>{identity.name}</h2>
     <p>{academic.role}</p>
     <dl>
@@ -16,6 +26,7 @@ const selectedPublicationCount = publications.filter((publication) => publicatio
       <div><dt>Based</dt><dd>{identity.location}</dd></div>
     </dl>
   </section>
+  <slot name="after-profile" />
   <section class="widget">
     <h2>Research Areas</h2>
     <div class="area-list">{academic.topics.map((topic) => <span>{topic}</span>)}</div>
@@ -28,4 +39,5 @@ const selectedPublicationCount = publications.filter((publication) => publicatio
       <li>{academic.availability}</li>
     </ul>
   </section>
+  <slot />
 </aside>

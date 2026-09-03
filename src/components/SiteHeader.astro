@@ -1,16 +1,30 @@
 ---
-import { isCombinedSite, templatePath } from "@/config/runtime";
-import type { SiteVariant } from "@/config/shared";
-import { withBase } from "@/lib/url";
+import { isCombinedSite, templatePath } from "../config/runtime";
+import type { NavigationItem, SiteVariant } from "../types";
+import { withBase } from "../lib/url";
 
 interface Props {
   variant: SiteVariant;
   title: string;
   description: string;
-  navigation: Array<{ key: string; label: string; href: string }>;
+  navigation: NavigationItem[];
   active?: string;
+  searchLabel?: string;
+  menuLabel?: string;
+  primaryNavigationLabel?: string;
+  variantNavigationLabel?: string;
 }
-const { variant, title, description, navigation, active = "home" } = Astro.props;
+const {
+  variant,
+  title,
+  description,
+  navigation,
+  active = "home",
+  searchLabel = "Search notes",
+  menuLabel = "Menu",
+  primaryNavigationLabel = "Primary navigation",
+  variantNavigationLabel = "Template variant"
+} = Astro.props;
 const homePath = templatePath(variant);
 const navigationId = `${variant}-navigation`;
 ---
@@ -23,25 +37,26 @@ const navigationId = `${variant}-navigation`;
     </div>
     <div class="header-tools">
       {isCombinedSite && (
-        <nav class="variant-switcher" aria-label="Template variant">
+        <nav class="variant-switcher" aria-label={variantNavigationLabel}>
           <a class:list={{ active: variant === "blog" }} aria-current={variant === "blog" ? "page" : undefined} href={withBase(templatePath("blog"))}>Blog</a>
           <a class:list={{ active: variant === "academic" }} aria-current={variant === "academic" ? "page" : undefined} href={withBase(templatePath("academic"))}>Academic</a>
         </nav>
       )}
       <div class="utility-actions">
-        {variant === "blog" && <a class="utility-link search-link" href={withBase(templatePath("blog", "/search/"))}><span aria-hidden="true">⌕</span><span class="sr-only">Search notes</span></a>}
+        {variant === "blog" && <a class="utility-link search-link" href={withBase(templatePath("blog", "/search/"))}><span aria-hidden="true">⌕</span><span class="sr-only">{searchLabel}</span></a>}
+        <slot name="actions" />
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Use dark theme" aria-pressed="false">
           <span class="theme-light" aria-hidden="true">☼</span>
           <span class="theme-dark" aria-hidden="true">◐</span>
         </button>
         <button class="nav-toggle" type="button" data-nav-toggle aria-controls={navigationId} aria-expanded="false">
-          <span aria-hidden="true">Menu</span>
+          <span aria-hidden="true">{menuLabel}</span>
           <span class="sr-only">Toggle navigation</span>
         </button>
       </div>
     </div>
   </div>
-  <nav class="nav-menu" id={navigationId} data-nav-menu aria-label="Primary navigation">
+  <nav class="nav-menu" id={navigationId} data-nav-menu aria-label={primaryNavigationLabel}>
     {navigation.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(templatePath(variant, item.href))}>{item.label}</a>)}
   </nav>
 </header>

@@ -39,6 +39,8 @@ The screenshots show the light theme with the optional editing guides enabled.
 
 There is only one implementation of each template. `sites/blog/` and `sites/academic/` are thin standalone route entrypoints, so fixes and improvements are not duplicated.
 
+The repository also exposes an `@lunecarnet/astro` package entrypoint. A separate personal site can depend directly on a versioned GitHub tag, receive upstream component and style updates, and keep its identity, content, and small token overrides locally. See the [Chinese dependency guide](./docs/DEPENDENCY_USAGE.zh-CN.md) for the complete setup.
+
 ## Getting Started
 
 Node.js 22 or later is required.
@@ -87,8 +89,9 @@ Most changes happen in focused configuration files:
 1. `src/config/shared.ts` contains identity information and the editing-guide switch.
 2. `src/config/blog.ts` contains blog copy and navigation.
 3. `src/config/academic.ts` contains the academic profile, publications, projects, news, education, honors, and service.
-4. `src/config/runtime.ts` resolves paths for the three build modes and normally does not need editing.
-5. `src/content/posts/`
+4. `src/config/site.ts` combines consumer-owned data into type-safe props for the reusable package components.
+5. `src/config/runtime.ts` resolves paths for the three build modes and normally does not need editing.
+6. `src/content/posts/`
    - Remove the three example notes and create Markdown files with the same frontmatter structure.
 
 The original `src/data/site.ts` remains as a compatibility barrel. New code should import from the focused config files.
@@ -122,7 +125,7 @@ authors: [
 
 `self: true` underlines the profile owner's name. `corresponding: true` appends `*` to a corresponding author. Both flags can be used on the same person.
 
-Colors, typography, spacing, and responsive rules are centralized in `src/styles/global.css`. The template uses system fonts, makes no third-party font requests, and has no required image assets. The rationale behind the design system is documented in [`DESIGN.md`](./DESIGN.md).
+Colors, typography, spacing, and responsive rules are centralized in `src/styles/global.css`. Stable downstream overrides use the public `--lc-*` properties in `src/styles/tokens.css`; the original short token names remain as compatibility aliases. The template uses system fonts, makes no third-party font requests, and has no required image assets. The rationale behind the design system is documented in [`DESIGN.md`](./DESIGN.md).
 
 Editing prompts are separate from the general placeholder content. Keep `showEditingGuides` enabled while customizing, then disable it before publication. Empty publication and project URLs never produce broken `#` links.
 
@@ -164,6 +167,8 @@ sites/blog/           Standalone blog route entrypoints
 sites/academic/       Standalone academic route entrypoints
 scripts/              Cross-platform mode runner and test orchestration
 src/config/           Shared, blog, academic, and runtime configuration
+src/index.ts          Public component and utility entrypoint for Git/npm installs
+src/types.ts          Public TypeScript types for consumer-owned configuration
 src/components/       Shared and template-specific components
 src/content/posts/    Markdown blog notes
 src/data/site.ts      Compatibility exports for the old config entrypoint

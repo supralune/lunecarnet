@@ -1,19 +1,29 @@
 ---
-import AcademicSidebar from "@/components/AcademicSidebar.astro";
-import PublicationRow from "@/components/PublicationRow.astro";
-import SiteFooter from "@/components/SiteFooter.astro";
-import AcademicHeader from "@/components/AcademicHeader.astro";
-import TemplateGuide from "@/components/TemplateGuide.astro";
-import { academic, news, projects, publications } from "@/config/academic";
-import { templatePath } from "@/config/runtime";
-import { identity, showEditingGuides } from "@/config/shared";
-import { withBase } from "@/lib/url";
+import AcademicSidebar from "./AcademicSidebar.astro";
+import PublicationRow from "./PublicationRow.astro";
+import SiteFooter from "./SiteFooter.astro";
+import AcademicHeader from "./AcademicHeader.astro";
+import TemplateGuide from "./TemplateGuide.astro";
+import { templatePath } from "../config/runtime";
+import type { AcademicConfig, IdentityConfig, NewsItem, Project, Publication } from "../types";
+import { withBase } from "../lib/url";
 
+interface Props {
+  academic: AcademicConfig;
+  identity: IdentityConfig;
+  publications: Publication[];
+  projects: Project[];
+  news: NewsItem[];
+  showEditingGuides?: boolean;
+}
+const { academic, identity, publications, projects, news, showEditingGuides = false } = Astro.props;
 const selectedPublications = publications.filter((publication) => publication.selected);
 ---
 
 <div class="site-shell academic-shell">
-  <AcademicHeader active="home" />
+  <AcademicHeader academic={academic} active="home">
+    <slot name="header-actions" slot="actions" />
+  </AcademicHeader>
   <div class="page-layout">
     <main class="main-content" id="main">
       <section class="academic-hero">
@@ -28,7 +38,9 @@ const selectedPublications = publications.filter((publication) => publication.se
         </div>
       </section>
 
-      <TemplateGuide compact>
+      <slot name="after-hero" />
+
+      <TemplateGuide compact enabled={showEditingGuides}>
         <p>Replace the placeholders in <code>src/config/academic.ts</code> with your own profile, publications, projects, and updates.</p>
       </TemplateGuide>
 
@@ -36,7 +48,7 @@ const selectedPublications = publications.filter((publication) => publication.se
         <div class="section-heading ruled"><h2>Selected Publications</h2><a class="section-more" href={withBase(templatePath("academic", "/publications/"))}>View all →</a></div>
         <p class="publication-legend"><span class="self-author">Your Name</span> indicates the profile owner; <sup>*</sup> indicates the corresponding author.</p>
         <div class="publication-list">
-          {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} />)}
+          {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} showEditingGuides={showEditingGuides} />)}
         </div>
       </section>
 
@@ -60,9 +72,14 @@ const selectedPublications = publications.filter((publication) => publication.se
         <div class="section-heading ruled"><h2>Latest News</h2><span>UPDATES</span></div>
         <div class="news-list">{news.map((item) => <div><time>{item.date}</time><p>{item.text}</p></div>)}</div>
       </section>
+      <slot />
     </main>
 
-    <AcademicSidebar />
+    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides}>
+      <slot name="sidebar" />
+    </AcademicSidebar>
   </div>
-  <SiteFooter variant="academic" />
+  <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides}>
+    <slot name="footer-extra" slot="extra" />
+  </SiteFooter>
 </div>

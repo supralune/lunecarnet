@@ -13,13 +13,14 @@ Lunecarnet combines two content modes without turning them into two unrelated th
 
 ## Core Tokens
 
-The design tokens live at the top of `src/styles/global.css`.
+The public design tokens live in `src/styles/tokens.css`. Consumer sites should override the namespaced `--lc-*` properties instead of editing `global.css`; the older short names remain compatibility aliases.
 
-- `--paper` and `--surface` establish the warm reading environment.
-- `--ink`, `--muted`, and `--faint` create three text levels.
-- `--line` and `--line-soft` organize information without heavy containers.
-- `--accent`, `--accent-deep`, and `--accent-pale` handle interaction and emphasis.
-- `--serif` is used for titles and long-form reading; `--sans` supports navigation and metadata.
+- `--lc-color-paper` and `--lc-color-surface` establish the reading environment.
+- `--lc-color-ink`, `--lc-color-muted`, and `--lc-color-faint` create three text levels.
+- `--lc-color-line` and `--lc-color-line-soft` organize information without heavy containers.
+- `--lc-color-accent`, `--lc-color-accent-deep`, and `--lc-color-accent-pale` handle interaction and emphasis.
+- `--lc-font-serif` is used for titles and long-form reading; `--lc-font-sans` supports navigation and metadata.
+- `--lc-site-width`, `--lc-article-width`, `--lc-sidebar-width`, and `--lc-layout-gap` expose the primary layout proportions.
 
 When extending the template, reuse these roles before adding colors or arbitrary component values.
 

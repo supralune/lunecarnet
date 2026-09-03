@@ -40,6 +40,8 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 
 模板组件只有一份。`sites/blog/` 和 `sites/academic/` 只提供很薄的独立路由入口，因此修复或改进模板时不需要维护两份页面实现。
 
+除了复制模板，仓库现在也提供 `@lunecarnet/astro` 包入口。独立个人站可以直接依赖 GitHub version tag，让组件和基础样式随上游版本升级，同时把个人配置、Markdown 和少量样式覆盖留在自己的仓库。完整说明参见 [`docs/DEPENDENCY_USAGE.zh-CN.md`](./docs/DEPENDENCY_USAGE.zh-CN.md)。
+
 ## 开始使用
 
 需要 Node.js 22 或更高版本。
@@ -88,6 +90,7 @@ npm test
 - `src/config/shared.ts`：身份信息和编辑指引开关。
 - `src/config/blog.ts`：博客标题、文案与导航。
 - `src/config/academic.ts`：学术简介、论文、项目、动态、教育、荣誉与服务。
+- `src/config/site.ts`：把个人数据组合成传给可复用组件的类型安全配置。
 - `src/config/runtime.ts`：三种构建模式的路径解析；通常不需要修改。
 
 原来的 `src/data/site.ts` 保留为兼容导出，已有定制代码不会立刻失效；新代码应使用上述聚焦配置文件。
@@ -136,7 +139,7 @@ Start the article here. Section headings should normally begin at `##`.
 
 ## 设计与样式
 
-颜色、字体、间距和响应式规则集中在 `src/styles/global.css`。模板使用系统字体，不请求第三方字体，也不依赖必须保留的图片资源。
+颜色、字体、间距和响应式规则集中在 `src/styles/global.css`。可供下游稳定覆盖的 `--lc-*` 设计变量定义在 `src/styles/tokens.css`；已有的短变量名继续作为兼容别名。模板使用系统字体，不请求第三方字体，也不依赖必须保留的图片资源。
 
 设计原则和变量说明参见 [`DESIGN.md`](./DESIGN.md)。
 
@@ -166,6 +169,8 @@ sites/blog/           博客独立站的根级路由入口
 sites/academic/       学术独立站的根级路由入口
 scripts/              跨平台的模式运行与测试脚本
 src/config/           共享、博客、学术和运行时配置
+src/index.ts          Git/npm 依赖的公开组件与工具入口
+src/types.ts          使用方配置的公开 TypeScript 类型
 src/components/       公共组件与两套模板组件
 src/content/posts/    Markdown 博客文章
 src/data/site.ts      旧配置入口的兼容导出

@@ -1,9 +1,8 @@
 ---
-import { showEditingGuides } from "@/config/shared";
-import type { Publication } from "@/config/academic";
+import type { Publication } from "../types";
 
-interface Props { publication: Publication; highlight?: boolean }
-const { publication, highlight = false } = Astro.props;
+interface Props { publication: Publication; highlight?: boolean; showEditingGuides?: boolean }
+const { publication, highlight = false, showEditingGuides = false } = Astro.props;
 ---
 
 <article class="publication">

@@ -1,9 +1,7 @@
 ---
-import BlogHome from "@/components/BlogHome.astro";
+import { BaseLayout, BlogHome, getPublishedPosts, templatePath } from "@lunecarnet/astro";
 import { blog } from "@/config/blog";
-import { templatePath } from "@/config/runtime";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getPublishedPosts } from "@/lib/posts";
+import { blogTemplate } from "@/config/site";
 
 const posts = await getPublishedPosts();
 const siteOrigin = Astro.site ?? Astro.url.origin;
@@ -17,5 +15,5 @@ const schema = {
 ---
 
 <BaseLayout title={`${blog.title} · Blog`} description={blog.description} lang={blog.language} pageClass="blog-page" schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }}>
-  <BlogHome posts={posts} />
+  <BlogHome posts={posts} {...blogTemplate} />
 </BaseLayout>

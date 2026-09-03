@@ -1,4 +1,6 @@
-export const blog = {
+import type { BlogConfig } from "../types";
+
+export const blog: BlogConfig = {
   title: "Lune Carnet",
   description: "A personal blog about ideas, projects, and lessons learned along the way.",
   language: "en",
