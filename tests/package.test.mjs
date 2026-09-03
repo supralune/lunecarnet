@@ -93,42 +93,58 @@ test("publishes shared content and localization contracts", async () => {
   assert.ok(manifest.files.includes("src/messages.ts"));
 });
 
-test("builds an isolated consumer from the packed artifact", { timeout: 60_000 }, async () => {
+test("builds isolated blog and academic consumers from the packed artifact", { timeout: 60_000 }, async () => {
   const temporaryRoot = await mkdtemp(join(tmpdir(), "lunecarnet-consumer-"));
-  const consumer = join(temporaryRoot, "consumer");
   const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
   try {
-    await cp(fileURLToPath(new URL("fixtures/consumer-blog/", import.meta.url)), consumer, { recursive: true });
     const { stdout } = await run(npm, ["pack", rootPath, "--json", "--pack-destination", temporaryRoot], {
       cwd: temporaryRoot,
       env: { ...process.env, npm_config_cache: join(temporaryRoot, "npm-cache") }
     });
     const [{ filename }] = JSON.parse(stdout);
-    await run(npm, ["install", join(temporaryRoot, filename), "--ignore-scripts", "--offline", "--legacy-peer-deps", "--no-audit", "--no-fund"], {
-      cwd: consumer,
-      env: { ...process.env, npm_config_cache: join(temporaryRoot, "npm-cache") }
-    });
-
-    const astroSource = join(rootPath, "node_modules", "astro");
-    const astroTarget = join(consumer, "node_modules", "astro");
-    await mkdir(dirname(astroTarget), { recursive: true });
-    await symlink(astroSource, astroTarget, process.platform === "win32" ? "junction" : "dir");
-    await mkdir(join(consumer, "node_modules", "@astrojs"), { recursive: true });
-    await symlink(join(rootPath, "node_modules", "@astrojs", "check"), join(consumer, "node_modules", "@astrojs", "check"), process.platform === "win32" ? "junction" : "dir");
-    await symlink(join(rootPath, "node_modules", "typescript"), join(consumer, "node_modules", "typescript"), process.platform === "win32" ? "junction" : "dir");
-
     const astroBin = join(rootPath, "node_modules", "astro", "bin", "astro.mjs");
     const consumerEnv = { ...process.env, SITE_MODE: "" };
-    await run(process.execPath, [astroBin, "check"], { cwd: consumer, env: consumerEnv });
-    await run(process.execPath, [astroBin, "build"], { cwd: consumer, env: consumerEnv });
 
-    const page = await readFile(join(consumer, "dist", "index.html"), "utf8");
-    assert.match(page, /独立博客/);
-    assert.match(page, /最新更新/);
-    assert.match(page, /第一篇文章/);
-    assert.match(page, /--lc-color-accent: #7654a8/);
-    assert.doesNotMatch(page, /href="\/blog\/"/);
+    for (const fixture of ["consumer-blog", "consumer-academic"]) {
+      const consumer = join(temporaryRoot, fixture);
+      await cp(fileURLToPath(new URL(`fixtures/${fixture}/`, import.meta.url)), consumer, { recursive: true });
+      await run(npm, ["install", join(temporaryRoot, filename), "--ignore-scripts", "--offline", "--legacy-peer-deps", "--no-audit", "--no-fund"], {
+        cwd: consumer,
+        env: { ...process.env, npm_config_cache: join(temporaryRoot, "npm-cache") }
+      });
+
+      const astroTarget = join(consumer, "node_modules", "astro");
+      await mkdir(dirname(astroTarget), { recursive: true });
+      await symlink(join(rootPath, "node_modules", "astro"), astroTarget, process.platform === "win32" ? "junction" : "dir");
+      await mkdir(join(consumer, "node_modules", "@astrojs"), { recursive: true });
+      await symlink(join(rootPath, "node_modules", "@astrojs", "check"), join(consumer, "node_modules", "@astrojs", "check"), process.platform === "win32" ? "junction" : "dir");
+      await symlink(join(rootPath, "node_modules", "typescript"), join(consumer, "node_modules", "typescript"), process.platform === "win32" ? "junction" : "dir");
+
+      await run(process.execPath, [astroBin, "check"], { cwd: consumer, env: consumerEnv });
+      await run(process.execPath, [astroBin, "build"], { cwd: consumer, env: consumerEnv });
+    }
+
+    const blog = await readFile(join(temporaryRoot, "consumer-blog", "dist", "index.html"), "utf8");
+    assert.match(blog, /独立博客/);
+    assert.match(blog, /最新更新/);
+    assert.match(blog, /第一篇文章/);
+    assert.match(blog, /--lc-color-accent: #7654a8/);
+    assert.doesNotMatch(blog, /href="\/blog\/"/);
+
+    const academicHome = await readFile(join(temporaryRoot, "consumer-academic", "dist", "index.html"), "utf8");
+    assert.match(academicHome, /测试学者/);
+    assert.doesNotMatch(academicHome, /id="(?:publications|projects|about|news)"/);
+    assert.doesNotMatch(academicHome, /class="widget"><h2>概览/);
+    assert.doesNotMatch(academicHome, /href="\/academic\/"/);
+
+    const academicAbout = await readFile(join(temporaryRoot, "consumer-academic", "dist", "about", "index.html"), "utf8");
+    assert.match(academicAbout, /第一段学术简介。/);
+    assert.match(academicAbout, /第二段学术简介。/);
+    assert.match(academicAbout, /研究兴趣/);
+    assert.match(academicAbout, /可信知识系统/);
+    assert.match(academicAbout, /研究可靠、透明且便于长期维护的知识工具。/);
+    assert.doesNotMatch(academicAbout, />教育经历</);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

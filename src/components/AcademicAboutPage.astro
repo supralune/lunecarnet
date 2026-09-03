@@ -2,10 +2,13 @@
 import AcademicPageLayout from "../layouts/AcademicPageLayout.astro";
 import { resolveMessages } from "../messages";
 import type { AcademicTemplateConfig } from "../types";
+import { textBlocks } from "../lib/text";
 
 type Props = AcademicTemplateConfig;
 const { academic, identity, publications, projects, education, honors, service, showEditingGuides = false, messages } = Astro.props;
 const ui = resolveMessages(academic.language, messages);
+const biography = textBlocks(academic.longBio);
+const researchInterests = academic.researchInterests ?? [];
 ---
 
 <AcademicPageLayout title={ui.academicAboutTitle} description={ui.academicAboutDescription} active="about" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
@@ -16,16 +19,22 @@ const ui = resolveMessages(academic.language, messages);
     <h1>{ui.academicAboutTitle}</h1>
     <p>{ui.academicAboutIntro}</p>
   </header>
-  <section class="academic-detail-section"><h2>{ui.biography}</h2><p class="about-copy">{academic.longBio}</p></section>
-  <section class="academic-detail-section">
+  {biography.length > 0 && <section class="academic-detail-section"><h2>{ui.biography}</h2>{biography.map((paragraph) => <p class="about-copy">{paragraph}</p>)}</section>}
+  {researchInterests.length > 0 && <section class="academic-detail-section">
+    <h2>{ui.researchInterests}</h2>
+    <div class="research-interest-list">
+      {researchInterests.map((interest) => <article class="record-row"><div><h3>{interest.title}</h3><p>{interest.description}</p></div></article>)}
+    </div>
+  </section>}
+  {education.length > 0 && <section class="academic-detail-section">
     <h2>{ui.education}</h2>
     {education.map((item) => <div class="record-row"><div><h3>{item.title}</h3><p>{item.detail}</p></div>{item.period && <time>{item.period}</time>}</div>)}
-  </section>
-  <section class="academic-detail-section">
+  </section>}
+  {honors.length > 0 && <section class="academic-detail-section">
     <h2>{ui.honorsAwards}</h2>
     {honors.map((item) => <div class="record-row"><div><h3>{item.title}</h3><p>{item.detail}</p></div>{item.period && <time>{item.period}</time>}</div>)}
-  </section>
-  <section class="academic-detail-section"><h2>{ui.academicService}</h2><ul class="service-list">{service.map((item) => <li>{item}</li>)}</ul></section>
+  </section>}
+  {service.length > 0 && <section class="academic-detail-section"><h2>{ui.academicService}</h2><ul class="service-list">{service.map((item) => <li>{item}</li>)}</ul></section>}
   <section class="academic-detail-section">
     <h2>{ui.contact}</h2>
     <dl class="contact-grid">

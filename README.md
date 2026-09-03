@@ -98,6 +98,8 @@ The original `src/data/site.ts` remains as a compatibility barrel. New code shou
 
 Setting `blog.language` or `academic.language` to `zh-CN` enables the bundled Chinese interface. Individual interface strings can be overridden through the typed `messages` field without copying components.
 
+`academic.longBio` accepts either one string or an array of paragraphs. The Publications, Projects, About, and News sections on the academic home page can be toggled through `academicHomeSections`; enabled sections with no content are hidden automatically. `academic.topics` remains the short tag list used on the home page and sidebar, while the optional `academic.researchInterests` records render title-and-description rows on the About page. Empty education, honors, and service sections are omitted.
+
 Example note:
 
 ```md

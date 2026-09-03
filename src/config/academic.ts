@@ -1,4 +1,4 @@
-import type { AcademicConfig, Project, Publication } from "../types";
+import type { AcademicConfig, AcademicHomeSections, Project, Publication } from "../types";
 
 export type { Project, Publication, PublicationAuthor } from "../types";
 
@@ -9,8 +9,25 @@ export const academic: AcademicConfig = {
   role: "Your Academic Role · Department, University",
   headline: "A concise sentence describing the broad focus and purpose of your research.",
   bio: "Use two or three sentences to introduce your main research questions, the methods or perspective you bring, and the broader significance of your work.",
-  longBio: "Write a fuller academic biography here. You might summarize your educational background, current research agenda, methodological approach, and the kinds of scholarly conversations or collaborations you hope to contribute to.",
+  longBio: [
+    "Write a fuller academic biography here. You might summarize your educational background, current research agenda, and methodological approach.",
+    "Use a second paragraph for the scholarly conversations, collaborations, or broader contributions you hope to develop."
+  ],
   topics: ["Research Area One", "Research Area Two", "Research Area Three"],
+  researchInterests: [
+    {
+      title: "Research Direction One",
+      description: "Describe the central problem, methods, and longer-term goal of this research direction."
+    },
+    {
+      title: "Research Direction Two",
+      description: "Explain how this direction connects to your broader agenda and the questions you are currently exploring."
+    },
+    {
+      title: "Research Direction Three",
+      description: "Summarize the systems, evidence, or practical outcomes you hope this line of work will produce."
+    }
+  ],
   scholar: "",
   orcid: "",
   cvUrl: "",
@@ -21,6 +38,14 @@ export const academic: AcademicConfig = {
     { key: "projects", label: "Projects", href: "/projects/" },
     { key: "about", label: "About", href: "/about/" }
   ]
+};
+
+/** Hide individual home sections without changing their data or dedicated pages. */
+export const academicHomeSections: AcademicHomeSections = {
+  publications: true,
+  projects: true,
+  about: true,
+  news: true
 };
 
 export const publications: Publication[] = [

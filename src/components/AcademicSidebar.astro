@@ -12,6 +12,8 @@ interface Props {
 }
 const { academic, identity, projects, publications, showEditingGuides = false, messages } = Astro.props;
 const selectedPublicationCount = publications.filter((publication) => publication.selected).length;
+const topics = academic.topics ?? [];
+const showSummary = selectedPublicationCount > 0 || projects.length > 0 || Boolean(academic.availability);
 const ui = resolveMessages(academic.language, messages);
 ---
 
@@ -30,17 +32,17 @@ const ui = resolveMessages(academic.language, messages);
     </dl>
   </section>
   <slot name="after-profile" />
-  <section class="widget">
+  {topics.length > 0 && <section class="widget">
     <h2>{ui.researchAreas}</h2>
-    <div class="area-list">{academic.topics.map((topic) => <span>{topic}</span>)}</div>
-  </section>
-  <section class="widget">
+    <div class="area-list">{topics.map((topic) => <span>{topic}</span>)}</div>
+  </section>}
+  {showSummary && <section class="widget">
     <h2>{ui.atAGlance}</h2>
     <ul class="plain-list">
-      <li>{formatMessage(ui.selectedPublicationCount, { count: selectedPublicationCount })}</li>
-      <li>{formatMessage(ui.activeProjectCount, { count: projects.length })}</li>
+      {selectedPublicationCount > 0 && <li>{formatMessage(ui.selectedPublicationCount, { count: selectedPublicationCount })}</li>}
+      {projects.length > 0 && <li>{formatMessage(ui.activeProjectCount, { count: projects.length })}</li>}
       {academic.availability && <li>{academic.availability}</li>}
     </ul>
-  </section>
+  </section>}
   <slot />
 </aside>

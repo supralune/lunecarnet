@@ -122,6 +122,7 @@ export const enMessages = {
   academicAboutEyebrow: "ABOUT · CURRICULUM VITAE",
   academicAboutIntro: "A concise academic biography, followed by the records people most often look for.",
   biography: "Biography",
+  researchInterests: "Research Interests",
   education: "Education",
   honorsAwards: "Honors & Awards",
   academicService: "Academic Service"
@@ -247,6 +248,7 @@ const zhCnMessages: ResolvedMessages = {
   academicAboutEyebrow: "关于 · 学术履历",
   academicAboutIntro: "简要的学术介绍，以及访客最常查找的履历信息。",
   biography: "个人简介",
+  researchInterests: "研究兴趣",
   education: "教育经历",
   honorsAwards: "荣誉与奖励",
   academicService: "学术服务"

@@ -97,6 +97,10 @@ npm test
 
 原来的 `src/data/site.ts` 保留为兼容导出，已有定制代码不会立刻失效；新代码应使用上述聚焦配置文件。
 
+`academic.longBio` 可以是单个字符串，也可以是字符串数组；数组中的每一项会渲染为独立段落。Academic 首页的 Publications、Projects、About 和 News 可以通过同一文件中的 `academicHomeSections` 分别开关。即使开关开启，没有实际数据的区块也会自动隐藏。
+
+`academic.topics` 继续用于首页和侧栏的短标签；About 页面的 Research Interests 使用可选的 `academic.researchInterests`，每一项包含 `title` 和 `description`，以带分隔线的标题与说明列表展示。Education、Honors 和 Service 等空区块同样不会渲染。
+
 ## 论文作者标注
 
 论文作者采用结构化数据，以便主页与 Publications 页面使用一致的标注规则：

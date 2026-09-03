@@ -81,7 +81,44 @@ export default defineBlogConfig({
 });
 ```
 
-学术站使用 `defineAcademicConfig()`；类型会检查 identity、论文、项目和动态数据是否完整。
+学术站使用 `defineAcademicConfig()`；类型会检查 identity、论文、项目和动态数据是否完整。`academic.longBio` 同时接受单个字符串和字符串数组，多项会渲染为多个段落。
+
+学术首页的主要区块可以独立开关：
+
+```ts
+export default defineAcademicConfig({
+  // identity、academic 和内容数组……
+  homeSections: {
+    publications: true,
+    projects: true,
+    about: true,
+    news: false
+  }
+});
+```
+
+区块只有在开关未关闭且存在内容时才会渲染。Education、Honors 和 Service 为空时也会自动隐藏。
+
+About 页面的 Research Interests 使用独立的结构化记录；`academic.topics` 则继续作为首页和侧栏的短标签：
+
+```ts
+academic: {
+  // 其他字段……
+  topics: ["Autonomous Driving", "Reinforcement Learning"],
+  researchInterests: [
+    {
+      title: "End-to-End Autonomous Driving",
+      description: "Unified driving models that integrate perception, prediction, planning, and control."
+    },
+    {
+      title: "Post-Training for Driving Models",
+      description: "Post-training strategies for improving robustness and generalization."
+    }
+  ]
+}
+```
+
+未提供 `researchInterests` 或数组为空时，About 页面不会渲染该区块。
 
 ## 页面只保留薄入口
 

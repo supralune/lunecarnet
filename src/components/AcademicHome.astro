@@ -5,9 +5,10 @@ import SiteFooter from "./SiteFooter.astro";
 import AcademicHeader from "./AcademicHeader.astro";
 import TemplateGuide from "./TemplateGuide.astro";
 import { templatePath } from "../config/runtime";
-import type { AcademicConfig, IdentityConfig, NewsItem, Project, Publication } from "../types";
+import type { AcademicConfig, AcademicHomeSections, IdentityConfig, NewsItem, Project, Publication } from "../types";
 import { withBase } from "../lib/url";
 import { resolveMessages, type MessageOverrides } from "../messages";
+import { textBlocks } from "../lib/text";
 
 interface Props {
   academic: AcademicConfig;
@@ -17,9 +18,16 @@ interface Props {
   news: NewsItem[];
   showEditingGuides?: boolean;
   messages?: MessageOverrides;
+  homeSections?: AcademicHomeSections;
 }
-const { academic, identity, publications, projects, news, showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications, projects, news, showEditingGuides = false, messages, homeSections } = Astro.props;
 const selectedPublications = publications.filter((publication) => publication.selected);
+const topics = academic.topics ?? [];
+const longBio = textBlocks(academic.longBio);
+const showPublications = homeSections?.publications !== false && selectedPublications.length > 0;
+const showProjects = homeSections?.projects !== false && projects.length > 0;
+const showAbout = homeSections?.about !== false && longBio.length > 0;
+const showNews = homeSections?.news !== false && news.length > 0;
 const ui = resolveMessages(academic.language, messages);
 ---
 
@@ -33,7 +41,7 @@ const ui = resolveMessages(academic.language, messages);
         <p class="eyebrow">{ui.researchProfile}</p>
         <h1>{academic.headline}</h1>
         <p>{academic.bio}</p>
-        <div class="topic-list">{academic.topics.map((topic) => <span>{topic}</span>)}</div>
+        {topics.length > 0 && <div class="topic-list">{topics.map((topic) => <span>{topic}</span>)}</div>}
         <div class="hero-actions">
           {academic.scholar ? <a class="button primary" href={academic.scholar} target="_blank" rel="noreferrer">{ui.googleScholar}</a> : showEditingGuides && <span class="button primary disabled">{ui.addScholarUrl}</span>}
           <a class="button" href={`mailto:${identity.email}`}>{ui.emailMe}</a>
@@ -47,15 +55,15 @@ const ui = resolveMessages(academic.language, messages);
         <p>Replace the placeholders in <code>src/config/academic.ts</code> with your own profile, publications, projects, and updates.</p>
       </TemplateGuide>
 
-      <section class="content-section" id="publications">
+      {showPublications && <section class="content-section" id="publications">
         <div class="section-heading ruled"><h2>{ui.selectedPublications}</h2><a class="section-more" href={withBase(templatePath("academic", "/publications/"))}>{ui.viewAll}</a></div>
         <p class="publication-legend">{ui.publicationLegend}</p>
         <div class="publication-list">
           {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages} />)}
         </div>
-      </section>
+      </section>}
 
-      <section class="content-section" id="projects">
+      {showProjects && <section class="content-section" id="projects">
         <div class="section-heading ruled"><h2>{ui.selectedProjects}</h2><a class="section-more" href={withBase(templatePath("academic", "/projects/"))}>{ui.viewAll}</a></div>
         {projects.map((project) => (
           <article class="project-row">
@@ -64,17 +72,17 @@ const ui = resolveMessages(academic.language, messages);
             <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
           </article>
         ))}
-      </section>
+      </section>}
 
-      <section class="content-section" id="about">
+      {showAbout && <section class="content-section" id="about">
         <div class="section-heading ruled"><h2>{ui.about}</h2><a class="section-more" href={withBase(templatePath("academic", "/about/"))}>{ui.fullProfile}</a></div>
-        <p class="about-copy">{academic.longBio}</p>
-      </section>
+        {longBio.map((paragraph) => <p class="about-copy">{paragraph}</p>)}
+      </section>}
 
-      <section class="content-section">
+      {showNews && <section class="content-section" id="news">
         <div class="section-heading ruled"><h2>{ui.latestNews}</h2><span>{ui.updates}</span></div>
         <div class="news-list">{news.map((item) => <div><time>{item.date}</time><p>{item.text}</p></div>)}</div>
-      </section>
+      </section>}
       <slot />
     </main>
 

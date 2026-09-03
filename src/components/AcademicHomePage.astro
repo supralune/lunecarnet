@@ -5,7 +5,7 @@ import type { AcademicTemplateConfig } from "../types";
 import AcademicHome from "./AcademicHome.astro";
 
 type Props = AcademicTemplateConfig;
-const { academic, identity, publications, projects, news, showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications, projects, news, showEditingGuides = false, messages, homeSections } = Astro.props;
 const siteOrigin = Astro.site ?? Astro.url.origin;
 const schema = {
   "@context": "https://schema.org",
@@ -21,7 +21,7 @@ const schema = {
 
 <BaseLayout title={`${academic.title} · Academic`} description={academic.description} lang={academic.language} pageClass="academic-page" schema={schema} messages={messages}>
   <slot name="head" slot="head" />
-  <AcademicHome academic={academic} identity={identity} publications={publications} projects={projects} news={news} showEditingGuides={showEditingGuides} messages={messages}>
+  <AcademicHome academic={academic} identity={identity} publications={publications} projects={projects} news={news} showEditingGuides={showEditingGuides} messages={messages} homeSections={homeSections}>
     <slot name="header-actions" slot="header-actions" />
     <slot name="after-hero" slot="after-hero" />
     <slot name="sidebar" slot="sidebar" />

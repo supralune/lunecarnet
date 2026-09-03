@@ -1,4 +1,4 @@
-import { academic, education, honors, news, projects, publications, service } from "./academic";
+import { academic, academicHomeSections, education, honors, news, projects, publications, service } from "./academic";
 import { blog } from "./blog";
 import { identity, showEditingGuides } from "./shared";
 import { defineAcademicConfig, defineBlogConfig } from "../types";
@@ -20,5 +20,6 @@ export const academicTemplate = defineAcademicConfig({
   education,
   honors,
   service,
+  homeSections: academicHomeSections,
   showEditingGuides
 });

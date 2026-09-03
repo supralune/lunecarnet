@@ -8,6 +8,15 @@ export type NavigationItem = {
   href: string;
 };
 
+export type TextBlocks = string | readonly string[];
+
+export type AcademicHomeSections = Partial<Record<"publications" | "projects" | "about" | "news", boolean>>;
+
+export type ResearchInterest = {
+  title: string;
+  description: string;
+};
+
 export type IdentityConfig = {
   name: string;
   initials: string;
@@ -39,8 +48,9 @@ export type AcademicConfig = {
   role: string;
   headline: string;
   bio: string;
-  longBio: string;
-  topics: string[];
+  longBio: TextBlocks;
+  topics?: string[];
+  researchInterests?: ResearchInterest[];
   scholar?: string;
   orcid?: string;
   cvUrl?: string;
@@ -93,6 +103,7 @@ export type AcademicTemplateConfig = {
   service: string[];
   showEditingGuides?: boolean;
   messages?: MessageOverrides;
+  homeSections?: AcademicHomeSections;
 };
 
 /** Preserve literal values while checking a consumer-owned template configuration. */
