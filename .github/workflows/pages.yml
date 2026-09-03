@@ -18,13 +18,14 @@ jobs:
     env:
       SITE_URL: ${{ vars.SITE_URL }}
       SITE_BASE: ${{ vars.SITE_BASE }}
+      SITE_MODE: ${{ vars.SITE_MODE || 'both' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm ci
-      - run: npm run build
+      - run: node scripts/run-astro.mjs "$SITE_MODE" check-build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

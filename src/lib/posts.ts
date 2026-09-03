@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { templatePath } from "@/config/runtime";
 
 export type Post = CollectionEntry<"posts">;
 
@@ -8,7 +9,7 @@ export async function getPublishedPosts() {
 }
 
 export function postPath(post: Post) {
-  return `/posts/${post.id.replace(/\.(md|mdx)$/, "")}/`;
+  return templatePath("blog", `/posts/${post.id.replace(/\.(md|mdx)$/, "")}/`);
 }
 
 export function formatDate(date: Date, locale = "en-US") {

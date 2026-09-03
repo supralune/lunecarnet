@@ -1,5 +1,6 @@
 ---
-import { identity, showEditingGuides, type SiteVariant } from "@/data/site";
+import { templatePath } from "@/config/runtime";
+import { identity, showEditingGuides, type SiteVariant } from "@/config/shared";
 import { withBase } from "@/lib/url";
 interface Props { variant: SiteVariant }
 const { variant } = Astro.props;
@@ -11,7 +12,7 @@ const { variant } = Astro.props;
     <a href={`mailto:${identity.email}`}>Email</a>
     <i aria-hidden="true">/</i>
     {identity.github ? <><a href={identity.github} target="_blank" rel="noreferrer">GitHub</a><i aria-hidden="true">/</i></> : showEditingGuides && <><span>Add GitHub URL</span><i aria-hidden="true">/</i></>}
-    {variant === "blog" && <><a href={withBase("/rss.xml")}>RSS</a><i aria-hidden="true">/</i></>}
+    {variant === "blog" && <><a href={withBase(templatePath("blog", "/rss.xml"))}>RSS</a><i aria-hidden="true">/</i></>}
     <span>{variant === "blog" ? "Notes made to last" : "Research made legible"}</span>
   </span>
 </footer>

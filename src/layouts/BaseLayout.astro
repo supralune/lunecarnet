@@ -1,6 +1,5 @@
 ---
 import "@/styles/global.css";
-import { blog } from "@/data/site";
 import { withBase } from "@/lib/url";
 
 interface Props {
@@ -11,9 +10,10 @@ interface Props {
   type?: "website" | "article";
   publishedTime?: Date;
   schema?: Record<string, unknown>;
+  feed?: { title: string; href: string };
 }
 
-const { title, description, lang = "en", pageClass = "", type = "website", publishedTime, schema } = Astro.props;
+const { title, description, lang = "en", pageClass = "", type = "website", publishedTime, schema, feed } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c") : undefined;
 ---
@@ -26,7 +26,7 @@ const serializedSchema = schema ? JSON.stringify(schema).replace(/</g, "\\u003c"
     <meta name="description" content={description} />
     <meta id="theme-color" name="theme-color" content="#ffffff" />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" type="application/rss+xml" title={`${blog.title} RSS`} href={withBase("/rss.xml")} />
+    {feed && <link rel="alternate" type="application/rss+xml" title={feed.title} href={withBase(feed.href)} />}
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

@@ -1,11 +1,12 @@
 import type { APIRoute } from "astro";
-import { blog } from "@/data/site";
+import { blog } from "@/config/blog";
+import { templatePath } from "@/config/runtime";
 import { absoluteSiteUrl, escapeXml } from "@/lib/discovery";
 import { getPublishedPosts, postPath } from "@/lib/posts";
 
 export const GET: APIRoute = async ({ site, url }) => {
   const posts = await getPublishedPosts();
-  const homeUrl = absoluteSiteUrl("/blog/", site, url.origin);
+  const homeUrl = absoluteSiteUrl(templatePath("blog"), site, url.origin);
   const items = posts.map((post) => {
     const link = absoluteSiteUrl(postPath(post), site, url.origin);
     return `<item>

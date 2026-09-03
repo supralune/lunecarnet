@@ -1,19 +1,13 @@
 ---
 import SiteFooter from "@/components/SiteFooter.astro";
-import SiteHeader from "@/components/SiteHeader.astro";
-import { render } from "astro:content";
+import BlogHeader from "@/components/BlogHeader.astro";
+import { blog } from "@/config/blog";
+import { templatePath } from "@/config/runtime";
+import { identity } from "@/config/shared";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { identity } from "@/data/site";
-import { formatDate, getPublishedPosts, postPath, type Post } from "@/lib/posts";
+import { formatDate, postPath, type Post } from "@/lib/posts";
 import { withBase } from "@/lib/url";
-
-export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
-  return posts.map((post, index) => ({
-    params: { slug: post.id.replace(/\.(md|mdx)$/, "") },
-    props: { post, previous: posts[index + 1], next: posts[index - 1] }
-  }));
-}
+import { render } from "astro:content";
 
 interface Props { post: Post; previous?: Post; next?: Post }
 const { post, previous, next } = Astro.props;
@@ -30,12 +24,12 @@ const schema = {
 };
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} lang="en" pageClass="blog-page" type="article" publishedTime={post.data.publishDate} schema={schema}>
+<BaseLayout title={post.data.title} description={post.data.description} lang={blog.language} pageClass="blog-page" type="article" publishedTime={post.data.publishDate} schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }}>
   <div class="site-shell article-site">
-    <SiteHeader variant="blog" />
+    <BlogHeader />
     <main class="article-main" id="main">
       <header class="article-header">
-        <a href={withBase("/blog/")}>← Back to all notes</a>
+        <a href={withBase(templatePath("blog"))}>← Back to all notes</a>
         <p class="eyebrow">{post.data.category}</p>
         <h1>{post.data.title}</h1>
         <p>{post.data.description}</p>
@@ -50,7 +44,7 @@ const schema = {
           </aside>
         )}
       </div>
-      <nav class="article-tags" aria-label="Note tags">{post.data.tags.map((tag) => <a href={`${withBase("/blog/search/")}?q=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>
+      <nav class="article-tags" aria-label="Note tags">{post.data.tags.map((tag) => <a href={`${withBase(templatePath("blog", "/search/"))}?q=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>
       {(previous || next) && (
         <nav class="post-navigation" aria-label="Adjacent notes">
           {previous ? <a href={withBase(postPath(previous))}><small>Previous note</small><span>{previous.data.title}</span></a> : <span></span>}

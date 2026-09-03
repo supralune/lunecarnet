@@ -1,8 +1,9 @@
 ---
 import BlogSidebar from "@/components/BlogSidebar.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
-import SiteHeader from "@/components/SiteHeader.astro";
-import { blog } from "@/data/site";
+import BlogHeader from "@/components/BlogHeader.astro";
+import { blog } from "@/config/blog";
+import { templatePath } from "@/config/runtime";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { Post } from "@/lib/posts";
 
@@ -16,9 +17,9 @@ interface Props {
 const { title, description, active, posts } = Astro.props;
 ---
 
-<BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page">
+<BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page" feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }}>
   <div class="site-shell blog-shell">
-    <SiteHeader variant="blog" active={active} />
+    <BlogHeader active={active} />
     <div class="page-layout">
       <main class="main-content inner-content" id="main"><slot /></main>
       <BlogSidebar posts={posts} />

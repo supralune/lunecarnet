@@ -2,16 +2,18 @@
 import AcademicSidebar from "@/components/AcademicSidebar.astro";
 import PublicationRow from "@/components/PublicationRow.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
-import SiteHeader from "@/components/SiteHeader.astro";
+import AcademicHeader from "@/components/AcademicHeader.astro";
 import TemplateGuide from "@/components/TemplateGuide.astro";
-import { academic, identity, news, projects, publications, showEditingGuides } from "@/data/site";
+import { academic, news, projects, publications } from "@/config/academic";
+import { templatePath } from "@/config/runtime";
+import { identity, showEditingGuides } from "@/config/shared";
 import { withBase } from "@/lib/url";
 
 const selectedPublications = publications.filter((publication) => publication.selected);
 ---
 
 <div class="site-shell academic-shell">
-  <SiteHeader variant="academic" active="home" />
+  <AcademicHeader active="home" />
   <div class="page-layout">
     <main class="main-content" id="main">
       <section class="academic-hero">
@@ -27,11 +29,11 @@ const selectedPublications = publications.filter((publication) => publication.se
       </section>
 
       <TemplateGuide compact>
-        <p>Replace the general academic placeholders in <code>src/data/site.ts</code> with your own profile, publications, projects, and updates.</p>
+        <p>Replace the placeholders in <code>src/config/academic.ts</code> with your own profile, publications, projects, and updates.</p>
       </TemplateGuide>
 
       <section class="content-section" id="publications">
-        <div class="section-heading ruled"><h2>Selected Publications</h2><a class="section-more" href={withBase("/academic/publications/")}>View all →</a></div>
+        <div class="section-heading ruled"><h2>Selected Publications</h2><a class="section-more" href={withBase(templatePath("academic", "/publications/"))}>View all →</a></div>
         <p class="publication-legend"><span class="self-author">Your Name</span> indicates the profile owner; <sup>*</sup> indicates the corresponding author.</p>
         <div class="publication-list">
           {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} />)}
@@ -39,7 +41,7 @@ const selectedPublications = publications.filter((publication) => publication.se
       </section>
 
       <section class="content-section" id="projects">
-        <div class="section-heading ruled"><h2>Selected Projects</h2><a class="section-more" href={withBase("/academic/projects/")}>View all →</a></div>
+        <div class="section-heading ruled"><h2>Selected Projects</h2><a class="section-more" href={withBase(templatePath("academic", "/projects/"))}>View all →</a></div>
         {projects.map((project) => (
           <article class="project-row">
             <div class="project-title"><h3>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h3><span>{project.period}</span></div>
@@ -50,7 +52,7 @@ const selectedPublications = publications.filter((publication) => publication.se
       </section>
 
       <section class="content-section" id="about">
-        <div class="section-heading ruled"><h2>About</h2><a class="section-more" href={withBase("/academic/about/")}>Full profile →</a></div>
+        <div class="section-heading ruled"><h2>About</h2><a class="section-more" href={withBase(templatePath("academic", "/about/"))}>Full profile →</a></div>
         <p class="about-copy">{academic.longBio}</p>
       </section>
 

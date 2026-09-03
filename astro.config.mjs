@@ -1,4 +1,9 @@
 import { defineConfig } from "astro/config";
+import { fileURLToPath } from "node:url";
+
+const requestedMode = process.env.SITE_MODE;
+const siteMode = requestedMode === "blog" || requestedMode === "academic" ? requestedMode : "both";
+const sourceDirectory = siteMode === "both" ? "./src/" : `./sites/${siteMode}/`;
 
 const [repositoryOwnerFromSlug, repository] = process.env.GITHUB_REPOSITORY?.split("/") ?? [];
 const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER ?? repositoryOwnerFromSlug;
@@ -17,9 +22,14 @@ function normalizeBase(value) {
 }
 
 export default defineConfig({
+  srcDir: sourceDirectory,
   site: configuredSite || inferredSite,
   base: configuredBase ? normalizeBase(configuredBase) : inferredBase,
   output: "static",
   trailingSlash: "always",
-  build: { format: "directory" }
+  build: { format: "directory" },
+  vite: {
+    define: { "import.meta.env.SITE_MODE": JSON.stringify(siteMode) },
+    resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } }
+  }
 });

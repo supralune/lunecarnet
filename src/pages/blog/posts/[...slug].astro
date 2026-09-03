@@ -1,0 +1,17 @@
+---
+import BlogPostPage from "@/components/BlogPostPage.astro";
+import { getPublishedPosts, type Post } from "@/lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.id.replace(/\.(md|mdx)$/, "") },
+    props: { post, previous: posts[index + 1], next: posts[index - 1] }
+  }));
+}
+
+interface Props { post: Post; previous?: Post; next?: Post }
+const { post, previous, next } = Astro.props;
+---
+
+<BlogPostPage post={post} previous={previous} next={next} />

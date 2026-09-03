@@ -1,5 +1,6 @@
 ---
-import { academic, education, honors, identity, service } from "@/data/site";
+import { academic, education, honors, service } from "@/config/academic";
+import { identity } from "@/config/shared";
 import TemplateGuide from "@/components/TemplateGuide.astro";
 import AcademicPageLayout from "@/layouts/AcademicPageLayout.astro";
 ---
@@ -12,7 +13,7 @@ import AcademicPageLayout from "@/layouts/AcademicPageLayout.astro";
   </header>
 
   <TemplateGuide title="Academic profile guidance">
-    <p>Prioritize information relevant to your current academic role. Education, honors, and service are maintained as arrays in <code>src/data/site.ts</code>.</p>
+    <p>Prioritize information relevant to your current academic role. Education, honors, and service are maintained as arrays in <code>src/config/academic.ts</code>.</p>
   </TemplateGuide>
 
   <section class="academic-detail-section">

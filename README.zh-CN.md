@@ -12,15 +12,16 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 
 ### 博客主页
 
-![Lunecarnet 博客主页浅色主题示例](./docs/screenshots/blog-home.png)
+![Lunecarnet 博客主页浅色主题示例](./docs/screenshots/blog-home.jpeg)
 
 ### 学术主页
 
-![Lunecarnet 学术主页浅色主题示例](./docs/screenshots/academic-home.png)
+![Lunecarnet 学术主页浅色主题示例](./docs/screenshots/academic-home.jpeg)
 
 ## 主要特性
 
-- 一套共享设计系统下的博客与学术主页双版本
+- 博客、学术和组合预览三种运行模式，共用一套依赖与设计基础
+- 单模板模式使用干净的根级路由，组合模式自动启用命名空间
 - 响应式桌面、平板和移动端布局
 - Markdown 文章、正文目录、标签及上一篇/下一篇
 - 自动生成的文章归档和分类页面
@@ -31,20 +32,13 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 - 可选的 GitHub Pages 手动部署、Pull Request 质量检查和路由测试
 - 不包含分析追踪、远程字体、数据库或前端框架运行时
 
-## 页面路由
+## 三种使用方式
 
-- `/blog/`：博客主页。
-- `/blog/archive/`：按年份自动生成的文章归档。
-- `/blog/categories/`：根据 Markdown Frontmatter 自动汇总的分类页。
-- `/blog/search/`：本地全文搜索。
-- `/blog/about/`：博客与作者介绍。
-- `/academic/`：学术主页。
-- `/academic/publications/`：完整论文与研究成果列表。
-- `/academic/projects/`：研究、开源和协作项目。
-- `/academic/about/`：个人简介、教育经历、荣誉、学术服务和联系方式。
-- `/`：显示 `src/data/site.ts` 中 `defaultVariant` 选择的默认主页。
+- `blog`：博客主页位于 `/`，归档、分类、搜索、文章和 RSS 都使用根级路由；不会构建学术页面。
+- `academic`：学术主页位于 `/`，Publications、Projects 和 About 使用根级路由；不会构建博客页面或 RSS。
+- `both`：`/` 是模板选择页，完整模板分别位于 `/blog/` 和 `/academic/`；文章与 RSS 也收纳在 `/blog/` 下。
 
-如果只需要其中一种主页，可将 `showVariantSwitcher` 改为 `false`，隐藏页头的 Blog / Academic 切换器。不需要保留另一套页面时，也可以删除相应路由文件。
+模板组件只有一份。`sites/blog/` 和 `sites/academic/` 只提供很薄的独立路由入口，因此修复或改进模板时不需要维护两份页面实现。
 
 ## 开始使用
 
@@ -52,13 +46,17 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 
 ```bash
 npm ci
-npm run dev
+npm run dev:blog      # 只使用博客模板
+npm run dev:academic  # 只使用学术模板
+npm run dev:both      # 同时预览两套模板（npm run dev 的默认模式）
 ```
 
 生成静态构建：
 
 ```bash
-npm run build
+npm run build:blog
+npm run build:academic
+npm run build:both    # npm run build 的默认模式
 ```
 
 构建结果位于 `dist/`。
@@ -69,33 +67,30 @@ npm run build
 npm test
 ```
 
-该命令会执行 Astro 类型检查、静态构建，并验证主要路由、搜索页、文章阅读组件、RSS、Sitemap 与 robots 输出。
+该命令会依次检查并构建三种模式，验证各自的路由隔离、搜索页、文章阅读组件、RSS、Sitemap 与 robots 输出。
 
 ## 快速配置
 
 1. 使用此模板创建仓库并克隆到本地。
-2. 修改 `src/data/site.ts` 中的个人身份、博客和学术信息。
-3. 删除 `src/content/posts/` 中的示例文章并添加自己的 Markdown。
-4. 填写论文、项目、GitHub、Scholar、ORCID 和 CV 链接。
-5. 完成内容替换后，将 `showEditingGuides` 设置为 `false`。
-6. 选择 `defaultVariant`，并决定是否保留 `showVariantSwitcher`。
-7. 如果使用自定义域名或子路径，按下文说明配置 `SITE_URL` 与 `SITE_BASE`。
-8. 执行 `npm test` 后推送到 GitHub。
+2. 在 `src/config/shared.ts` 修改身份和编辑指引设置。
+3. 按需要修改 `src/config/blog.ts`、`src/config/academic.ts` 中的模板内容。
+4. 使用博客模板时，删除 `src/content/posts/` 中的示例文章并添加自己的 Markdown。
+5. 填写论文、项目、GitHub、Scholar、ORCID 和 CV 链接。
+6. 完成内容替换后，将 `showEditingGuides` 设置为 `false`。
+7. 选择对应的 `dev:*` 和 `build:*` 命令；部署时配置 `SITE_MODE`。
+8. 如果使用自定义域名或子路径，按下文说明配置 `SITE_URL` 与 `SITE_BASE`。
+9. 执行 `npm test` 后推送到 GitHub。
 
 ## 内容配置
 
-主要修改入口是 `src/data/site.ts`：
+配置按职责拆分：
 
-- `defaultVariant`：根路径默认显示博客还是学术主页。
-- `showVariantSwitcher`：是否显示两套模板的切换器。
-- `showEditingGuides`：是否显示内容填写指引。
-- `identity`：姓名、邮箱、GitHub 和所在机构。
-- `blog`：博客标题、主页文案、About 页面各部分、联系说明和导航。
-- `academic`：学术简介、研究方向和学术链接。
-- `publications`：论文与研究成果。
-- `projects`：研究、开源或协作项目。
-- `news`：学术动态。
-- `education`、`honors`、`service`：教育经历、荣誉与学术服务。
+- `src/config/shared.ts`：身份信息和编辑指引开关。
+- `src/config/blog.ts`：博客标题、文案与导航。
+- `src/config/academic.ts`：学术简介、论文、项目、动态、教育、荣誉与服务。
+- `src/config/runtime.ts`：三种构建模式的路径解析；通常不需要修改。
+
+原来的 `src/data/site.ts` 保留为兼容导出，已有定制代码不会立刻失效；新代码应使用上述聚焦配置文件。
 
 ## 论文作者标注
 
@@ -160,19 +155,24 @@ Start the article here. Section headings should normally begin at `##`.
 
 - `SITE_URL`：公开访问域名，例如 `https://www.example.com`
 - `SITE_BASE`：根域名部署填写 `/`；部署在子路径时填写类似 `/notes` 的路径
+- `SITE_MODE`：填写 `blog`、`academic` 或 `both`；未设置时默认构建组合模式
 
-工作流会把这两个变量传给 Astro，使站内导航、canonical、RSS、Sitemap 和 robots 中的公开地址与实际部署保持一致。
+工作流会把这些变量传给 Astro，使构建模式、站内导航、canonical、RSS、Sitemap 和 robots 与实际部署保持一致。
 
 ## 项目结构
 
 ```text
-src/components/       共享组件和两套主页组件
+sites/blog/           博客独立站的根级路由入口
+sites/academic/       学术独立站的根级路由入口
+scripts/              跨平台的模式运行与测试脚本
+src/config/           共享、博客、学术和运行时配置
+src/components/       公共组件与两套模板组件
 src/content/posts/    Markdown 博客文章
-src/data/site.ts      站点内容与模板配置
-src/layouts/          HTML、SEO 和页面框架
-src/pages/            双主页、内页、文章页和发现文件
+src/data/site.ts      旧配置入口的兼容导出
+src/layouts/          公共 HTML/SEO 与模板页面框架
+src/pages/            组合模式路由和可复用页面实现
 src/styles/           共享设计系统与响应式样式
-tests/                静态构建和路由测试
+tests/                三种模式的构建契约测试
 .github/              工作流、Issue 表单和 PR 模板
 ```
 

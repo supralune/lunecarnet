@@ -1,29 +1,35 @@
 ---
-import { academic, blog, showVariantSwitcher, type SiteVariant } from "@/data/site";
+import { isCombinedSite, templatePath } from "@/config/runtime";
+import type { SiteVariant } from "@/config/shared";
 import { withBase } from "@/lib/url";
 
-interface Props { variant: SiteVariant; active?: string }
-const { variant, active = "home" } = Astro.props;
-const content = variant === "blog" ? blog : academic;
-const homePath = variant === "blog" ? "/blog/" : "/academic/";
+interface Props {
+  variant: SiteVariant;
+  title: string;
+  description: string;
+  navigation: Array<{ key: string; label: string; href: string }>;
+  active?: string;
+}
+const { variant, title, description, navigation, active = "home" } = Astro.props;
+const homePath = templatePath(variant);
 const navigationId = `${variant}-navigation`;
 ---
 
 <header class="site-header">
   <div class="brand-row">
     <div class="site-name">
-      <a class="logo" href={withBase(homePath)}>{content.title}</a>
-      <p>{content.description}</p>
+      <a class="logo" href={withBase(homePath)}>{title}</a>
+      <p>{description}</p>
     </div>
     <div class="header-tools">
-      {showVariantSwitcher && (
+      {isCombinedSite && (
         <nav class="variant-switcher" aria-label="Template variant">
-          <a class:list={{ active: variant === "blog" }} aria-current={variant === "blog" ? "page" : undefined} href={withBase("/blog/")}>Blog</a>
-          <a class:list={{ active: variant === "academic" }} aria-current={variant === "academic" ? "page" : undefined} href={withBase("/academic/")}>Academic</a>
+          <a class:list={{ active: variant === "blog" }} aria-current={variant === "blog" ? "page" : undefined} href={withBase(templatePath("blog"))}>Blog</a>
+          <a class:list={{ active: variant === "academic" }} aria-current={variant === "academic" ? "page" : undefined} href={withBase(templatePath("academic"))}>Academic</a>
         </nav>
       )}
       <div class="utility-actions">
-        {variant === "blog" && <a class="utility-link search-link" href={withBase("/blog/search/")}><span aria-hidden="true">⌕</span><span class="sr-only">Search notes</span></a>}
+        {variant === "blog" && <a class="utility-link search-link" href={withBase(templatePath("blog", "/search/"))}><span aria-hidden="true">⌕</span><span class="sr-only">Search notes</span></a>}
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Use dark theme" aria-pressed="false">
           <span class="theme-light" aria-hidden="true">☼</span>
           <span class="theme-dark" aria-hidden="true">◐</span>
@@ -36,6 +42,6 @@ const navigationId = `${variant}-navigation`;
     </div>
   </div>
   <nav class="nav-menu" id={navigationId} data-nav-menu aria-label="Primary navigation">
-    {content.nav.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(item.href)}>{item.label}</a>)}
+    {navigation.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(templatePath(variant, item.href))}>{item.label}</a>)}
   </nav>
 </header>

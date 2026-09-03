@@ -1,22 +1,21 @@
 import type { APIRoute } from "astro";
+import { siteMode, templatePath } from "@/config/runtime";
 import { absoluteSiteUrl, escapeXml } from "@/lib/discovery";
 import { getPublishedPosts, postPath } from "@/lib/posts";
 
-const staticRoutes = [
-  "/",
-  "/blog/",
-  "/blog/archive/",
-  "/blog/categories/",
-  "/blog/search/",
-  "/blog/about/",
-  "/academic/",
-  "/academic/publications/",
-  "/academic/projects/",
-  "/academic/about/"
-];
+const blogRoutes = ["/", "/archive/", "/categories/", "/search/", "/about/"]
+  .map((path) => templatePath("blog", path));
+const academicRoutes = ["/", "/publications/", "/projects/", "/about/"]
+  .map((path) => templatePath("academic", path));
+
+const staticRoutes = siteMode === "blog"
+  ? blogRoutes
+  : siteMode === "academic"
+    ? academicRoutes
+    : ["/", ...blogRoutes, ...academicRoutes];
 
 export const GET: APIRoute = async ({ site, url }) => {
-  const posts = await getPublishedPosts();
+  const posts = siteMode === "academic" ? [] : await getPublishedPosts();
   const entries: Array<{ path: string; lastmod?: string }> = [
     ...staticRoutes.map((path) => ({ path })),
     ...posts.map((post) => ({ path: postPath(post), lastmod: post.data.publishDate.toISOString() }))

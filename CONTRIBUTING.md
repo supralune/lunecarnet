@@ -15,7 +15,7 @@ npm ci
 npm test
 ```
 
-The test command performs Astro type checks, creates the static build, and verifies the main routes and discovery files.
+The test command checks and builds the standalone blog, standalone academic, and combined modes, then verifies each mode's route and discovery-file contract.
 
 ## Pull Requests
 

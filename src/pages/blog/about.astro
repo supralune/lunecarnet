@@ -1,6 +1,7 @@
 ---
 import TemplateGuide from "@/components/TemplateGuide.astro";
-import { blog, identity, showEditingGuides } from "@/data/site";
+import { blog } from "@/config/blog";
+import { identity, showEditingGuides } from "@/config/shared";
 import BlogPageLayout from "@/layouts/BlogPageLayout.astro";
 import { getPublishedPosts } from "@/lib/posts";
 
@@ -37,7 +38,7 @@ const posts = await getPublishedPosts();
       <h2>Contact</h2>
       <p>{blog.contactNote}</p>
       <p>Public email: <a href={`mailto:${identity.email}`}>{identity.email}</a></p>
-      {identity.github ? <p>GitHub: <a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></p> : showEditingGuides && <p class="fill-caption">Add a GitHub URL in the <code>identity</code> section of <code>src/data/site.ts</code>.</p>}
+      {identity.github ? <p>GitHub: <a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></p> : showEditingGuides && <p class="fill-caption">Add a GitHub URL in the <code>identity</code> section of <code>src/config/shared.ts</code>.</p>}
     </section>
   </div>
 </BlogPageLayout>

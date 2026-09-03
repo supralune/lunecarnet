@@ -12,15 +12,16 @@ The screenshots show the light theme with the optional editing guides enabled.
 
 ### Blog home
 
-![Lunecarnet blog home page in the light theme](./docs/screenshots/blog-home.png)
+![Lunecarnet blog home page in the light theme](./docs/screenshots/blog-home.jpeg)
 
 ### Academic home
 
-![Lunecarnet academic home page in the light theme](./docs/screenshots/academic-home.png)
+![Lunecarnet academic home page in the light theme](./docs/screenshots/academic-home.jpeg)
 
 ## Highlights
 
-- Two complete, responsive site variants built from one shared design system
+- Blog, academic, and combined-preview modes with one dependency set and design foundation
+- Clean root-level routes in standalone modes and automatic namespaces in combined mode
 - Markdown notes with article metadata, table of contents, tags, and adjacent navigation
 - Automatic archive and category pages
 - Private, browser-local full-text search with no external service
@@ -30,20 +31,13 @@ The screenshots show the light theme with the optional editing guides enabled.
 - Optional manual GitHub Pages deployment, pull-request quality checks, and route-level tests
 - No analytics, remote font requests, database, or client framework runtime
 
-## Included Pages
+## Three Ways to Use It
 
-- `/blog/` — Blog home with an introduction, Markdown note list, categories, and recent notes.
-- `/blog/archive/` — A year-based archive generated automatically from your notes.
-- `/blog/categories/` — Category groups generated from Markdown frontmatter.
-- `/blog/search/` — Local full-text search across every published note.
-- `/blog/about/` — An introduction to the blog and its author.
-- `/academic/` — Academic home with research summary, selected work, projects, and news.
-- `/academic/publications/` — A complete list of publications and research outputs.
-- `/academic/projects/` — Research, open-source, and collaborative projects.
-- `/academic/about/` — Biography, education, honors, academic service, and contact details.
-- `/` — Displays the variant selected by `defaultVariant` in `src/data/site.ts`.
+- `blog` — The blog lives at `/`, with root-level archive, category, search, post, and RSS routes. Academic pages are not built.
+- `academic` — The academic profile lives at `/`, with root-level Publications, Projects, and About routes. Blog pages and RSS are not built.
+- `both` — `/` becomes a template chooser. The complete templates live under `/blog/` and `/academic/`, including blog posts and RSS.
 
-For a single-purpose site, set `showVariantSwitcher` to `false` to hide the Blog / Academic switcher in the header. The two standalone routes remain available for reference; delete the route files you do not need if you want to remove one variant completely.
+There is only one implementation of each template. `sites/blog/` and `sites/academic/` are thin standalone route entrypoints, so fixes and improvements are not duplicated.
 
 ## Getting Started
 
@@ -51,13 +45,17 @@ Node.js 22 or later is required.
 
 ```bash
 npm ci
-npm run dev
+npm run dev:blog
+npm run dev:academic
+npm run dev:both      # also the default for npm run dev
 ```
 
 Build the static site with:
 
 ```bash
-npm run build
+npm run build:blog
+npm run build:academic
+npm run build:both    # also the default for npm run build
 ```
 
 The generated files are written to `dist/`.
@@ -68,34 +66,32 @@ Run the full quality suite with:
 npm test
 ```
 
-This checks Astro types, creates the static build, and verifies the primary routes, search page, article reading aids, RSS, Sitemap, and robots output.
+This checks and builds all three modes, then verifies route isolation, search, article reading aids, RSS, Sitemap, and robots output for each contract.
 
 ## Five-Minute Setup
 
 1. Create a repository from this template and clone it.
-2. Replace the identity, blog, and academic examples in `src/data/site.ts`.
-3. Replace the example notes in `src/content/posts/`.
-4. Add publication, project, profile, and CV URLs where available.
-5. Set `showEditingGuides` to `false`.
-6. Choose `defaultVariant` and decide whether to keep `showVariantSwitcher` enabled.
-7. If you use a custom domain or subpath, configure `SITE_URL` and `SITE_BASE` as described below.
-8. Run `npm test`, then push to GitHub.
+2. Update identity and editing-guide settings in `src/config/shared.ts`.
+3. Customize the enabled templates in `src/config/blog.ts` and `src/config/academic.ts`.
+4. If you use the blog, replace the example notes in `src/content/posts/`.
+5. Add publication, project, profile, and CV URLs where available.
+6. Set `showEditingGuides` to `false` when customization is complete.
+7. Choose the corresponding `dev:*` and `build:*` command; set `SITE_MODE` for deployment.
+8. Configure `SITE_URL` and `SITE_BASE` if you use a custom domain or subpath.
+9. Run `npm test`, then push to GitHub.
 
 ## Customization
 
-Most changes happen in two places:
+Most changes happen in focused configuration files:
 
-1. `src/data/site.ts`
-   - `defaultVariant` selects the home page shown at the root URL.
-   - `showVariantSwitcher` controls the header variant switcher.
-   - `showEditingGuides` shows or hides contextual customization notes.
-   - `identity` contains your name, email, GitHub profile, and institution.
-   - `blog` contains the blog title, home-page copy, About-page sections, contact note, and navigation.
-   - `academic` contains your biography, research areas, and academic links.
-   - `publications`, `projects`, and `news` power the academic work sections.
-   - `education`, `honors`, and `service` power the academic About page.
-2. `src/content/posts/`
+1. `src/config/shared.ts` contains identity information and the editing-guide switch.
+2. `src/config/blog.ts` contains blog copy and navigation.
+3. `src/config/academic.ts` contains the academic profile, publications, projects, news, education, honors, and service.
+4. `src/config/runtime.ts` resolves paths for the three build modes and normally does not need editing.
+5. `src/content/posts/`
    - Remove the three example notes and create Markdown files with the same frontmatter structure.
+
+The original `src/data/site.ts` remains as a compatibility barrel. New code should import from the focused config files.
 
 Example note:
 
@@ -134,8 +130,8 @@ The blog follows a common open-source-template pattern: readable demo copy is st
 
 ## Content Discovery
 
-- `/rss.xml` contains every published note.
-- `/sitemap.xml` includes both site variants and all note routes.
+- The blog feed is `/rss.xml` in blog mode and `/blog/rss.xml` in combined mode.
+- `/sitemap.xml` contains only the routes enabled by the selected build mode.
 - `/robots.txt` points crawlers to the generated Sitemap.
 - The search page embeds a small static index and searches entirely in the browser.
 - Canonical and Open Graph metadata are generated by the shared layout; article pages also expose their publication date.
@@ -157,20 +153,25 @@ No URL configuration is required for those standard GitHub Pages addresses. For 
 
 - `SITE_URL`: the public origin, such as `https://www.example.com`
 - `SITE_BASE`: `/` for a root-level custom domain, or a path such as `/notes` when the site is served below a subpath
+- `SITE_MODE`: `blog`, `academic`, or `both`; the workflow defaults to `both`
 
-The workflow passes both variables to Astro. This keeps navigation, canonical URLs, RSS, Sitemap, and robots metadata aligned with the deployed address.
+The workflow passes these variables to Astro. This keeps the build mode, navigation, canonical URLs, RSS, Sitemap, and robots metadata aligned with the deployed address.
 
 ## Project Structure
 
 ```text
-src/components/       Shared components and both home-page variants
+sites/blog/           Standalone blog route entrypoints
+sites/academic/       Standalone academic route entrypoints
+scripts/              Cross-platform mode runner and test orchestration
+src/config/           Shared, blog, academic, and runtime configuration
+src/components/       Shared and template-specific components
 src/content/posts/    Markdown blog notes
-src/data/site.ts      Site content and variant configuration
-src/layouts/          HTML shell, SEO metadata, and page frames
-src/pages/            Root route, two site variants, article pages, and 404
+src/data/site.ts      Compatibility exports for the old config entrypoint
+src/layouts/          Base HTML/SEO and template page shells
+src/pages/            Combined routes and reusable page implementations
 src/styles/           Shared design system and responsive styles
 .github/workflows/    Quality checks and optional GitHub Pages deployment
-tests/                Static-build route and metadata checks
+tests/                Build-contract tests for all three modes
 ```
 
 ## Contributing

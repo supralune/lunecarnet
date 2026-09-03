@@ -2,8 +2,16 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
+const mode = ["blog", "academic", "both"].includes(process.env.SITE_MODE)
+  ? process.env.SITE_MODE
+  : "both";
 const dist = new URL("../dist/", import.meta.url);
 const read = (path) => readFile(new URL(path, dist), "utf8");
+
+const templateRoute = (template, path = "") => {
+  const suffix = path ? `${path.replace(/^\/+|\/+$/g, "")}/` : "";
+  return mode === "both" ? `${template}/${suffix}` : suffix;
+};
 
 function expectedPublicRoot() {
   const [ownerFromSlug, repository] = process.env.GITHUB_REPOSITORY?.split("/") ?? [];
@@ -18,55 +26,93 @@ function expectedPublicRoot() {
   return `${site}${base}`;
 }
 
-test("builds every primary template route", async () => {
+test(`builds the ${mode} route contract`, async () => {
+  const sharedRoutes = ["index.html", "404.html", "sitemap.xml", "robots.txt"];
+  const blogRoutes = [
+    `${templateRoute("blog")}index.html`,
+    `${templateRoute("blog", "archive")}index.html`,
+    `${templateRoute("blog", "categories")}index.html`,
+    `${templateRoute("blog", "search")}index.html`,
+    `${templateRoute("blog", "about")}index.html`,
+    `${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`,
+    mode === "both" ? "blog/rss.xml" : "rss.xml"
+  ];
+  const academicRoutes = [
+    `${templateRoute("academic")}index.html`,
+    `${templateRoute("academic", "publications")}index.html`,
+    `${templateRoute("academic", "projects")}index.html`,
+    `${templateRoute("academic", "about")}index.html`
+  ];
   const routes = [
-    "index.html",
-    "blog/index.html",
-    "blog/archive/index.html",
-    "blog/categories/index.html",
-    "blog/search/index.html",
-    "blog/about/index.html",
-    "academic/index.html",
-    "academic/publications/index.html",
-    "academic/projects/index.html",
-    "academic/about/index.html",
-    "404.html"
+    ...sharedRoutes,
+    ...(mode !== "academic" ? blogRoutes : []),
+    ...(mode !== "blog" ? academicRoutes : [])
   ];
   await Promise.all(routes.map((route) => access(new URL(route, dist))));
+
+  if (mode === "blog") await assert.rejects(access(new URL("publications/index.html", dist)));
+  if (mode === "academic") await assert.rejects(access(new URL("rss.xml", dist)));
+  if (mode === "both") {
+    const index = await read("index.html");
+    assert.match(index, /TEMPLATE COLLECTION/);
+    assert.match(index, /href="[^"]*\/blog\/"/);
+    assert.match(index, /href="[^"]*\/academic\/"/);
+  }
 });
 
-test("renders accessible navigation and discovery metadata", async () => {
-  const blog = await read("blog/index.html");
-  assert.match(blog, /aria-label="Primary navigation"/);
-  assert.match(blog, /data-nav-toggle/);
-  assert.match(blog, /aria-current="page"/);
-  assert.match(blog, /rel="canonical"/);
-  assert.match(blog, /application\/rss\+xml/);
-  assert.doesNotMatch(blog, /href="#"/);
-});
-
-test("uses the deployment origin and base path in public URLs", async () => {
+test("renders template-aware navigation and metadata", async () => {
   const root = expectedPublicRoot();
-  const blog = await read("blog/index.html");
-  assert.ok(blog.includes(`rel="canonical" href="${root}/blog/"`));
-  assert.ok((await read("sitemap.xml")).includes(`<loc>${root}/blog/</loc>`));
-  assert.ok((await read("robots.txt")).includes(`Sitemap: ${root}/sitemap.xml`));
+  const template = mode === "academic" ? "academic" : "blog";
+  const pagePath = templateRoute(template);
+  const page = await read(`${pagePath}index.html`);
+  assert.match(page, /aria-label="Primary navigation"/);
+  assert.match(page, /data-nav-toggle/);
+  assert.match(page, /aria-current="page"/);
+  assert.match(page, /rel="canonical"/);
+  assert.doesNotMatch(page, /href="#"/);
+
+  const publicPath = mode === "both" ? `/${template}/` : "/";
+  assert.ok(page.includes(`rel="canonical" href="${root}${publicPath}"`));
+
+  if (mode === "academic") {
+    assert.doesNotMatch(page, /application\/rss\+xml/);
+    assert.doesNotMatch(page, /Template variant/);
+  } else {
+    assert.match(page, /application\/rss\+xml/);
+    if (mode === "blog") assert.doesNotMatch(page, /Template variant/);
+  }
 });
 
-test("renders local search and article reading aids", async () => {
-  const search = await read("blog/search/index.html");
+test("exports a mode-specific sitemap and robots file", async () => {
+  const root = expectedPublicRoot();
+  const sitemap = await read("sitemap.xml");
+  const robots = await read("robots.txt");
+  assert.match(sitemap, /<urlset/);
+  assert.ok(robots.includes(`Sitemap: ${root}/sitemap.xml`));
+
+  if (mode === "blog") {
+    assert.ok(sitemap.includes(`<loc>${root}/archive/</loc>`));
+    assert.doesNotMatch(sitemap, /\/publications\//);
+  } else if (mode === "academic") {
+    assert.ok(sitemap.includes(`<loc>${root}/publications/</loc>`));
+    assert.doesNotMatch(sitemap, /\/posts\//);
+  } else {
+    assert.ok(sitemap.includes(`<loc>${root}/blog/</loc>`));
+    assert.ok(sitemap.includes(`<loc>${root}/academic/</loc>`));
+  }
+});
+
+test("keeps blog-only discovery and reading features inside the blog template", { skip: mode === "academic" }, async () => {
+  const search = await read(`${templateRoute("blog", "search")}index.html`);
   assert.match(search, /id="note-search"/);
   assert.match(search, /id="search-index"/);
   assert.match(search, /Designing a Calm Digital Garden/);
 
-  const article = await read("posts/designing-a-calm-digital-garden/index.html");
+  const article = await read(`${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`);
   assert.match(article, /class="toc"/);
   assert.match(article, /class="post-navigation"/);
   assert.match(article, /property="og:type" content="article"/);
-});
 
-test("exports RSS, sitemap, and robots discovery files", async () => {
-  assert.match(await read("rss.xml"), /<rss version="2.0">/);
-  assert.match(await read("sitemap.xml"), /<urlset/);
-  assert.match(await read("robots.txt"), /Sitemap:/);
+  const rssPath = mode === "both" ? "blog/rss.xml" : "rss.xml";
+  assert.match(await read(rssPath), /<rss version="2.0">/);
 });

@@ -1,5 +1,6 @@
 ---
-import { showEditingGuides, type Publication } from "@/data/site";
+import { showEditingGuides } from "@/config/shared";
+import type { Publication } from "@/config/academic";
 
 interface Props { publication: Publication; highlight?: boolean }
 const { publication, highlight = false } = Astro.props;

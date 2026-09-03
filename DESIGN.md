@@ -33,4 +33,4 @@ When extending the template, reuse these roles before adding colors or arbitrary
 
 ## Template Guidance
 
-Editing prompts are controlled by `showEditingGuides` in `src/data/site.ts`. They are intentionally separate from demo content. Keep them enabled while customizing and disable them before publishing.
+Editing prompts are controlled by `showEditingGuides` in `src/config/shared.ts`. They are intentionally separate from demo content. Keep them enabled while customizing and disable them before publishing.
