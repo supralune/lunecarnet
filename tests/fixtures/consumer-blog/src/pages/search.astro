@@ -1,0 +1,8 @@
+---
+import { BlogSearchPage, getPublishedPosts } from "@lunecarnet/astro";
+import site from "../config";
+
+const posts = await getPublishedPosts();
+---
+
+<BlogSearchPage posts={posts} {...site} />

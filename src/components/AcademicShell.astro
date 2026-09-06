@@ -1,0 +1,44 @@
+---
+import AcademicHeader from "./AcademicHeader.astro";
+import AcademicSidebar from "./AcademicSidebar.astro";
+import SiteFooter from "./SiteFooter.astro";
+import type { AcademicConfig, IdentityConfig, Project, Publication } from "../types";
+import type { MessageOverrides } from "../messages";
+
+interface Props {
+  active?: "home" | "publications" | "projects" | "about";
+  academic: AcademicConfig;
+  identity: IdentityConfig;
+  projects?: Project[];
+  publications?: Publication[];
+  inner?: boolean;
+  showEditingGuides?: boolean;
+  messages?: MessageOverrides;
+}
+
+const {
+  active = "home",
+  academic,
+  identity,
+  projects = [],
+  publications = [],
+  inner = false,
+  showEditingGuides = false,
+  messages
+} = Astro.props;
+---
+
+<div class="site-shell academic-shell">
+  <AcademicHeader academic={academic} active={active} messages={messages}>
+    <slot name="header-actions" slot="actions" />
+  </AcademicHeader>
+  <div class="page-layout">
+    <main class:list={["main-content", { "inner-content": inner }]} id="main"><slot /></main>
+    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+      <slot name="sidebar" />
+    </AcademicSidebar>
+  </div>
+  <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages}>
+    <slot name="footer-extra" slot="extra" />
+  </SiteFooter>
+</div>

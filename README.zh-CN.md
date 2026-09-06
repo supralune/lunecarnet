@@ -75,7 +75,7 @@ npm test
 
 1. 使用此模板创建仓库并克隆到本地。
 2. 在 `src/config/shared.ts` 修改身份和编辑指引设置。
-3. 按需要修改 `src/config/blog.ts`、`src/config/academic.ts` 中的模板内容。
+3. 按需要修改 `src/config/blog.ts`、`src/config/academic.ts` 中的模板内容；标准导航会自动生成，只有需要完全自定义时才填写 `nav`。
 4. 使用博客模板时，删除 `src/content/posts/` 中的示例文章并添加自己的 Markdown。
 5. 填写论文、项目、GitHub、Scholar、ORCID 和 CV 链接。
 6. 完成内容替换后，将 `showEditingGuides` 设置为 `false`。
@@ -88,7 +88,7 @@ npm test
 配置按职责拆分：
 
 - `src/config/shared.ts`：身份信息和编辑指引开关。
-- `src/config/blog.ts`：博客标题、文案与导航。
+- `src/config/blog.ts`：博客标题、文案与首页文章数量。
 - `src/config/academic.ts`：学术简介、论文、项目、动态、教育、荣誉与服务。
 - `src/config/site.ts`：把个人数据组合成传给可复用组件的类型安全配置。
 - `src/config/runtime.ts`：三种构建模式的路径解析；通常不需要修改。
@@ -97,7 +97,7 @@ npm test
 
 原来的 `src/data/site.ts` 保留为兼容导出，已有定制代码不会立刻失效；新代码应使用上述聚焦配置文件。
 
-`academic.longBio` 可以是单个字符串，也可以是字符串数组；数组中的每一项会渲染为独立段落。Academic 首页的 Publications、Projects、About 和 News 可以通过同一文件中的 `academicHomeSections` 分别开关。即使开关开启，没有实际数据的区块也会自动隐藏。
+`academic.longBio` 可以是单个字符串，也可以是字符串数组；数组中的每一项会渲染为独立段落。Academic 首页的 Publications、Projects、About 和 News 可以通过同一文件中的 `academicHomeSections` 分别开关，`academicHomeLimits` 控制首页最多展示的论文、项目和动态数量。将项目的 `selected` 设为 `false`，可以让它只出现在 Projects 页面。依赖模式下，没有内容的学术数据数组可以直接省略。
 
 `academic.topics` 继续用于首页和侧栏的短标签；About 页面的 Research Interests 使用可选的 `academic.researchInterests`，每一项包含 `title` 和 `description`，以带分隔线的标题与说明列表展示。Education、Honors 和 Service 等空区块同样不会渲染。
 

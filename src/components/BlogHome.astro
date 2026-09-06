@@ -1,9 +1,7 @@
 ---
 import PostItem from "./PostItem.astro";
-import BlogSidebar from "./BlogSidebar.astro";
 import EmptyState from "./EmptyState.astro";
-import SiteFooter from "./SiteFooter.astro";
-import BlogHeader from "./BlogHeader.astro";
+import BlogShell from "./BlogShell.astro";
 import TemplateGuide from "./TemplateGuide.astro";
 import { templatePath } from "../config/runtime";
 import type { Post } from "../lib/posts";
@@ -17,17 +15,15 @@ interface Props {
   identity: IdentityConfig;
   showEditingGuides?: boolean;
   messages?: MessageOverrides;
+  blogHomePostLimit?: number;
 }
-const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const { posts, blog, identity, showEditingGuides = false, messages, blogHomePostLimit = 8 } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
+const homePosts = posts.slice(0, Math.max(0, blogHomePostLimit));
 ---
 
-<div class="site-shell blog-shell">
-  <BlogHeader blog={blog} active="home" messages={messages}>
-    <slot name="header-actions" slot="actions" />
-  </BlogHeader>
-  <div class="page-layout">
-    <main class="main-content" id="main">
+<BlogShell posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+  <slot name="header-actions" slot="header-actions" />
       <section class="blog-hero">
         <p class="eyebrow">{formatMessage(ui.blogHeroEyebrow, { year: blog.foundedYear })}</p>
         <h1>{blog.hero}</h1>
@@ -37,7 +33,7 @@ const ui = resolveMessages(blog.language, messages);
       <slot name="after-hero" />
 
       <TemplateGuide compact enabled={showEditingGuides}>
-        <p>Replace the blog fields in <code>src/config/blog.ts</code> and identity fields in <code>src/config/shared.ts</code>, then set <code>showEditingGuides</code> to <code>false</code>.</p>
+        <p>{ui.blogEditingGuide}</p>
       </TemplateGuide>
 
       <section id="notes" class="content-section">
@@ -46,19 +42,12 @@ const ui = resolveMessages(blog.language, messages);
           <a class="section-more" href={withBase(templatePath("blog", "/archive/"))}>{ui.viewArchive}</a>
         </div>
         <div class="post-list">
-          {posts.length > 0
-            ? posts.map((post, index) => <PostItem post={post} featured={index === 0 && post.data.featured} locale={blog.language} messages={messages} />)
+          {homePosts.length > 0
+            ? homePosts.map((post, index) => <PostItem post={post} featured={index === 0 && post.data.featured} locale={blog.language} messages={messages} />)
             : <EmptyState title={ui.noNotesTitle} description={ui.noNotesDescription} />}
         </div>
       </section>
-      <slot />
-    </main>
-
-    <BlogSidebar posts={posts} blog={blog} messages={messages}>
-      <slot name="sidebar" />
-    </BlogSidebar>
-  </div>
-  <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
-    <slot name="footer-extra" slot="extra" />
-  </SiteFooter>
-</div>
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</BlogShell>

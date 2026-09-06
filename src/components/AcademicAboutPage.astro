@@ -3,9 +3,10 @@ import AcademicPageLayout from "../layouts/AcademicPageLayout.astro";
 import { resolveMessages } from "../messages";
 import type { AcademicTemplateConfig } from "../types";
 import { textBlocks } from "../lib/text";
+import PageHeading from "./PageHeading.astro";
 
 type Props = AcademicTemplateConfig;
-const { academic, identity, publications, projects, education, honors, service, showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications = [], projects = [], education = [], honors = [], service = [], showEditingGuides = false, messages } = Astro.props;
 const ui = resolveMessages(academic.language, messages);
 const biography = textBlocks(academic.longBio);
 const researchInterests = academic.researchInterests ?? [];
@@ -14,11 +15,7 @@ const researchInterests = academic.researchInterests ?? [];
 <AcademicPageLayout title={ui.academicAboutTitle} description={ui.academicAboutDescription} active="about" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
-  <header class="page-heading">
-    <p class="eyebrow">{ui.academicAboutEyebrow}</p>
-    <h1>{ui.academicAboutTitle}</h1>
-    <p>{ui.academicAboutIntro}</p>
-  </header>
+  <PageHeading eyebrow={ui.academicAboutEyebrow} title={ui.academicAboutTitle} intro={ui.academicAboutIntro} />
   {biography.length > 0 && <section class="academic-detail-section"><h2>{ui.biography}</h2>{biography.map((paragraph) => <p class="about-copy">{paragraph}</p>)}</section>}
   {researchInterests.length > 0 && <section class="academic-detail-section">
     <h2>{ui.researchInterests}</h2>

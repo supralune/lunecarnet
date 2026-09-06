@@ -2,6 +2,7 @@
 import BlogPageLayout from "../layouts/BlogPageLayout.astro";
 import EmptyState from "./EmptyState.astro";
 import TemplateGuide from "./TemplateGuide.astro";
+import PageHeading from "./PageHeading.astro";
 import { formatDate, postPath, type Post } from "../lib/posts";
 import { withBase } from "../lib/url";
 import { formatMessage, resolveMessages } from "../messages";
@@ -20,11 +21,7 @@ const grouped = Object.entries(posts.reduce<Record<string, Post[]>>((years, post
 <BlogPageLayout title={ui.archiveTitle} description={ui.archiveDescription} active="archive" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
-  <header class="page-heading">
-    <p class="eyebrow">{formatMessage(ui.archiveEyebrow, { count: posts.length })}</p>
-    <h1>{ui.archiveTitle}</h1>
-    <p>{ui.archiveIntro}</p>
-  </header>
+  <PageHeading eyebrow={formatMessage(ui.archiveEyebrow, { count: posts.length })} title={ui.archiveTitle} intro={ui.archiveIntro} />
 
   <TemplateGuide title={ui.archiveGuideTitle} enabled={showEditingGuides}><p>{ui.archiveGuide}</p></TemplateGuide>
 

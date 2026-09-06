@@ -74,7 +74,7 @@ This checks and builds all three modes, then verifies route isolation, search, a
 
 1. Create a repository from this template and clone it.
 2. Update identity and editing-guide settings in `src/config/shared.ts`.
-3. Customize the enabled templates in `src/config/blog.ts` and `src/config/academic.ts`.
+3. Customize the enabled templates in `src/config/blog.ts` and `src/config/academic.ts`; standard navigation is generated automatically unless you override `nav`.
 4. If you use the blog, replace the example notes in `src/content/posts/`.
 5. Add publication, project, profile, and CV URLs where available.
 6. Set `showEditingGuides` to `false` when customization is complete.
@@ -87,7 +87,7 @@ This checks and builds all three modes, then verifies route isolation, search, a
 Most changes happen in focused configuration files:
 
 1. `src/config/shared.ts` contains identity information and the editing-guide switch.
-2. `src/config/blog.ts` contains blog copy and navigation.
+2. `src/config/blog.ts` contains blog copy and the home-page post limit.
 3. `src/config/academic.ts` contains the academic profile, publications, projects, news, education, honors, and service.
 4. `src/config/site.ts` combines consumer-owned data into type-safe props for the reusable package components.
 5. `src/config/runtime.ts` resolves paths for the three build modes and normally does not need editing.
@@ -98,7 +98,7 @@ The original `src/data/site.ts` remains as a compatibility barrel. New code shou
 
 Setting `blog.language` or `academic.language` to `zh-CN` enables the bundled Chinese interface. Individual interface strings can be overridden through the typed `messages` field without copying components.
 
-`academic.longBio` accepts either one string or an array of paragraphs. The Publications, Projects, About, and News sections on the academic home page can be toggled through `academicHomeSections`; enabled sections with no content are hidden automatically. `academic.topics` remains the short tag list used on the home page and sidebar, while the optional `academic.researchInterests` records render title-and-description rows on the About page. Empty education, honors, and service sections are omitted.
+`academic.longBio` accepts either one string or an array of paragraphs. The Publications, Projects, About, and News sections on the academic home page can be toggled through `academicHomeSections`; `academicHomeLimits` keeps growing collections concise. Set `project.selected` to `false` to retain a project on the Projects page while omitting it from the home page. Enabled sections with no content are hidden automatically, and empty academic data arrays may be omitted from dependency-owned configurations. `academic.topics` remains the short tag list used on the home page and sidebar, while the optional `academic.researchInterests` records render title-and-description rows on the About page.
 
 Example note:
 

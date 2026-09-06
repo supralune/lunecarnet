@@ -17,8 +17,8 @@ export default defineBlogConfig({
     writingPurpose: "记录和分享。",
     coverage: "研究与开发。",
     authorBio: "个人简介。",
-    contactNote: "欢迎通过邮件联系。",
-    nav: [{ key: "home", label: "首页", href: "/" }]
+    contactNote: "欢迎通过邮件联系。"
   },
+  blogHomePostLimit: 1,
   messages: { latestNotes: "最新更新" }
 });

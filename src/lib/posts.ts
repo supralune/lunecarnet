@@ -8,6 +8,15 @@ export async function getPublishedPosts() {
   return posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 }
 
+/** Shared static-path contract for the standard blog post route. */
+export async function getBlogPostPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.id.replace(/\.(md|mdx)$/, "") },
+    props: { post, previous: posts[index + 1], next: posts[index - 1] }
+  }));
+}
+
 export function postPath(post: Post) {
   return templatePath("blog", `/posts/${post.id.replace(/\.(md|mdx)$/, "")}/`);
 }

@@ -3,9 +3,10 @@ import AcademicPageLayout from "../layouts/AcademicPageLayout.astro";
 import PublicationRow from "./PublicationRow.astro";
 import { formatMessage, resolveMessages } from "../messages";
 import type { AcademicTemplateConfig } from "../types";
+import PageHeading from "./PageHeading.astro";
 
 type Props = AcademicTemplateConfig;
-const { academic, identity, publications, projects, showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications = [], projects = [], showEditingGuides = false, messages } = Astro.props;
 const ui = resolveMessages(academic.language, messages);
 const years = [...new Set(publications.map((publication) => publication.year))].sort((a, b) => b - a);
 ---
@@ -13,11 +14,7 @@ const years = [...new Set(publications.map((publication) => publication.year))].
 <AcademicPageLayout title={ui.publicationsTitle} description={ui.publicationsDescription} active="publications" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
-  <header class="page-heading">
-    <p class="eyebrow">{formatMessage(ui.publicationsEyebrow, { count: publications.length })}</p>
-    <h1>{ui.publicationsTitle}</h1>
-    <p>{ui.publicationsIntro}</p>
-  </header>
+  <PageHeading eyebrow={formatMessage(ui.publicationsEyebrow, { count: publications.length })} title={ui.publicationsTitle} intro={ui.publicationsIntro} />
   <p class="publication-legend">{ui.publicationLegend}</p>
   {years.map((year) => (
     <section class="publication-year-section">

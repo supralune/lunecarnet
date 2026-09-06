@@ -116,3 +116,11 @@ test("keeps blog-only discovery and reading features inside the blog template", 
   const rssPath = mode === "both" ? "blog/rss.xml" : "rss.xml";
   assert.match(await read(rssPath), /<rss version="2.0">/);
 });
+
+test("keeps unselected projects off the academic home page", { skip: mode === "blog" }, async () => {
+  const home = await read(`${templateRoute("academic")}index.html`);
+  const projects = await read(`${templateRoute("academic", "projects")}index.html`);
+  assert.match(home, /Project or Research Initiative Title/);
+  assert.doesNotMatch(home, /Second Project or Collaboration/);
+  assert.match(projects, /Second Project or Collaboration/);
+});

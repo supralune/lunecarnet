@@ -25,7 +25,7 @@ export { default as BaseLayout } from "./layouts/BaseLayout.astro";
 export { default as BlogPageLayout } from "./layouts/BlogPageLayout.astro";
 
 export { isCombinedSite, siteMode, templatePath } from "./config/runtime";
-export { dateParts, formatDate, getPublishedPosts, postPath } from "./lib/posts";
+export { dateParts, formatDate, getBlogPostPaths, getPublishedPosts, postPath } from "./lib/posts";
 export { withBase } from "./lib/url";
 export { textBlocks } from "./lib/text";
 export { defineAcademicConfig, defineBlogConfig } from "./types";

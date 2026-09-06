@@ -126,14 +126,27 @@ test("builds isolated blog and academic consumers from the packed artifact", { t
     }
 
     const blog = await readFile(join(temporaryRoot, "consumer-blog", "dist", "index.html"), "utf8");
+    const blogMain = blog.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? "";
     assert.match(blog, /独立博客/);
     assert.match(blog, /最新更新/);
-    assert.match(blog, /第一篇文章/);
+    assert.match(blogMain, /第一篇文章/);
+    assert.doesNotMatch(blogMain, /第二篇文章/);
+    assert.match(blog, />归档</);
+    assert.match(blog, />分类</);
     assert.match(blog, /--lc-color-accent: #7654a8/);
     assert.doesNotMatch(blog, /href="\/blog\/"/);
 
+    const blogArchive = await readFile(join(temporaryRoot, "consumer-blog", "dist", "archive", "index.html"), "utf8");
+    assert.match(blogArchive, /第一篇文章/);
+    assert.match(blogArchive, /第二篇文章/);
+
+    await access(join(temporaryRoot, "consumer-blog", "dist", "posts", "hello", "index.html"));
+    await access(join(temporaryRoot, "consumer-blog", "dist", "search", "index.html"));
+
     const academicHome = await readFile(join(temporaryRoot, "consumer-academic", "dist", "index.html"), "utf8");
     assert.match(academicHome, /测试学者/);
+    assert.match(academicHome, />论文</);
+    assert.match(academicHome, />项目</);
     assert.doesNotMatch(academicHome, /id="(?:publications|projects|about|news)"/);
     assert.doesNotMatch(academicHome, /class="widget"><h2>概览/);
     assert.doesNotMatch(academicHome, /href="\/academic\/"/);
@@ -145,6 +158,8 @@ test("builds isolated blog and academic consumers from the packed artifact", { t
     assert.match(academicAbout, /可信知识系统/);
     assert.match(academicAbout, /研究可靠、透明且便于长期维护的知识工具。/);
     assert.doesNotMatch(academicAbout, />教育经历</);
+    await access(join(temporaryRoot, "consumer-academic", "dist", "projects", "index.html"));
+    await access(join(temporaryRoot, "consumer-academic", "dist", "publications", "index.html"));
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

@@ -1,13 +1,9 @@
 ---
-import { BlogPostPage, getPublishedPosts, type Post } from "@lunecarnet/astro";
+import { BlogPostPage, getBlogPostPaths, type Post } from "@lunecarnet/astro";
 import { blogTemplate } from "@/config/site";
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
-  return posts.map((post, index) => ({
-    params: { slug: post.id.replace(/\.(md|mdx)$/, "") },
-    props: { post, previous: posts[index + 1], next: posts[index - 1] }
-  }));
+  return getBlogPostPaths();
 }
 
 interface Props { post: Post; previous?: Post; next?: Post }

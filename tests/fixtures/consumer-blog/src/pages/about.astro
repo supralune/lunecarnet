@@ -1,0 +1,8 @@
+---
+import { BlogAboutPage, getPublishedPosts } from "@lunecarnet/astro";
+import site from "../config";
+
+const posts = await getPublishedPosts();
+---
+
+<BlogAboutPage posts={posts} {...site} />

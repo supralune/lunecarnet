@@ -8,6 +8,12 @@ export type NavigationItem = {
   href: string;
 };
 
+export type AcademicHomeLimits = {
+  publications?: number;
+  projects?: number;
+  news?: number;
+};
+
 export type TextBlocks = string | readonly string[];
 
 export type AcademicHomeSections = Partial<Record<"publications" | "projects" | "about" | "news", boolean>>;
@@ -38,7 +44,8 @@ export type BlogConfig = {
   coverage: string;
   authorBio: string;
   contactNote: string;
-  nav: NavigationItem[];
+  /** Override the built-in navigation. Omit this to follow template route updates automatically. */
+  nav?: readonly NavigationItem[];
 };
 
 export type AcademicConfig = {
@@ -55,7 +62,8 @@ export type AcademicConfig = {
   orcid?: string;
   cvUrl?: string;
   availability?: string;
-  nav: NavigationItem[];
+  /** Override the built-in navigation. Omit this to follow template route updates automatically. */
+  nav?: readonly NavigationItem[];
 };
 
 export type PublicationAuthor = {
@@ -80,6 +88,8 @@ export type Project = {
   description: string;
   tags: string[];
   link?: string;
+  /** Set to false to keep the project off the home page while retaining it on the projects page. */
+  selected?: boolean;
 };
 
 export type NewsItem = { date: string; text: string };
@@ -90,20 +100,22 @@ export type BlogTemplateConfig = {
   identity: IdentityConfig;
   showEditingGuides?: boolean;
   messages?: MessageOverrides;
+  blogHomePostLimit?: number;
 };
 
 export type AcademicTemplateConfig = {
   academic: AcademicConfig;
   identity: IdentityConfig;
-  publications: Publication[];
-  projects: Project[];
-  news: NewsItem[];
-  education: RecordItem[];
-  honors: RecordItem[];
-  service: string[];
+  publications?: Publication[];
+  projects?: Project[];
+  news?: NewsItem[];
+  education?: RecordItem[];
+  honors?: RecordItem[];
+  service?: string[];
   showEditingGuides?: boolean;
   messages?: MessageOverrides;
   homeSections?: AcademicHomeSections;
+  homeLimits?: AcademicHomeLimits;
 };
 
 /** Preserve literal values while checking a consumer-owned template configuration. */

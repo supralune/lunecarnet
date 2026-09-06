@@ -70,18 +70,15 @@ export default defineBlogConfig({
     writingPurpose: "I write to clarify what I learn.",
     coverage: "Research, software, and books.",
     authorBio: "A short public biography.",
-    contactNote: "Email is the best way to reach me.",
-    nav: [
-      { key: "home", label: "Home", href: "/" },
-      { key: "archive", label: "Archive", href: "/archive/" },
-      { key: "categories", label: "Categories", href: "/categories/" },
-      { key: "about", label: "About", href: "/about/" }
-    ]
-  }
+    contactNote: "Email is the best way to reach me."
+  },
+  blogHomePostLimit: 8
 });
 ```
 
-学术站使用 `defineAcademicConfig()`；类型会检查 identity、论文、项目和动态数据是否完整。`academic.longBio` 同时接受单个字符串和字符串数组，多项会渲染为多个段落。
+标准导航由主题根据当前语言自动生成，因此通常不需要配置 `nav`。只有需要完全替换导航时才传入自定义数组。
+
+学术站使用 `defineAcademicConfig()`；`academic.longBio` 同时接受单个字符串和字符串数组，多项会渲染为多个段落。论文、项目、动态、教育、荣誉和服务数组没有内容时可以省略。
 
 学术首页的主要区块可以独立开关：
 
@@ -98,6 +95,15 @@ export default defineAcademicConfig({
 ```
 
 区块只有在开关未关闭且存在内容时才会渲染。Education、Honors 和 Service 为空时也会自动隐藏。
+
+可以通过 `homeLimits` 控制学术首页的信息密度；项目默认显示在首页，将 `selected` 设为 `false` 后只保留在 Projects 页面：
+
+```ts
+homeLimits: { publications: 5, projects: 4, news: 6 },
+projects: [
+  { title: "Long-running project", period: "2024–", description: "…", tags: [], selected: false }
+]
+```
 
 About 页面的 Research Interests 使用独立的结构化记录；`academic.topics` 则继续作为首页和侧栏的短标签：
 
@@ -146,6 +152,24 @@ const posts = await getPublishedPosts();
 ```
 
 其他页面同样使用完整页面组件，例如 `BlogArchivePage`、`BlogCategoriesPage`、`BlogSearchPage`、`BlogAboutPage`、`AcademicPublicationsPage`、`AcademicProjectsPage` 和 `AcademicAboutPage`。个人站仍然拥有 URL 文件，但不再复制页面结构。
+
+标准文章动态路由应调用主题提供的 `getBlogPostPaths()`，使排序、slug 和上一篇/下一篇规则跟随上游更新：
+
+```astro
+---
+import { BlogPostPage, getBlogPostPaths, type Post } from "@lunecarnet/astro";
+import site from "../../config/site";
+
+export async function getStaticPaths() {
+  return getBlogPostPaths();
+}
+
+interface Props { post: Post; previous?: Post; next?: Post }
+const { post, previous, next } = Astro.props;
+---
+
+<BlogPostPage post={post} previous={previous} next={next} {...site} />
+```
 
 博客仍需在个人站定义名为 `posts` 的 Astro content collection。Schema 可以直接从主题导入，Markdown 永远保留在个人站：
 

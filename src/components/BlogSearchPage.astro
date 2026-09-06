@@ -5,6 +5,7 @@ import { templatePath } from "../config/runtime";
 import { withBase } from "../lib/url";
 import { formatMessage, resolveMessages } from "../messages";
 import type { BlogTemplateConfig } from "../types";
+import PageHeading from "./PageHeading.astro";
 
 interface Props extends BlogTemplateConfig { posts: Post[] }
 const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
@@ -31,11 +32,7 @@ const clientUi = JSON.stringify({
 <BlogPageLayout title={ui.searchTitle} description={ui.searchDescription} active="search" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
-  <header class="page-heading">
-    <p class="eyebrow">{formatMessage(ui.searchEyebrow, { count: posts.length })}</p>
-    <h1>{ui.searchHeading}</h1>
-    <p>{ui.searchIntro}</p>
-  </header>
+  <PageHeading eyebrow={formatMessage(ui.searchEyebrow, { count: posts.length })} title={ui.searchHeading} intro={ui.searchIntro} />
 
   <div class="search-box">
     <label class="sr-only" for="note-search">{ui.searchNotes}</label>

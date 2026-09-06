@@ -8,7 +8,7 @@ interface Props {
   variant: SiteVariant;
   title: string;
   description: string;
-  navigation: NavigationItem[];
+  navigation?: readonly NavigationItem[];
   active?: string;
   searchLabel?: string;
   menuLabel?: string;
@@ -31,6 +31,20 @@ const {
   messages
 } = Astro.props;
 const ui = resolveMessages(locale, messages);
+const defaultNavigation: readonly NavigationItem[] = variant === "blog"
+  ? [
+      { key: "home", label: ui.home, href: "/" },
+      { key: "archive", label: ui.archiveTitle, href: "/archive/" },
+      { key: "categories", label: ui.categoriesTitle, href: "/categories/" },
+      { key: "about", label: ui.blogAboutTitle, href: "/about/" }
+    ]
+  : [
+      { key: "home", label: ui.home, href: "/" },
+      { key: "publications", label: ui.publicationsTitle, href: "/publications/" },
+      { key: "projects", label: ui.projectsTitle, href: "/projects/" },
+      { key: "about", label: ui.academicAboutTitle, href: "/about/" }
+    ];
+const resolvedNavigation = navigation ?? defaultNavigation;
 const homePath = templatePath(variant);
 const navigationId = `${variant}-navigation`;
 ---
@@ -63,6 +77,6 @@ const navigationId = `${variant}-navigation`;
     </div>
   </div>
   <nav class="nav-menu" id={navigationId} data-nav-menu aria-label={primaryNavigationLabel === "Primary navigation" ? ui.primaryNavigation : primaryNavigationLabel}>
-    {navigation.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(templatePath(variant, item.href))}>{item.label}</a>)}
+    {resolvedNavigation.map((item) => <a class:list={{ current: item.key === active }} aria-current={item.key === active ? "page" : undefined} href={withBase(templatePath(variant, item.href))}>{item.label}</a>)}
   </nav>
 </header>

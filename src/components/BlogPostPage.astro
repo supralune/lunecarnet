@@ -56,9 +56,9 @@ const schema = {
           </aside>
         )}
       </div>
-      <nav class="article-tags" aria-label="Note tags">{post.data.tags.map((tag) => <a href={`${withBase(templatePath("blog", "/search/"))}?q=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>
+      <nav class="article-tags" aria-label={ui.noteTags}>{post.data.tags.map((tag) => <a href={`${withBase(templatePath("blog", "/search/"))}?q=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>
       {(previous || next) && (
-        <nav class="post-navigation" aria-label="Adjacent notes">
+        <nav class="post-navigation" aria-label={ui.adjacentNotes}>
           {previous ? <a href={withBase(postPath(previous))}><small>{ui.previousNote}</small><span>{previous.data.title}</span></a> : <span></span>}
           {next && <a href={withBase(postPath(next))}><small>{ui.nextNote}</small><span>{next.data.title}</span></a>}
         </nav>

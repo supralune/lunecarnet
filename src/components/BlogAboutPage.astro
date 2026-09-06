@@ -3,6 +3,7 @@ import BlogPageLayout from "../layouts/BlogPageLayout.astro";
 import type { Post } from "../lib/posts";
 import { resolveMessages } from "../messages";
 import type { BlogTemplateConfig } from "../types";
+import PageHeading from "./PageHeading.astro";
 
 interface Props extends BlogTemplateConfig { posts: Post[] }
 const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
@@ -12,11 +13,7 @@ const ui = resolveMessages(blog.language, messages);
 <BlogPageLayout title={ui.blogAboutTitle} description={ui.blogAboutDescription} active="about" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
-  <header class="page-heading">
-    <p class="eyebrow">{ui.blogAboutEyebrow}</p>
-    <h1>{ui.blogAboutHeading}</h1>
-    <p>{ui.blogAboutIntro}</p>
-  </header>
+  <PageHeading eyebrow={ui.blogAboutEyebrow} title={ui.blogAboutHeading} intro={ui.blogAboutIntro} />
   <div class="prose-page">
     <section><h2>{ui.whyIWrite}</h2><p>{blog.about}</p><p>{blog.writingPurpose}</p></section>
     <section><h2>{ui.whatICover}</h2><p>{blog.coverage}</p></section>

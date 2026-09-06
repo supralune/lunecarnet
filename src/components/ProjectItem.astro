@@ -1,0 +1,29 @@
+---
+import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
+import type { Project } from "../types";
+
+interface Props {
+  project: Project;
+  variant?: "row" | "card";
+  index?: number;
+  showEditingGuides?: boolean;
+  locale?: string;
+  messages?: MessageOverrides;
+}
+
+const { project, variant = "row", index = 0, showEditingGuides = false, locale = "en", messages } = Astro.props;
+const ui = resolveMessages(locale, messages);
+---
+
+<article class={variant === "card" ? "project-card" : "project-row"}>
+  {variant === "card" && <p class="project-index">{formatMessage(ui.projectNumber, { number: String(index + 1).padStart(2, "0") })}</p>}
+  <div class="project-title">
+    {variant === "card"
+      ? <h2>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h2>
+      : <h3>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h3>}
+    <span>{project.period}</span>
+  </div>
+  <p>{project.description}</p>
+  <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
+  {variant === "card" && !project.link && showEditingGuides && <p class="fill-caption">{ui.addProjectLink}</p>}
+</article>

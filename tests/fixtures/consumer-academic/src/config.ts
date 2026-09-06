@@ -18,17 +18,7 @@ export default defineAcademicConfig({
     researchInterests: [
       { title: "可信知识系统", description: "研究可靠、透明且便于长期维护的知识工具。" },
       { title: "开放研究基础设施", description: "探索可复用的研究工作流与公共基础设施。" }
-    ],
-    nav: [
-      { key: "home", label: "首页", href: "/" },
-      { key: "about", label: "关于", href: "/about/" }
     ]
   },
-  publications: [],
-  projects: [],
-  news: [],
-  education: [],
-  honors: [],
-  service: [],
   homeSections: { about: false }
 });

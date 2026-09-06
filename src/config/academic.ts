@@ -1,4 +1,4 @@
-import type { AcademicConfig, AcademicHomeSections, Project, Publication } from "../types";
+import type { AcademicConfig, AcademicHomeLimits, AcademicHomeSections, Project, Publication } from "../types";
 
 export type { Project, Publication, PublicationAuthor } from "../types";
 
@@ -31,13 +31,7 @@ export const academic: AcademicConfig = {
   scholar: "",
   orcid: "",
   cvUrl: "",
-  availability: "Add your collaboration, supervision, or visiting availability.",
-  nav: [
-    { key: "home", label: "Home", href: "/" },
-    { key: "publications", label: "Publications", href: "/publications/" },
-    { key: "projects", label: "Projects", href: "/projects/" },
-    { key: "about", label: "About", href: "/about/" }
-  ]
+  availability: "Add your collaboration, supervision, or visiting availability."
 };
 
 /** Hide individual home sections without changing their data or dedicated pages. */
@@ -46,6 +40,13 @@ export const academicHomeSections: AcademicHomeSections = {
   projects: true,
   about: true,
   news: true
+};
+
+/** Keep the home page concise as the academic record grows. */
+export const academicHomeLimits: AcademicHomeLimits = {
+  publications: 5,
+  projects: 4,
+  news: 6
 };
 
 export const publications: Publication[] = [
@@ -89,14 +90,16 @@ export const projects: Project[] = [
     period: "2025 – present",
     description: "Summarize the question or need behind the project, your role, and the most important output or contribution.",
     tags: ["Method or Technology", "Project Type"],
-    link: ""
+    link: "",
+    selected: true
   },
   {
     title: "Second Project or Collaboration",
     period: "2024 – present",
     description: "Use one or two sentences to describe the work. Add a repository, project page, dataset, demo, or report URL when available.",
     tags: ["Research Topic", "Your Role"],
-    link: ""
+    link: "",
+    selected: false
   }
 ];
 

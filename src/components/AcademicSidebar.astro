@@ -20,7 +20,7 @@ const ui = resolveMessages(academic.language, messages);
 <aside class="sidebar academic-sidebar">
   <section class="profile-card">
     {identity.avatar
-      ? <img class="avatar avatar-image" src={identity.avatar} alt={`${identity.name} portrait`} />
+      ? <img class="avatar avatar-image" src={identity.avatar} alt={formatMessage(ui.portraitAlt, { name: identity.name })} />
       : <div class="avatar" aria-hidden="true">{identity.initials}</div>}
     <h2>{identity.name}</h2>
     <p>{academic.role}</p>

@@ -1,7 +1,5 @@
 ---
-import BlogSidebar from "../components/BlogSidebar.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import BlogHeader from "../components/BlogHeader.astro";
+import BlogShell from "../components/BlogShell.astro";
 import { templatePath } from "../config/runtime";
 import BaseLayout from "./BaseLayout.astro";
 import type { Post } from "../lib/posts";
@@ -24,16 +22,10 @@ const { title, description, active, posts, blog, identity, showEditingGuides = f
 
 <BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page" feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
   <slot name="head" slot="head" />
-  <div class="site-shell blog-shell">
-    <BlogHeader blog={blog} active={active} messages={messages}>
-      <slot name="header-actions" slot="actions" />
-    </BlogHeader>
-    <div class="page-layout">
-      <main class="main-content inner-content" id="main"><slot /></main>
-      <BlogSidebar posts={posts} blog={blog} messages={messages}><slot name="sidebar" /></BlogSidebar>
-    </div>
-    <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
-      <slot name="footer-extra" slot="extra" />
-    </SiteFooter>
-  </div>
+  <BlogShell active={active} posts={posts} blog={blog} identity={identity} inner showEditingGuides={showEditingGuides} messages={messages}>
+    <slot name="header-actions" slot="header-actions" />
+    <slot name="sidebar" slot="sidebar" />
+    <slot name="footer-extra" slot="footer-extra" />
+    <slot />
+  </BlogShell>
 </BaseLayout>

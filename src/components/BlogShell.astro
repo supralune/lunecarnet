@@ -1,0 +1,33 @@
+---
+import BlogHeader from "./BlogHeader.astro";
+import BlogSidebar from "./BlogSidebar.astro";
+import SiteFooter from "./SiteFooter.astro";
+import type { Post } from "../lib/posts";
+import type { BlogConfig, IdentityConfig } from "../types";
+import type { MessageOverrides } from "../messages";
+
+interface Props {
+  active?: "home" | "archive" | "categories" | "about" | "search";
+  posts: Post[];
+  blog: BlogConfig;
+  identity: IdentityConfig;
+  inner?: boolean;
+  showEditingGuides?: boolean;
+  messages?: MessageOverrides;
+}
+
+const { active = "home", posts, blog, identity, inner = false, showEditingGuides = false, messages } = Astro.props;
+---
+
+<div class="site-shell blog-shell">
+  <BlogHeader blog={blog} active={active} messages={messages}>
+    <slot name="header-actions" slot="actions" />
+  </BlogHeader>
+  <div class="page-layout">
+    <main class:list={["main-content", { "inner-content": inner }]} id="main"><slot /></main>
+    <BlogSidebar posts={posts} blog={blog} messages={messages}><slot name="sidebar" /></BlogSidebar>
+  </div>
+  <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
+    <slot name="footer-extra" slot="extra" />
+  </SiteFooter>
+</div>

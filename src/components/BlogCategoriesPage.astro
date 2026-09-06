@@ -2,6 +2,7 @@
 import BlogPageLayout from "../layouts/BlogPageLayout.astro";
 import EmptyState from "./EmptyState.astro";
 import TemplateGuide from "./TemplateGuide.astro";
+import PageHeading from "./PageHeading.astro";
 import { postPath, type Post } from "../lib/posts";
 import { withBase } from "../lib/url";
 import { formatMessage, resolveMessages } from "../messages";
@@ -19,11 +20,7 @@ const categories = [...new Set(posts.map((post) => post.data.category))].map((na
 <BlogPageLayout title={ui.categoriesTitle} description={ui.categoriesDescription} active="categories" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
-  <header class="page-heading">
-    <p class="eyebrow">{formatMessage(ui.categoriesEyebrow, { count: categories.length })}</p>
-    <h1>{ui.categoriesTitle}</h1>
-    <p>{ui.categoriesIntro}</p>
-  </header>
+  <PageHeading eyebrow={formatMessage(ui.categoriesEyebrow, { count: categories.length })} title={ui.categoriesTitle} intro={ui.categoriesIntro} />
 
   <TemplateGuide title={ui.categoriesGuideTitle} enabled={showEditingGuides}><p>{ui.categoriesGuide}</p></TemplateGuide>
 

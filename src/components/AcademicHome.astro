@@ -1,11 +1,10 @@
 ---
-import AcademicSidebar from "./AcademicSidebar.astro";
+import AcademicShell from "./AcademicShell.astro";
 import PublicationRow from "./PublicationRow.astro";
-import SiteFooter from "./SiteFooter.astro";
-import AcademicHeader from "./AcademicHeader.astro";
+import ProjectItem from "./ProjectItem.astro";
 import TemplateGuide from "./TemplateGuide.astro";
 import { templatePath } from "../config/runtime";
-import type { AcademicConfig, AcademicHomeSections, IdentityConfig, NewsItem, Project, Publication } from "../types";
+import type { AcademicConfig, AcademicHomeLimits, AcademicHomeSections, IdentityConfig, NewsItem, Project, Publication } from "../types";
 import { withBase } from "../lib/url";
 import { resolveMessages, type MessageOverrides } from "../messages";
 import { textBlocks } from "../lib/text";
@@ -13,30 +12,29 @@ import { textBlocks } from "../lib/text";
 interface Props {
   academic: AcademicConfig;
   identity: IdentityConfig;
-  publications: Publication[];
-  projects: Project[];
-  news: NewsItem[];
+  publications?: Publication[];
+  projects?: Project[];
+  news?: NewsItem[];
   showEditingGuides?: boolean;
   messages?: MessageOverrides;
   homeSections?: AcademicHomeSections;
+  homeLimits?: AcademicHomeLimits;
 }
-const { academic, identity, publications, projects, news, showEditingGuides = false, messages, homeSections } = Astro.props;
-const selectedPublications = publications.filter((publication) => publication.selected);
+const { academic, identity, publications = [], projects = [], news = [], showEditingGuides = false, messages, homeSections, homeLimits } = Astro.props;
+const selectedPublications = publications.filter((publication) => publication.selected).slice(0, Math.max(0, homeLimits?.publications ?? 5));
+const selectedProjects = projects.filter((project) => project.selected !== false).slice(0, Math.max(0, homeLimits?.projects ?? 4));
+const latestNews = news.slice(0, Math.max(0, homeLimits?.news ?? 6));
 const topics = academic.topics ?? [];
 const longBio = textBlocks(academic.longBio);
 const showPublications = homeSections?.publications !== false && selectedPublications.length > 0;
-const showProjects = homeSections?.projects !== false && projects.length > 0;
+const showProjects = homeSections?.projects !== false && selectedProjects.length > 0;
 const showAbout = homeSections?.about !== false && longBio.length > 0;
-const showNews = homeSections?.news !== false && news.length > 0;
+const showNews = homeSections?.news !== false && latestNews.length > 0;
 const ui = resolveMessages(academic.language, messages);
 ---
 
-<div class="site-shell academic-shell">
-  <AcademicHeader academic={academic} active="home" messages={messages}>
-    <slot name="header-actions" slot="actions" />
-  </AcademicHeader>
-  <div class="page-layout">
-    <main class="main-content" id="main">
+<AcademicShell academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+  <slot name="header-actions" slot="header-actions" />
       <section class="academic-hero">
         <p class="eyebrow">{ui.researchProfile}</p>
         <h1>{academic.headline}</h1>
@@ -52,7 +50,7 @@ const ui = resolveMessages(academic.language, messages);
       <slot name="after-hero" />
 
       <TemplateGuide compact enabled={showEditingGuides}>
-        <p>Replace the placeholders in <code>src/config/academic.ts</code> with your own profile, publications, projects, and updates.</p>
+        <p>{ui.academicEditingGuide}</p>
       </TemplateGuide>
 
       {showPublications && <section class="content-section" id="publications">
@@ -65,13 +63,7 @@ const ui = resolveMessages(academic.language, messages);
 
       {showProjects && <section class="content-section" id="projects">
         <div class="section-heading ruled"><h2>{ui.selectedProjects}</h2><a class="section-more" href={withBase(templatePath("academic", "/projects/"))}>{ui.viewAll}</a></div>
-        {projects.map((project) => (
-          <article class="project-row">
-            <div class="project-title"><h3>{project.link ? <a href={project.link} target="_blank" rel="noreferrer">{project.title}</a> : project.title}</h3><span>{project.period}</span></div>
-            <p>{project.description}</p>
-            <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
-          </article>
-        ))}
+        {selectedProjects.map((project) => <ProjectItem project={project} locale={academic.language} messages={messages} />)}
       </section>}
 
       {showAbout && <section class="content-section" id="about">
@@ -81,16 +73,9 @@ const ui = resolveMessages(academic.language, messages);
 
       {showNews && <section class="content-section" id="news">
         <div class="section-heading ruled"><h2>{ui.latestNews}</h2><span>{ui.updates}</span></div>
-        <div class="news-list">{news.map((item) => <div><time>{item.date}</time><p>{item.text}</p></div>)}</div>
+        <div class="news-list">{latestNews.map((item) => <div><time>{item.date}</time><p>{item.text}</p></div>)}</div>
       </section>}
-      <slot />
-    </main>
-
-    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
-      <slot name="sidebar" />
-    </AcademicSidebar>
-  </div>
-  <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages}>
-    <slot name="footer-extra" slot="extra" />
-  </SiteFooter>
-</div>
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</AcademicShell>
