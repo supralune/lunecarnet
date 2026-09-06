@@ -110,8 +110,21 @@ test("keeps blog-only discovery and reading features inside the blog template", 
 
   const article = await read(`${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`);
   assert.match(article, /class="toc"/);
-  assert.match(article, /class="post-navigation"/);
+  assert.match(article, /class="post-navigation is-single"/);
+  assert.match(article, /class="previous-note"/);
+  assert.doesNotMatch(article, /class="next-note"/);
   assert.match(article, /property="og:type" content="article"/);
+
+  const middleArticle = await read(`${templateRoute("blog", "posts/notes-that-remain-useful")}index.html`);
+  assert.match(middleArticle, /class="post-navigation"/);
+  assert.doesNotMatch(middleArticle, /class="post-navigation is-single"/);
+  assert.match(middleArticle, /class="previous-note"/);
+  assert.match(middleArticle, /class="next-note"/);
+
+  const firstArticle = await read(`${templateRoute("blog", "posts/a-small-project-log")}index.html`);
+  assert.match(firstArticle, /class="post-navigation is-single"/);
+  assert.doesNotMatch(firstArticle, /class="previous-note"/);
+  assert.match(firstArticle, /class="next-note"/);
 
   const rssPath = mode === "both" ? "blog/rss.xml" : "rss.xml";
   assert.match(await read(rssPath), /<rss version="2.0">/);
