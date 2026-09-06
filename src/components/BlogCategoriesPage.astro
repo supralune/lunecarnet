@@ -1,7 +1,6 @@
 ---
 import BlogPageLayout from "../layouts/BlogPageLayout.astro";
 import EmptyState from "./EmptyState.astro";
-import TemplateGuide from "./TemplateGuide.astro";
 import PageHeading from "./PageHeading.astro";
 import { postPath, type Post } from "../lib/posts";
 import { withBase } from "../lib/url";
@@ -9,7 +8,7 @@ import { formatMessage, resolveMessages } from "../messages";
 import type { BlogTemplateConfig } from "../types";
 
 interface Props extends BlogTemplateConfig { posts: Post[] }
-const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const { posts, blog, identity, messages } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
 const categories = [...new Set(posts.map((post) => post.data.category))].map((name) => ({
   name,
@@ -17,12 +16,10 @@ const categories = [...new Set(posts.map((post) => post.data.category))].map((na
 }));
 ---
 
-<BlogPageLayout title={ui.categoriesTitle} description={ui.categoriesDescription} active="categories" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+<BlogPageLayout title={ui.categoriesTitle} description={ui.categoriesDescription} active="categories" posts={posts} blog={blog} identity={identity} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={formatMessage(ui.categoriesEyebrow, { count: categories.length })} title={ui.categoriesTitle} intro={ui.categoriesIntro} />
-
-  <TemplateGuide title={ui.categoriesGuideTitle} enabled={showEditingGuides}><p>{ui.categoriesGuide}</p></TemplateGuide>
 
   <div class="category-groups">
     {categories.length > 0 ? categories.map((category, index) => (

@@ -98,7 +98,6 @@ export type RecordItem = { period?: string; title: string; detail: string };
 export type BlogTemplateConfig = {
   blog: BlogConfig;
   identity: IdentityConfig;
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
   blogHomePostLimit?: number;
 };
@@ -112,7 +111,6 @@ export type AcademicTemplateConfig = {
   education?: RecordItem[];
   honors?: RecordItem[];
   service?: string[];
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
   homeSections?: AcademicHomeSections;
   homeLimits?: AcademicHomeLimits;

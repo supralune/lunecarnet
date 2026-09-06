@@ -18,7 +18,8 @@ This repository is maintained primarily with AI coding agents. Preserve the foll
 - Reuse a component when a data-backed visual pattern appears in more than one page; do not componentize one-off markup.
 - Configuration and Markdown are consumer-owned. Components must not import demo configuration from `src/config/`.
 - Standard navigation comes from the theme. `blog.nav` and `academic.nav` are optional full overrides.
-- User-facing strings, editing guidance, alt text, and ARIA labels belong in `src/messages.ts`.
+- Keep blog Markdown behavior in `createLunecarnetMarkdownProcessor()`. Consumer fixtures must use the exported processor so math and callout behavior matches the template.
+- User-facing strings, alt text, and ARIA labels belong in `src/messages.ts`.
 - Theme CSS uses `--lc-*` tokens and stays inside the `lunecarnet` cascade layer. Prefer adding a meaningful token over asking consumers to override internal selectors.
 
 ## Public usage surface

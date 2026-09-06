@@ -1,13 +1,12 @@
 import { academic, academicHomeLimits, academicHomeSections, education, honors, news, projects, publications, service } from "./academic";
 import { blog, blogHomePostLimit } from "./blog";
-import { identity, showEditingGuides } from "./shared";
+import { identity } from "./shared";
 import { defineAcademicConfig, defineBlogConfig } from "../types";
 
 /** Consumer-owned data passed into the reusable blog theme components. */
 export const blogTemplate = defineBlogConfig({
   blog,
   identity,
-  showEditingGuides,
   blogHomePostLimit
 });
 
@@ -22,6 +21,5 @@ export const academicTemplate = defineAcademicConfig({
   honors,
   service,
   homeSections: academicHomeSections,
-  homeLimits: academicHomeLimits,
-  showEditingGuides
+  homeLimits: academicHomeLimits
 });

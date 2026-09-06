@@ -28,11 +28,13 @@ npm install github:supralune/lunecarnet#v0.2.1
 
 ```js
 import { defineConfig } from "astro/config";
+import { createLunecarnetMarkdownProcessor } from "@lunecarnet/astro/markdown";
 
 export default defineConfig({
   site: "https://example.com",
   output: "static",
   trailingSlash: "always",
+  markdown: { processor: createLunecarnetMarkdownProcessor() },
   vite: {
     define: {
       "import.meta.env.SITE_MODE": JSON.stringify("both")
@@ -40,6 +42,8 @@ export default defineConfig({
   }
 });
 ```
+
+`createLunecarnetMarkdownProcessor()` 同时启用 `$...$`、`$$...$$` 数学公式和 Obsidian `[!note]` Callout。单独使用博客模式时也应配置该 processor；纯学术站不渲染 Markdown，可以省略。
 
 ## 把个人数据留在个人站
 
@@ -50,7 +54,6 @@ export default defineConfig({
 import { defineBlogConfig } from "@lunecarnet/astro";
 
 export default defineBlogConfig({
-  showEditingGuides: false,
   identity: {
     name: "Your Name",
     initials: "YN",

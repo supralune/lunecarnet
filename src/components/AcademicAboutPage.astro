@@ -6,13 +6,13 @@ import { textBlocks } from "../lib/text";
 import PageHeading from "./PageHeading.astro";
 
 type Props = AcademicTemplateConfig;
-const { academic, identity, publications = [], projects = [], education = [], honors = [], service = [], showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications = [], projects = [], education = [], honors = [], service = [], messages } = Astro.props;
 const ui = resolveMessages(academic.language, messages);
 const biography = textBlocks(academic.longBio);
 const researchInterests = academic.researchInterests ?? [];
 ---
 
-<AcademicPageLayout title={ui.academicAboutTitle} description={ui.academicAboutDescription} active="about" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+<AcademicPageLayout title={ui.academicAboutTitle} description={ui.academicAboutDescription} active="about" academic={academic} identity={identity} projects={projects} publications={publications} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={ui.academicAboutEyebrow} title={ui.academicAboutTitle} intro={ui.academicAboutIntro} />

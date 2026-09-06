@@ -13,16 +13,15 @@ interface Props {
   posts: Post[];
   blog: BlogConfig;
   identity: IdentityConfig;
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
 }
 
-const { title, description, active, posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const { title, description, active, posts, blog, identity, messages } = Astro.props;
 ---
 
 <BaseLayout title={`${title} · ${blog.title}`} description={description} lang={blog.language} pageClass="blog-page" feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
   <slot name="head" slot="head" />
-  <BlogShell active={active} posts={posts} blog={blog} identity={identity} inner showEditingGuides={showEditingGuides} messages={messages}>
+  <BlogShell active={active} posts={posts} blog={blog} identity={identity} inner messages={messages}>
     <slot name="header-actions" slot="header-actions" />
     <slot name="sidebar" slot="sidebar" />
     <slot name="footer-extra" slot="footer-extra" />

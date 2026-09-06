@@ -6,12 +6,12 @@ import type { AcademicTemplateConfig } from "../types";
 import PageHeading from "./PageHeading.astro";
 
 type Props = AcademicTemplateConfig;
-const { academic, identity, publications = [], projects = [], showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications = [], projects = [], messages } = Astro.props;
 const ui = resolveMessages(academic.language, messages);
 const years = [...new Set(publications.map((publication) => publication.year))].sort((a, b) => b - a);
 ---
 
-<AcademicPageLayout title={ui.publicationsTitle} description={ui.publicationsDescription} active="publications" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+<AcademicPageLayout title={ui.publicationsTitle} description={ui.publicationsDescription} active="publications" academic={academic} identity={identity} projects={projects} publications={publications} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={formatMessage(ui.publicationsEyebrow, { count: publications.length })} title={ui.publicationsTitle} intro={ui.publicationsIntro} />
@@ -20,7 +20,7 @@ const years = [...new Set(publications.map((publication) => publication.year))].
     <section class="publication-year-section">
       <h2 class="year-heading">{year}</h2>
       {publications.filter((publication) => publication.year === year).map((publication) => (
-        <PublicationRow publication={publication} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages} />
+        <PublicationRow publication={publication} locale={academic.language} messages={messages} />
       ))}
     </section>
   ))}

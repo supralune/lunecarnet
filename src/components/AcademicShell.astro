@@ -12,7 +12,6 @@ interface Props {
   projects?: Project[];
   publications?: Publication[];
   inner?: boolean;
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
 }
 
@@ -23,7 +22,6 @@ const {
   projects = [],
   publications = [],
   inner = false,
-  showEditingGuides = false,
   messages
 } = Astro.props;
 ---
@@ -34,11 +32,11 @@ const {
   </AcademicHeader>
   <div class="page-layout">
     <main class:list={["main-content", { "inner-content": inner }]} id="main"><slot /></main>
-    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+    <AcademicSidebar academic={academic} identity={identity} projects={projects} publications={publications} messages={messages}>
       <slot name="sidebar" />
     </AcademicSidebar>
   </div>
-  <SiteFooter variant="academic" identity={identity} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages}>
+  <SiteFooter variant="academic" identity={identity} locale={academic.language} messages={messages}>
     <slot name="footer-extra" slot="extra" />
   </SiteFooter>
 </div>

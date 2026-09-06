@@ -4,11 +4,11 @@
 
 An Astro template that combines a personal blog and an academic homepage in one repository. Its visual language blends an editorial blog with a restrained academic profile: warm paper tones, serif headings, fine rules, a low-saturation blue accent, and a comfortable reading density.
 
-The template contains no personal information or branding from the reference projects. Its academic sections use discipline-neutral placeholders, and the built-in editing guides explain where to replace them. The repository is ready to use as a GitHub Template Repository.
+The template contains no personal information or branding from the reference projects. Its academic sections use discipline-neutral placeholders and the repository is ready to use as a GitHub Template Repository.
 
 ## Preview
 
-The screenshots show the light theme with the optional editing guides enabled.
+The screenshots show the light theme.
 
 ### Blog home
 
@@ -23,6 +23,7 @@ The screenshots show the light theme with the optional editing guides enabled.
 - Blog, academic, and combined-preview modes with one dependency set and design foundation
 - Clean root-level routes in standalone modes and automatic namespaces in combined mode
 - Markdown notes with article metadata, table of contents, tags, and adjacent navigation
+- Obsidian-style inline/display LaTeX and icon callouts such as `[!note]`
 - Automatic archive and category pages
 - Private, browser-local full-text search with no external service
 - RSS, Sitemap, robots discovery, canonical URLs, and article metadata
@@ -73,20 +74,19 @@ This checks and builds all three modes, then verifies route isolation, search, a
 ## Five-Minute Setup
 
 1. Create a repository from this template and clone it.
-2. Update identity and editing-guide settings in `src/config/shared.ts`.
+2. Update identity settings in `src/config/shared.ts`.
 3. Customize the enabled templates in `src/config/blog.ts` and `src/config/academic.ts`; standard navigation is generated automatically unless you override `nav`.
 4. If you use the blog, replace the example notes in `src/content/posts/`.
 5. Add publication, project, profile, and CV URLs where available.
-6. Set `showEditingGuides` to `false` when customization is complete.
-7. Choose the corresponding `dev:*` and `build:*` command; set `SITE_MODE` for deployment.
-8. Configure `SITE_URL` and `SITE_BASE` if you use a custom domain or subpath.
-9. Run `npm test`, then push to GitHub.
+6. Choose the corresponding `dev:*` and `build:*` command; set `SITE_MODE` for deployment.
+7. Configure `SITE_URL` and `SITE_BASE` if you use a custom domain or subpath.
+8. Run `npm test`, then push to GitHub.
 
 ## Customization
 
 Most changes happen in focused configuration files:
 
-1. `src/config/shared.ts` contains identity information and the editing-guide switch.
+1. `src/config/shared.ts` contains identity information.
 2. `src/config/blog.ts` contains blog copy and the home-page post limit.
 3. `src/config/academic.ts` contains the academic profile, publications, projects, news, education, honors, and service.
 4. `src/config/site.ts` combines consumer-owned data into type-safe props for the reusable package components.
@@ -117,6 +117,21 @@ readingTime: 5
 Start the article here. Section headings should normally begin at `##`.
 ```
 
+Obsidian-style math and callouts are rendered at build time:
+
+```md
+Inline math uses $E = mc^2$.
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
+
+> [!note] A useful note
+> Callouts support normal **Markdown** content.
+```
+
+Supported callout types are `note`, `abstract`, `info`, `todo`, `tip`, `success`, `question`, `warning`, `failure`, `danger`, `bug`, `example`, and `quote`, including Obsidian's standard aliases.
+
 Publication authors use structured records so the template can mark roles consistently:
 
 ```ts
@@ -131,9 +146,7 @@ authors: [
 
 Colors, typography, spacing, and responsive rules are centralized in `src/styles/global.css`. Stable downstream overrides use the public `--lc-*` properties in `src/styles/tokens.css`; theme internals use only namespaced properties, while the original short names remain as compatibility aliases. The template uses system fonts, makes no third-party font requests, and has no required image assets. The rationale behind the design system is documented in [`DESIGN.md`](./DESIGN.md).
 
-Editing prompts are separate from the general placeholder content. Keep `showEditingGuides` enabled while customizing, then disable it before publication. Empty publication and project URLs never produce broken `#` links.
-
-The blog follows a common open-source-template pattern: readable demo copy is stored in configuration, while customization instructions live in the optional editing guides. If you remove all example notes, the home page, archive, and category page show purposeful empty states instead of blank sections.
+Empty publication and project URLs never produce broken `#` links. If you remove all example notes, the home page, archive, and category page show purposeful empty states instead of blank sections.
 
 ## Content Discovery
 

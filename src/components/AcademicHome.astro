@@ -2,7 +2,6 @@
 import AcademicShell from "./AcademicShell.astro";
 import PublicationRow from "./PublicationRow.astro";
 import ProjectItem from "./ProjectItem.astro";
-import TemplateGuide from "./TemplateGuide.astro";
 import { templatePath } from "../config/runtime";
 import type { AcademicConfig, AcademicHomeLimits, AcademicHomeSections, IdentityConfig, NewsItem, Project, Publication } from "../types";
 import { withBase } from "../lib/url";
@@ -15,12 +14,11 @@ interface Props {
   publications?: Publication[];
   projects?: Project[];
   news?: NewsItem[];
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
   homeSections?: AcademicHomeSections;
   homeLimits?: AcademicHomeLimits;
 }
-const { academic, identity, publications = [], projects = [], news = [], showEditingGuides = false, messages, homeSections, homeLimits } = Astro.props;
+const { academic, identity, publications = [], projects = [], news = [], messages, homeSections, homeLimits } = Astro.props;
 const selectedPublications = publications.filter((publication) => publication.selected).slice(0, Math.max(0, homeLimits?.publications ?? 5));
 const selectedProjects = projects.filter((project) => project.selected !== false).slice(0, Math.max(0, homeLimits?.projects ?? 4));
 const latestNews = news.slice(0, Math.max(0, homeLimits?.news ?? 6));
@@ -33,7 +31,7 @@ const showNews = homeSections?.news !== false && latestNews.length > 0;
 const ui = resolveMessages(academic.language, messages);
 ---
 
-<AcademicShell academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+<AcademicShell academic={academic} identity={identity} projects={projects} publications={publications} messages={messages}>
   <slot name="header-actions" slot="header-actions" />
       <section class="academic-hero">
         <p class="eyebrow">{ui.researchProfile}</p>
@@ -41,23 +39,19 @@ const ui = resolveMessages(academic.language, messages);
         <p>{academic.bio}</p>
         {topics.length > 0 && <div class="topic-list">{topics.map((topic) => <span>{topic}</span>)}</div>}
         <div class="hero-actions">
-          {academic.scholar ? <a class="button primary" href={academic.scholar} target="_blank" rel="noreferrer">{ui.googleScholar}</a> : showEditingGuides && <span class="button primary disabled">{ui.addScholarUrl}</span>}
+          {academic.scholar && <a class="button primary" href={academic.scholar} target="_blank" rel="noreferrer">{ui.googleScholar}</a>}
           <a class="button" href={`mailto:${identity.email}`}>{ui.emailMe}</a>
-          {academic.cvUrl ? <a class="button" href={academic.cvUrl}>{ui.downloadCv}</a> : showEditingGuides && <span class="button disabled">{ui.addCvUrl}</span>}
+          {academic.cvUrl && <a class="button" href={academic.cvUrl}>{ui.downloadCv}</a>}
         </div>
       </section>
 
       <slot name="after-hero" />
 
-      <TemplateGuide compact enabled={showEditingGuides}>
-        <p>{ui.academicEditingGuide}</p>
-      </TemplateGuide>
-
       {showPublications && <section class="content-section" id="publications">
         <div class="section-heading ruled"><h2>{ui.selectedPublications}</h2><a class="section-more" href={withBase(templatePath("academic", "/publications/"))}>{ui.viewAll}</a></div>
         <p class="publication-legend">{ui.publicationLegend}</p>
         <div class="publication-list">
-          {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages} />)}
+          {selectedPublications.map((publication, index) => <PublicationRow publication={publication} highlight={index === 0} locale={academic.language} messages={messages} />)}
         </div>
       </section>}
 

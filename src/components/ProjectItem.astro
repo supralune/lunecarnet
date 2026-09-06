@@ -6,12 +6,11 @@ interface Props {
   project: Project;
   variant?: "row" | "card";
   index?: number;
-  showEditingGuides?: boolean;
   locale?: string;
   messages?: MessageOverrides;
 }
 
-const { project, variant = "row", index = 0, showEditingGuides = false, locale = "en", messages } = Astro.props;
+const { project, variant = "row", index = 0, locale = "en", messages } = Astro.props;
 const ui = resolveMessages(locale, messages);
 ---
 
@@ -25,5 +24,4 @@ const ui = resolveMessages(locale, messages);
   </div>
   <p>{project.description}</p>
   <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
-  {variant === "card" && !project.link && showEditingGuides && <p class="fill-caption">{ui.addProjectLink}</p>}
 </article>

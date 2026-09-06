@@ -15,6 +15,8 @@
   --lc-color-warm: #eeece4;
   --lc-color-warm-ink: #68645a;
   --lc-color-green: #24745f;
+  --lc-color-warning: #9a6418;
+  --lc-color-danger: #a33d3d;
   --lc-font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", STSong, Georgia, serif;
   --lc-font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --lc-font-size-body: 14px;
@@ -66,4 +68,6 @@
   --lc-color-warm: #36342e;
   --lc-color-warm-ink: #c6beae;
   --lc-color-green: #83c7b4;
+  --lc-color-warning: #e0ae62;
+  --lc-color-danger: #e58a8a;
 }

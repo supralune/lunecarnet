@@ -12,11 +12,10 @@ interface Props {
   blog: BlogConfig;
   identity: IdentityConfig;
   inner?: boolean;
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
 }
 
-const { active = "home", posts, blog, identity, inner = false, showEditingGuides = false, messages } = Astro.props;
+const { active = "home", posts, blog, identity, inner = false, messages } = Astro.props;
 ---
 
 <div class="site-shell blog-shell">
@@ -27,7 +26,7 @@ const { active = "home", posts, blog, identity, inner = false, showEditingGuides
     <main class:list={["main-content", { "inner-content": inner }]} id="main"><slot /></main>
     <BlogSidebar posts={posts} blog={blog} messages={messages}><slot name="sidebar" /></BlogSidebar>
   </div>
-  <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
+  <SiteFooter variant="blog" identity={identity} locale={blog.language} messages={messages}>
     <slot name="footer-extra" slot="extra" />
   </SiteFooter>
 </div>

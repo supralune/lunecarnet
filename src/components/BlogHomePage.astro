@@ -6,7 +6,7 @@ import type { BlogTemplateConfig } from "../types";
 import BlogHome from "./BlogHome.astro";
 
 interface Props extends BlogTemplateConfig { posts: Post[] }
-const { posts, blog, identity, showEditingGuides = false, messages, blogHomePostLimit } = Astro.props;
+const { posts, blog, identity, messages, blogHomePostLimit } = Astro.props;
 const siteOrigin = Astro.site ?? Astro.url.origin;
 const schema = {
   "@context": "https://schema.org",
@@ -19,7 +19,7 @@ const schema = {
 
 <BaseLayout title={`${blog.title} · Blog`} description={blog.description} lang={blog.language} pageClass="blog-page" schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
   <slot name="head" slot="head" />
-  <BlogHome posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages} blogHomePostLimit={blogHomePostLimit}>
+  <BlogHome posts={posts} blog={blog} identity={identity} messages={messages} blogHomePostLimit={blogHomePostLimit}>
     <slot name="header-actions" slot="header-actions" />
     <slot name="after-hero" slot="after-hero" />
     <slot name="sidebar" slot="sidebar" />

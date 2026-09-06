@@ -6,16 +6,16 @@ import PageHeading from "./PageHeading.astro";
 import ProjectItem from "./ProjectItem.astro";
 
 type Props = AcademicTemplateConfig;
-const { academic, identity, publications = [], projects = [], showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, publications = [], projects = [], messages } = Astro.props;
 const ui = resolveMessages(academic.language, messages);
 ---
 
-<AcademicPageLayout title={ui.projectsTitle} description={ui.projectsDescription} active="projects" academic={academic} identity={identity} projects={projects} publications={publications} showEditingGuides={showEditingGuides} messages={messages}>
+<AcademicPageLayout title={ui.projectsTitle} description={ui.projectsDescription} active="projects" academic={academic} identity={identity} projects={projects} publications={publications} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={ui.projectsEyebrow} title={ui.projectsTitle} intro={ui.projectsIntro} />
   <div class="project-grid">
-    {projects.map((project, index) => <ProjectItem project={project} variant="card" index={index} showEditingGuides={showEditingGuides} locale={academic.language} messages={messages} />)}
+    {projects.map((project, index) => <ProjectItem project={project} variant="card" index={index} locale={academic.language} messages={messages} />)}
   </div>
   <slot />
   <slot name="sidebar" slot="sidebar" />

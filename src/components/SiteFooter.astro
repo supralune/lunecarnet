@@ -3,8 +3,8 @@ import { templatePath } from "../config/runtime";
 import type { IdentityConfig, SiteVariant } from "../types";
 import { withBase } from "../lib/url";
 import { resolveMessages, type MessageOverrides } from "../messages";
-interface Props { variant: SiteVariant; identity: IdentityConfig; showEditingGuides?: boolean; locale?: string; messages?: MessageOverrides }
-const { variant, identity, showEditingGuides = false, locale = "en", messages } = Astro.props;
+interface Props { variant: SiteVariant; identity: IdentityConfig; locale?: string; messages?: MessageOverrides }
+const { variant, identity, locale = "en", messages } = Astro.props;
 const ui = resolveMessages(locale, messages);
 ---
 
@@ -13,7 +13,7 @@ const ui = resolveMessages(locale, messages);
   <span class="footer-links">
     <a href={`mailto:${identity.email}`}>{ui.email}</a>
     <i aria-hidden="true">/</i>
-    {identity.github ? <><a href={identity.github} target="_blank" rel="noreferrer">{ui.github}</a><i aria-hidden="true">/</i></> : showEditingGuides && <><span>{ui.addGithubUrl}</span><i aria-hidden="true">/</i></>}
+    {identity.github && <><a href={identity.github} target="_blank" rel="noreferrer">{ui.github}</a><i aria-hidden="true">/</i></>}
     {variant === "blog" && <><a href={withBase(templatePath("blog", "/rss.xml"))}>{ui.rss}</a><i aria-hidden="true">/</i></>}
     <span>{variant === "blog" ? ui.blogTagline : ui.academicTagline}</span>
     <slot name="extra" />

@@ -7,10 +7,9 @@ interface Props {
   identity: IdentityConfig;
   projects: Project[];
   publications: Publication[];
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
 }
-const { academic, identity, projects, publications, showEditingGuides = false, messages } = Astro.props;
+const { academic, identity, projects, publications, messages } = Astro.props;
 const selectedPublicationCount = publications.filter((publication) => publication.selected).length;
 const topics = academic.topics ?? [];
 const showSummary = selectedPublicationCount > 0 || projects.length > 0 || Boolean(academic.availability);
@@ -26,8 +25,8 @@ const ui = resolveMessages(academic.language, messages);
     <p>{academic.role}</p>
     <dl>
       <div><dt>{ui.email}</dt><dd><a href={`mailto:${identity.email}`}>{identity.email}</a></dd></div>
-      {(identity.github || showEditingGuides) && <div><dt>{ui.github}</dt><dd>{identity.github ? <a href={identity.github} target="_blank" rel="noreferrer">{ui.profile}</a> : <span class="placeholder-link">{ui.addProfileUrl}</span>}</dd></div>}
-      {(academic.orcid || showEditingGuides) && <div><dt>ORCID</dt><dd>{academic.orcid ? <a href={academic.orcid} target="_blank" rel="noreferrer">{ui.record}</a> : <span class="placeholder-link">{ui.addOrcidUrl}</span>}</dd></div>}
+      {identity.github && <div><dt>{ui.github}</dt><dd><a href={identity.github} target="_blank" rel="noreferrer">{ui.profile}</a></dd></div>}
+      {academic.orcid && <div><dt>ORCID</dt><dd><a href={academic.orcid} target="_blank" rel="noreferrer">{ui.record}</a></dd></div>}
       {identity.location && <div><dt>{ui.based}</dt><dd>{identity.location}</dd></div>}
     </dl>
   </section>

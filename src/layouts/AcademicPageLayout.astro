@@ -12,16 +12,15 @@ interface Props {
   identity: IdentityConfig;
   projects?: Project[];
   publications?: Publication[];
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
 }
 
-const { title, description, active, academic, identity, projects = [], publications = [], showEditingGuides = false, messages } = Astro.props;
+const { title, description, active, academic, identity, projects = [], publications = [], messages } = Astro.props;
 ---
 
 <BaseLayout title={`${title} · ${academic.title}`} description={description} lang={academic.language} pageClass="academic-page" messages={messages}>
   <slot name="head" slot="head" />
-  <AcademicShell active={active} academic={academic} identity={identity} projects={projects} publications={publications} inner showEditingGuides={showEditingGuides} messages={messages}>
+  <AcademicShell active={active} academic={academic} identity={identity} projects={projects} publications={publications} inner messages={messages}>
     <slot name="header-actions" slot="header-actions" />
     <slot name="sidebar" slot="sidebar" />
     <slot name="footer-extra" slot="footer-extra" />

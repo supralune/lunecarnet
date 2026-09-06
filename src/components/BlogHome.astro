@@ -2,7 +2,6 @@
 import PostItem from "./PostItem.astro";
 import EmptyState from "./EmptyState.astro";
 import BlogShell from "./BlogShell.astro";
-import TemplateGuide from "./TemplateGuide.astro";
 import { templatePath } from "../config/runtime";
 import type { Post } from "../lib/posts";
 import type { BlogConfig, IdentityConfig } from "../types";
@@ -13,16 +12,15 @@ interface Props {
   posts: Post[];
   blog: BlogConfig;
   identity: IdentityConfig;
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
   blogHomePostLimit?: number;
 }
-const { posts, blog, identity, showEditingGuides = false, messages, blogHomePostLimit = 8 } = Astro.props;
+const { posts, blog, identity, messages, blogHomePostLimit = 8 } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
 const homePosts = posts.slice(0, Math.max(0, blogHomePostLimit));
 ---
 
-<BlogShell posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+<BlogShell posts={posts} blog={blog} identity={identity} messages={messages}>
   <slot name="header-actions" slot="header-actions" />
       <section class="blog-hero">
         <p class="eyebrow">{formatMessage(ui.blogHeroEyebrow, { year: blog.foundedYear })}</p>
@@ -31,10 +29,6 @@ const homePosts = posts.slice(0, Math.max(0, blogHomePostLimit));
       </section>
 
       <slot name="after-hero" />
-
-      <TemplateGuide compact enabled={showEditingGuides}>
-        <p>{ui.blogEditingGuide}</p>
-      </TemplateGuide>
 
       <section id="notes" class="content-section">
         <div class="section-heading">

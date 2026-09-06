@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import { fileURLToPath } from "node:url";
+import { createLunecarnetMarkdownProcessor } from "./src/markdown.ts";
 
 const requestedMode = process.env.SITE_MODE;
 const siteMode = requestedMode === "blog" || requestedMode === "academic" ? requestedMode : "both";
@@ -27,6 +28,7 @@ export default defineConfig({
   base: configuredBase ? normalizeBase(configuredBase) : inferredBase,
   output: "static",
   trailingSlash: "always",
+  markdown: { processor: createLunecarnetMarkdownProcessor() },
   build: { format: "directory" },
   vite: {
     define: { "import.meta.env.SITE_MODE": JSON.stringify(siteMode) },

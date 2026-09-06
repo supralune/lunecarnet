@@ -1,7 +1,6 @@
 ---
 import BlogPageLayout from "../layouts/BlogPageLayout.astro";
 import EmptyState from "./EmptyState.astro";
-import TemplateGuide from "./TemplateGuide.astro";
 import PageHeading from "./PageHeading.astro";
 import { formatDate, postPath, type Post } from "../lib/posts";
 import { withBase } from "../lib/url";
@@ -9,7 +8,7 @@ import { formatMessage, resolveMessages } from "../messages";
 import type { BlogTemplateConfig } from "../types";
 
 interface Props extends BlogTemplateConfig { posts: Post[] }
-const { posts, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const { posts, blog, identity, messages } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
 const grouped = Object.entries(posts.reduce<Record<string, Post[]>>((years, post) => {
   const year = String(post.data.publishDate.getFullYear());
@@ -18,12 +17,10 @@ const grouped = Object.entries(posts.reduce<Record<string, Post[]>>((years, post
 }, {})).sort(([a], [b]) => Number(b) - Number(a));
 ---
 
-<BlogPageLayout title={ui.archiveTitle} description={ui.archiveDescription} active="archive" posts={posts} blog={blog} identity={identity} showEditingGuides={showEditingGuides} messages={messages}>
+<BlogPageLayout title={ui.archiveTitle} description={ui.archiveDescription} active="archive" posts={posts} blog={blog} identity={identity} messages={messages}>
   <slot name="head" slot="head" />
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={formatMessage(ui.archiveEyebrow, { count: posts.length })} title={ui.archiveTitle} intro={ui.archiveIntro} />
-
-  <TemplateGuide title={ui.archiveGuideTitle} enabled={showEditingGuides}><p>{ui.archiveGuide}</p></TemplateGuide>
 
   <div class="archive-groups">
     {grouped.length > 0 ? grouped.map(([year, yearPosts]) => (

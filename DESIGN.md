@@ -28,6 +28,8 @@ When extending the template, reuse these roles before adding colors or arbitrary
 
 Component and foundation rules are placed in the `lunecarnet` cascade layer. Consumer styles can remain unlayered and therefore override theme rules predictably; stable customization should still prefer the public tokens over internal class selectors.
 
+Article callouts reuse the semantic accent, green, warning, and danger tokens. LaTeX is rendered by KaTeX during the static build, so article math and callout icons require no client-side runtime.
+
 ## Layout Rules
 
 - The maximum site width is 1140px.
@@ -35,7 +37,3 @@ Component and foundation rules are placed in the `lunecarnet` cascade layer. Con
 - Article text stays near 760px for readable line length.
 - Below 980px, the sidebar moves below the content.
 - Below 720px, navigation becomes an explicit disclosure menu with 44px targets.
-
-## Template Guidance
-
-Editing prompts are controlled by `showEditingGuides` in `src/config/shared.ts`. They are intentionally separate from demo content. Keep them enabled while customizing and disable them before publishing.

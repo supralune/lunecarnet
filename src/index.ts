@@ -19,7 +19,6 @@ export { default as PostItem } from "./components/PostItem.astro";
 export { default as PublicationRow } from "./components/PublicationRow.astro";
 export { default as SiteFooter } from "./components/SiteFooter.astro";
 export { default as SiteHeader } from "./components/SiteHeader.astro";
-export { default as TemplateGuide } from "./components/TemplateGuide.astro";
 export { default as AcademicPageLayout } from "./layouts/AcademicPageLayout.astro";
 export { default as BaseLayout } from "./layouts/BaseLayout.astro";
 export { default as BlogPageLayout } from "./layouts/BlogPageLayout.astro";

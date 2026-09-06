@@ -8,6 +8,7 @@ import type { BlogConfig, IdentityConfig } from "../types";
 import { withBase } from "../lib/url";
 import { render } from "astro:content";
 import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
+import "katex/dist/katex.min.css";
 
 interface Props {
   post: Post;
@@ -15,10 +16,9 @@ interface Props {
   next?: Post;
   blog: BlogConfig;
   identity: IdentityConfig;
-  showEditingGuides?: boolean;
   messages?: MessageOverrides;
 }
-const { post, previous, next, blog, identity, showEditingGuides = false, messages } = Astro.props;
+const { post, previous, next, blog, identity, messages } = Astro.props;
 const { Content, headings } = await render(post);
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 const ui = resolveMessages(blog.language, messages);
@@ -64,7 +64,7 @@ const schema = {
         </nav>
       )}
     </main>
-    <SiteFooter variant="blog" identity={identity} showEditingGuides={showEditingGuides} locale={blog.language} messages={messages}>
+    <SiteFooter variant="blog" identity={identity} locale={blog.language} messages={messages}>
       <slot name="footer-extra" slot="extra" />
     </SiteFooter>
   </div>

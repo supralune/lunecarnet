@@ -19,6 +19,7 @@ test("exposes a Git-installable Astro package contract", async () => {
   assert.equal(manifest.exports["./styles.css"], "./src/styles/global.css");
   assert.equal(manifest.exports["./tokens.css"], "./src/styles/tokens.css");
   assert.equal(manifest.exports["./content"], "./src/content.ts");
+  assert.equal(manifest.exports["./markdown"], "./src/markdown.ts");
   assert.match(manifest.peerDependencies.astro, /^\^7/);
 
   await Promise.all(Object.values(manifest.exports)
@@ -35,9 +36,10 @@ test("keeps published source independent from the demo alias", async () => {
     files.push(...entries.filter((entry) => entry.isFile()).map((entry) => `${directory}/${entry.name}`));
   }
 
-  files.push("src/index.ts", "src/types.ts", "src/messages.ts", "src/content.ts", "src/config/runtime.ts");
-  const sources = await Promise.all(files.map((file) => readFile(new URL(file, root), "utf8")));
-  sources.forEach((source, index) => assert.doesNotMatch(source, /from\s+["']@\//, `${files[index]} must not depend on the demo @ alias`));
+  files.push("src/index.ts", "src/types.ts", "src/messages.ts", "src/content.ts", "src/markdown.ts", "src/config/runtime.ts");
+    const sources = await Promise.all(files.map((file) => readFile(new URL(file, root), "utf8")));
+    sources.forEach((source, index) => assert.doesNotMatch(source, /from\s+["']@\//, `${files[index]} must not depend on the demo @ alias`));
+    sources.forEach((source, index) => assert.doesNotMatch(source, /TemplateGuide|showEditingGuides/, `${files[index]} must not expose template editing guides`));
 });
 
 test("publishes stable design tokens", async () => {
@@ -109,6 +111,12 @@ test("builds isolated blog and academic consumers from the packed artifact", { t
     for (const fixture of ["consumer-blog", "consumer-academic"]) {
       const consumer = join(temporaryRoot, fixture);
       await cp(fileURLToPath(new URL(`fixtures/${fixture}/`, import.meta.url)), consumer, { recursive: true });
+      await mkdir(join(consumer, "node_modules"), { recursive: true });
+      for (const dependency of Object.keys(manifest.dependencies ?? {})) {
+        const dependencyTarget = join(consumer, "node_modules", dependency);
+        await mkdir(dirname(dependencyTarget), { recursive: true });
+        await symlink(join(rootPath, "node_modules", dependency), dependencyTarget, process.platform === "win32" ? "junction" : "dir");
+      }
       await run(npm, ["install", join(temporaryRoot, filename), "--ignore-scripts", "--offline", "--legacy-peer-deps", "--no-audit", "--no-fund"], {
         cwd: consumer,
         env: { ...process.env, npm_config_cache: join(temporaryRoot, "npm-cache") }
@@ -140,7 +148,14 @@ test("builds isolated blog and academic consumers from the packed artifact", { t
     assert.match(blogArchive, /第一篇文章/);
     assert.match(blogArchive, /第二篇文章/);
 
-    await access(join(temporaryRoot, "consumer-blog", "dist", "posts", "hello", "index.html"));
+    const blogPost = await readFile(join(temporaryRoot, "consumer-blog", "dist", "posts", "hello", "index.html"), "utf8");
+    assert.match(blogPost, /class="katex"/);
+    assert.match(blogPost, /class="callout callout-note"/);
+    assert.match(blogPost, /data-callout="note"/);
+    assert.match(blogPost, /class="callout-icon"/);
+    assert.match(blogPost, /测试提示/);
+    assert.match(blogPost, /Callout 正文支持 <strong>Markdown<\/strong>/);
+    assert.doesNotMatch(blogPost, /\[!note\]/);
     await access(join(temporaryRoot, "consumer-blog", "dist", "search", "index.html"));
 
     const academicHome = await readFile(join(temporaryRoot, "consumer-academic", "dist", "index.html"), "utf8");
