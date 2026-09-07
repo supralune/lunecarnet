@@ -31,7 +31,11 @@ test(`builds the ${mode} route contract`, async () => {
   const blogRoutes = [
     `${templateRoute("blog")}index.html`,
     `${templateRoute("blog", "archive")}index.html`,
+    `${templateRoute("blog", "archive/2026")}index.html`,
     `${templateRoute("blog", "categories")}index.html`,
+    `${templateRoute("blog", "categories/Design%20Notes")}index.html`,
+    `${templateRoute("blog", "categories/Learning")}index.html`,
+    `${templateRoute("blog", "categories/Project%20Notes")}index.html`,
     `${templateRoute("blog", "search")}index.html`,
     `${templateRoute("blog", "about")}index.html`,
     `${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`,
@@ -92,12 +96,15 @@ test("exports a mode-specific sitemap and robots file", async () => {
 
   if (mode === "blog") {
     assert.ok(sitemap.includes(`<loc>${root}/archive/</loc>`));
+    assert.ok(sitemap.includes(`<loc>${root}/archive/2026/</loc>`));
+    assert.ok(sitemap.includes(`<loc>${root}/categories/Design%20Notes/</loc>`));
     assert.doesNotMatch(sitemap, /\/publications\//);
   } else if (mode === "academic") {
     assert.ok(sitemap.includes(`<loc>${root}/publications/</loc>`));
     assert.doesNotMatch(sitemap, /\/posts\//);
   } else {
     assert.ok(sitemap.includes(`<loc>${root}/blog/</loc>`));
+    assert.ok(sitemap.includes(`<loc>${root}/blog/archive/2026/</loc>`));
     assert.ok(sitemap.includes(`<loc>${root}/academic/</loc>`));
   }
 });
@@ -107,6 +114,7 @@ test("keeps blog-only discovery and reading features inside the blog template", 
   assert.match(search, /id="note-search"/);
   assert.match(search, /id="search-index"/);
   assert.match(search, /Designing a Calm Digital Garden/);
+  assert.match(search, /Start with the Content/);
 
   const article = await read(`${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`);
   assert.match(article, /class="toc"/);

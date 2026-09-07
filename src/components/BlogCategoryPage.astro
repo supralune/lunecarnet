@@ -1,0 +1,32 @@
+---
+import BlogPageLayout from "../layouts/BlogPageLayout.astro";
+import PageHeading from "./PageHeading.astro";
+import PostItem from "./PostItem.astro";
+import Pagination from "./Pagination.astro";
+import { categoryPath, defaultBlogPagination, paginateItems, positivePageSize, type Post } from "../lib/posts";
+import { templatePath } from "../config/runtime";
+import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages } from "../messages";
+import type { BlogTemplateConfig } from "../types";
+
+interface Props extends BlogTemplateConfig { posts: Post[]; category: string; currentPage?: number }
+const { posts, category, currentPage = 1, blog, identity, messages, pagination } = Astro.props;
+const ui = resolveMessages(blog.language, messages);
+const categoryPosts = posts.filter((post) => post.data.category === category);
+const pageSize = positivePageSize(pagination?.categoryPostsPerPage, defaultBlogPagination.categoryPostsPerPage);
+const page = paginateItems(categoryPosts, currentPage, pageSize);
+const pageSuffix = page.totalPages > 1 ? formatMessage(ui.categoryPageSuffix, { current: page.currentPage, total: page.totalPages }) : "";
+const intro = formatMessage(page.totalItems === 1 ? ui.categoryPageIntroOne : ui.categoryPageIntroMany, { count: page.totalItems, page: pageSuffix });
+---
+
+<BlogPageLayout title={`${category} · ${ui.categoriesTitle}`} description={intro} active="categories" posts={posts} blog={blog} identity={identity} messages={messages}>
+  <slot name="head" slot="head" />
+  <slot name="header-actions" slot="header-actions" />
+  <a class="overview-back" href={withBase(templatePath("blog", "/categories/"))}>{ui.backToCategories}</a>
+  <PageHeading eyebrow={ui.categoryEyebrow} title={category} intro={intro} />
+  <div class="post-list">{page.items.map((post) => <PostItem post={post} locale={blog.language} messages={messages} />)}</div>
+  <Pagination currentPage={page.currentPage} totalPages={page.totalPages} firstPath={categoryPath(category)} pagePath={(number) => categoryPath(category, number)} locale={blog.language} messages={messages} />
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</BlogPageLayout>

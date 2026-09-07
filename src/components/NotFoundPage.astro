@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { resolveMessages, type MessageOverrides } from "../messages";
+import { withBase } from "../lib/url";
+
+interface Props {
+  siteTitle: string;
+  locale?: string;
+  messages?: MessageOverrides;
+  homePath?: string;
+}
+
+const { siteTitle, locale = "en", messages, homePath = "/" } = Astro.props;
+const ui = resolveMessages(locale, messages);
+---
+
+<BaseLayout title={`${ui.notFoundTitle} · ${siteTitle}`} description={ui.notFoundDescription}>
+  <slot name="head" slot="head" />
+  <main class="not-found" id="main">
+    <p class="eyebrow">{ui.notFoundEyebrow}</p>
+    <h1>{ui.notFoundHeading}</h1>
+    <p>{ui.notFoundIntro}</p>
+    <a class="button primary" href={withBase(homePath)}>{ui.backHome}</a>
+  </main>
+</BaseLayout>

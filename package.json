@@ -1,6 +1,6 @@
 {
   "name": "@lunecarnet/astro",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Reusable Astro components and design system for personal blogs and academic profiles.",
   "private": true,
   "type": "module",

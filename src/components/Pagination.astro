@@ -1,0 +1,42 @@
+---
+import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  firstPath: string;
+  pagePath: (page: number) => string;
+  locale?: string;
+  messages?: MessageOverrides;
+}
+
+const { currentPage, totalPages, firstPath, pagePath, locale = "en", messages } = Astro.props;
+const ui = resolveMessages(locale, messages);
+const href = (page: number) => withBase(page === 1 ? firstPath : pagePath(page));
+const pageNumbers = totalPages <= 7
+  ? Array.from({ length: totalPages }, (_, index) => index + 1)
+  : [...new Set([1, currentPage - 1, currentPage, currentPage + 1, totalPages])]
+      .filter((page) => page >= 1 && page <= totalPages)
+      .sort((a, b) => a - b);
+const pageItems = pageNumbers.flatMap<(number | "ellipsis")>((page, index) => {
+  const previous = pageNumbers[index - 1];
+  return previous && page - previous > 1 ? ["ellipsis", page] : [page];
+});
+---
+
+{totalPages > 1 && (
+  <nav class="pagination" aria-label={ui.pagination}>
+    {currentPage > 1
+      ? <a class="page-direction" href={href(currentPage - 1)} rel="prev">{ui.previousPage}</a>
+      : <span class="page-direction disabled" aria-disabled="true">{ui.previousPage}</span>}
+    <div class="page-numbers">
+      {pageItems.map((item) => item === "ellipsis"
+        ? <span class="page-ellipsis" aria-hidden="true">…</span>
+        : <a class:list={{ current: item === currentPage }} href={href(item)} aria-current={item === currentPage ? "page" : undefined} aria-label={formatMessage(ui.pageNumber, { page: item })}>{String(item).padStart(2, "0")}</a>)}
+    </div>
+    {currentPage < totalPages
+      ? <a class="page-direction" href={href(currentPage + 1)} rel="next">{ui.nextPage}</a>
+      : <span class="page-direction disabled" aria-disabled="true">{ui.nextPage}</span>}
+  </nav>
+)}

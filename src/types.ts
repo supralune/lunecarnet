@@ -48,6 +48,11 @@ export type BlogConfig = {
   nav?: readonly NavigationItem[];
 };
 
+export type BlogPaginationConfig = {
+  postsPerPage?: number;
+  categoryPostsPerPage?: number;
+};
+
 export type AcademicConfig = {
   title: string;
   description: string;
@@ -99,7 +104,7 @@ export type BlogTemplateConfig = {
   blog: BlogConfig;
   identity: IdentityConfig;
   messages?: MessageOverrides;
-  blogHomePostLimit?: number;
+  pagination?: BlogPaginationConfig;
 };
 
 export type AcademicTemplateConfig = {

@@ -5,4 +5,8 @@ import site from "../config";
 const posts = await getPublishedPosts();
 ---
 
-<BlogAboutPage posts={posts} {...site} />
+<BlogAboutPage posts={posts} {...site}>
+  <Fragment slot="content">
+    <section><h2>消费者自有正文</h2><p>完整 About 文案无需映射到模板固定字段。</p></section>
+  </Fragment>
+</BlogAboutPage>

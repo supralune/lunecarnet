@@ -1,0 +1,37 @@
+---
+import BlogPageLayout from "../layouts/BlogPageLayout.astro";
+import PageHeading from "./PageHeading.astro";
+import { categoryPath, formatDate, postPath, type Post } from "../lib/posts";
+import { templatePath } from "../config/runtime";
+import { withBase } from "../lib/url";
+import { formatMessage, resolveMessages } from "../messages";
+import type { BlogTemplateConfig } from "../types";
+
+interface Props extends BlogTemplateConfig { posts: Post[]; year: string }
+const { posts, year, blog, identity, messages } = Astro.props;
+const ui = resolveMessages(blog.language, messages);
+const yearPosts = posts.filter((post) => String(post.data.publishDate.getFullYear()) === year);
+const intro = formatMessage(ui.archiveYearIntro, { year, count: yearPosts.length });
+---
+
+<BlogPageLayout title={`${year} · ${ui.archiveTitle}`} description={intro} active="archive" posts={posts} blog={blog} identity={identity} messages={messages}>
+  <slot name="head" slot="head" />
+  <slot name="header-actions" slot="header-actions" />
+  <a class="overview-back" href={withBase(templatePath("blog", "/archive/"))}>{ui.backToArchive}</a>
+  <PageHeading eyebrow={ui.archiveYearEyebrow} title={year} intro={intro} />
+  <section class="archive-year archive-year-detail">
+    <h2>{year}</h2>
+    <ol>
+      {yearPosts.map((post) => (
+        <li>
+          <time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate, blog.language)}</time>
+          <a href={withBase(postPath(post))}>{post.data.title}</a>
+          <a class="archive-category" href={withBase(categoryPath(post.data.category))}>{post.data.category}</a>
+        </li>
+      ))}
+    </ol>
+  </section>
+  <slot />
+  <slot name="sidebar" slot="sidebar" />
+  <slot name="footer-extra" slot="footer-extra" />
+</BlogPageLayout>

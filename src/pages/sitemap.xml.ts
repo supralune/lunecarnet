@@ -1,24 +1,18 @@
 import type { APIRoute } from "astro";
 import { siteMode, templatePath } from "@/config/runtime";
-import { absoluteSiteUrl, escapeXml } from "@/lib/discovery";
-import { getPublishedPosts, postPath } from "@/lib/posts";
+import { blogTemplate } from "@/config/site";
+import { absoluteSiteUrl, escapeXml, getBlogSitemapEntries } from "@/lib/discovery";
+import { getPublishedPosts } from "@/lib/posts";
 
-const blogRoutes = ["/", "/archive/", "/categories/", "/search/", "/about/"]
-  .map((path) => templatePath("blog", path));
 const academicRoutes = ["/", "/publications/", "/projects/", "/about/"]
   .map((path) => templatePath("academic", path));
-
-const staticRoutes = siteMode === "blog"
-  ? blogRoutes
-  : siteMode === "academic"
-    ? academicRoutes
-    : ["/", ...blogRoutes, ...academicRoutes];
 
 export const GET: APIRoute = async ({ site, url }) => {
   const posts = siteMode === "academic" ? [] : await getPublishedPosts();
   const entries: Array<{ path: string; lastmod?: string }> = [
-    ...staticRoutes.map((path) => ({ path })),
-    ...posts.map((post) => ({ path: postPath(post), lastmod: post.data.publishDate.toISOString() }))
+    ...(siteMode === "both" ? [{ path: "/" }] : []),
+    ...(siteMode === "academic" ? [] : getBlogSitemapEntries(posts, blogTemplate.pagination)),
+    ...(siteMode === "blog" ? [] : academicRoutes.map((path) => ({ path })))
   ];
   const urls = entries.map((entry) => `<url><loc>${escapeXml(absoluteSiteUrl(entry.path, site, url.origin))}</loc>${entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : ""}</url>`).join("\n  ");
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

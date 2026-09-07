@@ -1,0 +1,8 @@
+---
+import { BlogCategoryPage, getBlogCategoryPaths, getPublishedPosts } from "@lunecarnet/astro";
+import { blogTemplate } from "@/config/site";
+export function getStaticPaths() { return getBlogCategoryPaths(blogTemplate.pagination?.categoryPostsPerPage); }
+const posts = await getPublishedPosts();
+const { category, currentPage } = Astro.props;
+---
+<BlogCategoryPage posts={posts} category={category} currentPage={currentPage} {...blogTemplate} />

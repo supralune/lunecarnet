@@ -1,13 +1,15 @@
 ---
 import { templatePath } from "../config/runtime";
-import { postPath, type Post } from "../lib/posts";
+import { categoryPath, getCategorySummaries, postPath, type Post } from "../lib/posts";
 import type { BlogConfig } from "../types";
 import { withBase } from "../lib/url";
-import { resolveMessages, type MessageOverrides } from "../messages";
+import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
 
 interface Props { posts: Post[]; blog: BlogConfig; messages?: MessageOverrides }
 const { posts, blog, messages } = Astro.props;
-const categories = [...new Set(posts.map((post) => post.data.category))];
+const categories = getCategorySummaries(posts);
+const visibleCategories = categories.slice(0, 4);
+const hiddenCategories = categories.slice(4);
 const ui = resolveMessages(blog.language, messages);
 ---
 
@@ -20,11 +22,20 @@ const ui = resolveMessages(blog.language, messages);
   </section>
   {categories.length > 0 && <section class="widget">
     <h2>{ui.categories}</h2>
-    <ul class="category-list">
-      {categories.map((category, index) => (
-        <li><a href={`${withBase(templatePath("blog", "/categories/"))}#category-${index + 1}`}><span>{category}</span><span>{posts.filter((post) => post.data.category === category).length}</span></a></li>
+    <ul class="category-list category-list-primary">
+      {visibleCategories.map((category) => (
+        <li><a href={withBase(categoryPath(category.name))}><span>{category.name}</span><span>{category.posts.length}</span></a></li>
       ))}
     </ul>
+    {hiddenCategories.length > 0 && <details class="category-more">
+      <summary><span>{formatMessage(ui.remainingCategories, { count: hiddenCategories.length })}</span><span class="category-more-icon" aria-hidden="true">+</span></summary>
+      <ul class="category-list category-list-hidden">
+        {hiddenCategories.map((category) => (
+          <li><a href={withBase(categoryPath(category.name))}><span>{category.name}</span><span>{category.posts.length}</span></a></li>
+        ))}
+      </ul>
+    </details>}
+    <a class="category-all-link" href={withBase(templatePath("blog", "/categories/"))}>{ui.viewAllCategories}</a>
   </section>}
   {posts.length > 0 && <section class="widget">
     <h2>{ui.recentNotes}</h2>

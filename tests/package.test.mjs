@@ -58,9 +58,13 @@ test("exports complete page views so consumer routes stay thin", async () => {
   const pageViews = [
     "BlogHomePage",
     "BlogArchivePage",
+    "BlogArchiveYearPage",
+    "BlogCategoryPage",
     "BlogCategoriesPage",
+    "BlogPostPage",
     "BlogSearchPage",
     "BlogAboutPage",
+    "NotFoundPage",
     "AcademicHomePage",
     "AcademicPublicationsPage",
     "AcademicProjectsPage",
@@ -71,7 +75,10 @@ test("exports complete page views so consumer routes stay thin", async () => {
   const routeFiles = [
     "src/pages/blog/index.astro",
     "src/pages/blog/archive.astro",
+    "src/pages/blog/archive/[year].astro",
     "src/pages/blog/categories.astro",
+    "src/pages/blog/categories/[category]/[...page].astro",
+    "src/pages/blog/page/[page].astro",
     "src/pages/blog/search.astro",
     "src/pages/blog/about.astro",
     "src/pages/academic/index.astro",
@@ -148,15 +155,43 @@ test("builds isolated blog and academic consumers from the packed artifact", { t
     assert.match(blogArchive, /第一篇文章/);
     assert.match(blogArchive, /第二篇文章/);
 
+    const blogPageTwo = await readFile(join(temporaryRoot, "consumer-blog", "dist", "page", "2", "index.html"), "utf8");
+    const blogPageTwoMain = blogPageTwo.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? "";
+    assert.match(blogPageTwoMain, /第二篇文章/);
+    assert.doesNotMatch(blogPageTwoMain, /第一篇文章/);
+    assert.match(blogPageTwo, /aria-label="文章分页"/);
+
+    const categoryPageOne = await readFile(join(temporaryRoot, "consumer-blog", "dist", "categories", "测试", "index.html"), "utf8");
+    const categoryPageTwo = await readFile(join(temporaryRoot, "consumer-blog", "dist", "categories", "测试", "page", "2", "index.html"), "utf8");
+    assert.match(categoryPageOne.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? "", /第一篇文章/);
+    assert.match(categoryPageTwo.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? "", /第二篇文章/);
+    assert.match(await readFile(join(temporaryRoot, "consumer-blog", "dist", "archive", "2026", "index.html"), "utf8"), /第一篇文章/);
+    assert.match(await readFile(join(temporaryRoot, "consumer-blog", "dist", "archive", "2025", "index.html"), "utf8"), /第二篇文章/);
+
     const blogPost = await readFile(join(temporaryRoot, "consumer-blog", "dist", "posts", "hello", "index.html"), "utf8");
     assert.match(blogPost, /class="katex"/);
-    assert.match(blogPost, /class="callout callout-note"/);
+    assert.match(blogPost, /<details class="callout callout-note"[^>]*open/);
+    assert.match(blogPost, /<details class="callout callout-warning"(?![^>]*open)/);
     assert.match(blogPost, /data-callout="note"/);
-    assert.match(blogPost, /class="callout-icon"/);
-    assert.match(blogPost, /测试提示/);
+    assert.match(blogPost, /class="callout-title-icon"/);
+    assert.match(blogPost, /测试<strong>提示<\/strong>/);
     assert.match(blogPost, /Callout 正文支持 <strong>Markdown<\/strong>/);
+    assert.match(blogPost, /class="toc-depth-1"/);
+    assert.match(blogPost, /property="article:modified_time" content="2026-09-03/);
+    assert.match(blogPost, /target="_blank"/);
+    assert.match(blogPost, /rel="noopener noreferrer"/);
     assert.doesNotMatch(blogPost, /\[!note\]/);
     await access(join(temporaryRoot, "consumer-blog", "dist", "search", "index.html"));
+    assert.match(await readFile(join(temporaryRoot, "consumer-blog", "dist", "rss.xml"), "utf8"), /<rss version="2.0">/);
+    const consumerSitemap = await readFile(join(temporaryRoot, "consumer-blog", "dist", "sitemap.xml"), "utf8");
+    assert.match(consumerSitemap, /\/page\/2\//);
+    assert.match(consumerSitemap, /\/categories\/%E6%B5%8B%E8%AF%95\/page\/2\//);
+    assert.match(consumerSitemap, /\/archive\/2025\//);
+    assert.match(consumerSitemap, /<lastmod>2026-09-03/);
+    assert.match(await readFile(join(temporaryRoot, "consumer-blog", "dist", "404.html"), "utf8"), /页面不存在/);
+    const consumerAbout = await readFile(join(temporaryRoot, "consumer-blog", "dist", "about", "index.html"), "utf8");
+    assert.match(consumerAbout, /消费者自有正文/);
+    assert.doesNotMatch(consumerAbout, /记录和分享。/);
 
     const academicHome = await readFile(join(temporaryRoot, "consumer-academic", "dist", "index.html"), "utf8");
     assert.match(academicHome, /测试学者/);

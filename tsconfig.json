@@ -4,5 +4,5 @@
     "baseUrl": ".",
     "paths": { "@/*": ["src/*"] }
   },
-  "exclude": ["tests/fixtures"]
+  "exclude": ["tests/fixtures", "dist"]
 }

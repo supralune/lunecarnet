@@ -23,9 +23,9 @@ Lunecarnet 是一套在同一仓库中提供个人博客与学术主页的 Astro
 - 博客、学术和组合预览三种运行模式，共用一套依赖与设计基础
 - 单模板模式使用干净的根级路由，组合模式自动启用命名空间
 - 响应式桌面、平板和移动端布局
-- Markdown 文章、正文目录、标签及上一篇/下一篇
-- Obsidian 风格的行内/块级 LaTeX 公式，以及 `[!note]` 等带图标 Callout
-- 自动生成的文章归档和分类页面
+- Markdown 文章、发布/更新日期、H1–H3 正文目录、标签及上一篇/下一篇
+- Obsidian 风格的行内/块级 LaTeX 公式，以及支持 `[!note]+`、`[!warning]-` 折叠语义的图标 Callout
+- 首页与分类详情分页，以及按年度生成的完整归档详情页
 - 完全在浏览器本地运行的全文搜索
 - RSS、Sitemap、robots、canonical 与文章元数据
 - 持久化明暗主题与浏览器主题色同步
@@ -88,7 +88,7 @@ npm test
 配置按职责拆分：
 
 - `src/config/shared.ts`：身份信息。
-- `src/config/blog.ts`：博客标题、文案与首页文章数量。
+- `src/config/blog.ts`：博客标题、文案与首页/分类分页数量。
 - `src/config/academic.ts`：学术简介、论文、项目、动态、教育、荣誉与服务。
 - `src/config/site.ts`：把个人数据组合成传给可复用组件的类型安全配置。
 - `src/config/runtime.ts`：三种构建模式的路径解析；通常不需要修改。
@@ -129,6 +129,7 @@ authors: [
 title: "Your Note Title"
 description: "A short summary used on listing pages"
 publishDate: 2026-08-27
+updatedDate: 2026-09-02
 category: "Category Name"
 tags: ["Astro", "Writing"]
 draft: false
@@ -136,7 +137,9 @@ featured: false
 readingTime: 5
 ---
 
-Start the article here. Section headings should normally begin at `##`.
+# 正文一级标题
+
+正文中的 H1、H2、H3 都会进入文章目录。
 ```
 
 文章支持 Obsidian 风格的数学公式和 Callout，并在构建时完成渲染：
@@ -150,11 +153,14 @@ $$
 
 > [!note] 一条提示
 > Callout 正文支持普通的 **Markdown**。
+
+> [!tip]+ 默认展开且可以折叠
+> 使用 `+` 默认展开，使用 `-` 默认收起。
 ```
 
 支持 `note`、`abstract`、`info`、`todo`、`tip`、`success`、`question`、`warning`、`failure`、`danger`、`bug`、`example`、`quote` 及 Obsidian 的标准别名。
 
-归档、分类、全文搜索、RSS、Sitemap 和文章详情页都会根据这些文件自动更新。
+归档、年度详情、分类详情及分页、正文全文搜索、RSS、Sitemap 和文章详情页都会根据这些文件自动更新；正文中的外链会自动在新标签页安全打开。
 
 ## 设计与样式
 

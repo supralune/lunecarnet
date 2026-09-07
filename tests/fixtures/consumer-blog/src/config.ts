@@ -19,6 +19,6 @@ export default defineBlogConfig({
     authorBio: "个人简介。",
     contactNote: "欢迎通过邮件联系。"
   },
-  blogHomePostLimit: 1,
+  pagination: { postsPerPage: 1, categoryPostsPerPage: 1 },
   messages: { latestNotes: "最新更新" }
 });

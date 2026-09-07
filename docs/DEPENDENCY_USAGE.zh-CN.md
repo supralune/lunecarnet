@@ -7,7 +7,7 @@ Lunecarnet 既可以作为 GitHub Template 复制，也可以作为可版本化�
 仓库发布版本 tag 后，在个人站中安装固定版本：
 
 ```bash
-npm install github:supralune/lunecarnet#v0.3.0
+npm install github:supralune/lunecarnet#v0.4.0
 ```
 
 `package.json` 会包含：
@@ -15,7 +15,7 @@ npm install github:supralune/lunecarnet#v0.3.0
 ```json
 {
   "dependencies": {
-    "@lunecarnet/astro": "github:supralune/lunecarnet#v0.3.0"
+    "@lunecarnet/astro": "github:supralune/lunecarnet#v0.4.0"
   }
 }
 ```
@@ -43,7 +43,7 @@ export default defineConfig({
 });
 ```
 
-`createLunecarnetMarkdownProcessor()` 同时启用 `$...$`、`$$...$$` 数学公式和 Obsidian `[!note]` Callout。单独使用博客模式时也应配置该 processor；纯学术站不渲染 Markdown，可以省略。
+`createLunecarnetMarkdownProcessor()` 同时启用 `$...$`、`$$...$$` 数学公式、Obsidian `[!note]` Callout、`+`/`-` 折叠语义和外链新标签页。单独使用博客模式时也应配置该 processor；纯学术站不渲染 Markdown，可以省略。
 
 ## 把个人数据留在个人站
 
@@ -75,7 +75,10 @@ export default defineBlogConfig({
     authorBio: "A short public biography.",
     contactNote: "Email is the best way to reach me."
   },
-  blogHomePostLimit: 8
+  pagination: {
+    postsPerPage: 8,
+    categoryPostsPerPage: 10
+  }
 });
 ```
 
@@ -174,6 +177,34 @@ const { post, previous, next } = Astro.props;
 <BlogPostPage post={post} previous={previous} next={next} {...site} />
 ```
 
+分页、分类和年度详情同样由上游 helper 生成静态路径，使用方只保留三类薄路由：
+
+| 使用方路由 | 页面组件 | `getStaticPaths` helper |
+| --- | --- | --- |
+| `src/pages/page/[page].astro` | `BlogHomePage` | `getBlogPagePaths(site.pagination?.postsPerPage)` |
+| `src/pages/categories/[category]/[...page].astro` | `BlogCategoryPage` | `getBlogCategoryPaths(site.pagination?.categoryPostsPerPage)` |
+| `src/pages/archive/[year].astro` | `BlogArchiveYearPage` | `getBlogArchiveYearPaths()` |
+
+例如分类路由只负责取数并转交完整页面组件：
+
+```astro
+---
+import { BlogCategoryPage, getBlogCategoryPaths, getPublishedPosts } from "@lunecarnet/astro";
+import site from "../../../config/site";
+
+export function getStaticPaths() {
+  return getBlogCategoryPaths(site.pagination?.categoryPostsPerPage);
+}
+
+const posts = await getPublishedPosts();
+const { category, currentPage } = Astro.props;
+---
+
+<BlogCategoryPage posts={posts} category={category} currentPage={currentPage} {...site} />
+```
+
+个人站的 `rss.xml.ts`、`sitemap.xml.ts` 和 `404.astro` 分别使用 `createBlogRssResponse()`、`createBlogSitemapResponse()` 与 `NotFoundPage`。这样消费者拥有路由和站点地址，上游拥有稳定的 XML 与页面实现；Sitemap 会自动包含分页、分类分页、年度详情和以 `updatedDate` 为准的 `lastmod`。
+
 博客仍需在个人站定义名为 `posts` 的 Astro content collection。Schema 可以直接从主题导入，Markdown 永远保留在个人站：
 
 ```ts
@@ -188,6 +219,8 @@ const posts = defineCollection({
 
 export const collections = { posts };
 ```
+
+`postSchema` 接受可选的 `updatedDate`。文章页会显示更新日期并输出 `article:modified_time` 与 JSON-LD `dateModified`；正文的 H1、H2、H3 都会进入目录。
 
 ## 界面语言
 
@@ -210,6 +243,7 @@ export default defineBlogConfig({
 - `head`：额外 meta、验证标签和样式覆盖；由 `BaseLayout` 提供。
 - `header-actions`：语言切换、额外社交入口等。
 - `after-hero`：Hero 后的个人区块。
+- `content`：替换 `BlogAboutPage` 的默认正文，用于无损保留个人站已有的 About 文案，同时继续复用上游页面外壳与排版。
 - `sidebar`：在默认侧栏末尾追加内容。
 - `footer-extra`：追加 Footer 内容。
 - 默认插槽：在首页默认区块后追加内容。
@@ -218,7 +252,7 @@ export default defineBlogConfig({
 
 ## 升级
 
-模板仓库发布新 tag 后，将依赖版本从例如 `v0.2.1` 改为 `v0.3.0`，然后运行：
+模板仓库发布新 tag 后，将依赖版本从例如 `v0.3.0` 改为 `v0.4.0`，然后运行：
 
 ```bash
 npm install

@@ -1,5 +1,5 @@
 import { academic, academicHomeLimits, academicHomeSections, education, honors, news, projects, publications, service } from "./academic";
-import { blog, blogHomePostLimit } from "./blog";
+import { blog, blogPagination } from "./blog";
 import { identity } from "./shared";
 import { defineAcademicConfig, defineBlogConfig } from "../types";
 
@@ -7,7 +7,7 @@ import { defineAcademicConfig, defineBlogConfig } from "../types";
 export const blogTemplate = defineBlogConfig({
   blog,
   identity,
-  blogHomePostLimit
+  pagination: blogPagination
 });
 
 /** Consumer-owned data passed into the reusable academic theme components. */

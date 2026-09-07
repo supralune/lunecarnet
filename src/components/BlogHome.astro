@@ -3,44 +3,55 @@ import PostItem from "./PostItem.astro";
 import EmptyState from "./EmptyState.astro";
 import BlogShell from "./BlogShell.astro";
 import { templatePath } from "../config/runtime";
-import type { Post } from "../lib/posts";
-import type { BlogConfig, IdentityConfig } from "../types";
+import { blogPagePath, defaultBlogPagination, paginateItems, positivePageSize, type Post } from "../lib/posts";
+import type { BlogConfig, BlogPaginationConfig, IdentityConfig } from "../types";
 import { withBase } from "../lib/url";
 import { formatMessage, resolveMessages, type MessageOverrides } from "../messages";
+import PageHeading from "./PageHeading.astro";
+import Pagination from "./Pagination.astro";
 
 interface Props {
   posts: Post[];
   blog: BlogConfig;
   identity: IdentityConfig;
   messages?: MessageOverrides;
-  blogHomePostLimit?: number;
+  pagination?: BlogPaginationConfig;
+  currentPage?: number;
 }
-const { posts, blog, identity, messages, blogHomePostLimit = 8 } = Astro.props;
+const { posts, blog, identity, messages, pagination, currentPage = 1 } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
-const homePosts = posts.slice(0, Math.max(0, blogHomePostLimit));
+const postsPerPage = positivePageSize(pagination?.postsPerPage, defaultBlogPagination.postsPerPage);
+const page = paginateItems(posts, currentPage, postsPerPage);
+const isFirstPage = page.currentPage === 1;
 ---
 
 <BlogShell posts={posts} blog={blog} identity={identity} messages={messages}>
   <slot name="header-actions" slot="header-actions" />
-      <section class="blog-hero">
-        <p class="eyebrow">{formatMessage(ui.blogHeroEyebrow, { year: blog.foundedYear })}</p>
-        <h1>{blog.hero}</h1>
-        <p>{blog.intro}</p>
-      </section>
-
-      <slot name="after-hero" />
+    {isFirstPage ? (
+      <Fragment>
+        <section class="blog-hero">
+          <p class="eyebrow">{formatMessage(ui.blogHeroEyebrow, { year: blog.foundedYear })}</p>
+          <h1>{blog.hero}</h1>
+          <p>{blog.intro}</p>
+        </section>
+        <slot name="after-hero" />
+      </Fragment>
+    ) : (
+      <PageHeading eyebrow={formatMessage(ui.allNotesEyebrow, { current: page.currentPage })} title={ui.allNotesTitle} intro={formatMessage(ui.allNotesPageIntro, { current: page.currentPage, total: page.totalPages })} />
+    )}
 
       <section id="notes" class="content-section">
         <div class="section-heading">
-          <h2>{ui.latestNotes}</h2>
+          <h2>{isFirstPage ? ui.latestNotes : ui.allNotesTitle}</h2>
           <a class="section-more" href={withBase(templatePath("blog", "/archive/"))}>{ui.viewArchive}</a>
         </div>
         <div class="post-list">
-          {homePosts.length > 0
-            ? homePosts.map((post, index) => <PostItem post={post} featured={index === 0 && post.data.featured} locale={blog.language} messages={messages} />)
+          {page.items.length > 0
+            ? page.items.map((post, index) => <PostItem post={post} featured={isFirstPage && index === 0 && post.data.featured} locale={blog.language} messages={messages} />)
             : <EmptyState title={ui.noNotesTitle} description={ui.noNotesDescription} />}
         </div>
       </section>
+      <Pagination currentPage={page.currentPage} totalPages={page.totalPages} firstPath={templatePath("blog")} pagePath={blogPagePath} locale={blog.language} messages={messages} />
   <slot />
   <slot name="sidebar" slot="sidebar" />
   <slot name="footer-extra" slot="footer-extra" />

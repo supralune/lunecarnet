@@ -2,7 +2,8 @@
 import BlogPageLayout from "../layouts/BlogPageLayout.astro";
 import EmptyState from "./EmptyState.astro";
 import PageHeading from "./PageHeading.astro";
-import { postPath, type Post } from "../lib/posts";
+import { categoryPath, formatDate, getCategorySummaries, postPath, type Post } from "../lib/posts";
+import { templatePath } from "../config/runtime";
 import { withBase } from "../lib/url";
 import { formatMessage, resolveMessages } from "../messages";
 import type { BlogTemplateConfig } from "../types";
@@ -10,10 +11,8 @@ import type { BlogTemplateConfig } from "../types";
 interface Props extends BlogTemplateConfig { posts: Post[] }
 const { posts, blog, identity, messages } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
-const categories = [...new Set(posts.map((post) => post.data.category))].map((name) => ({
-  name,
-  posts: posts.filter((post) => post.data.category === name)
-}));
+const categories = getCategorySummaries(posts);
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, blog.language));
 ---
 
 <BlogPageLayout title={ui.categoriesTitle} description={ui.categoriesDescription} active="categories" posts={posts} blog={blog} identity={identity} messages={messages}>
@@ -21,17 +20,26 @@ const categories = [...new Set(posts.map((post) => post.data.category))].map((na
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={formatMessage(ui.categoriesEyebrow, { count: categories.length })} title={ui.categoriesTitle} intro={ui.categoriesIntro} />
 
-  <div class="category-groups">
-    {categories.length > 0 ? categories.map((category, index) => (
-      <section class="category-group" id={`category-${index + 1}`}>
-        <div class="category-group-title">
-          <h2>{category.name}</h2>
-          <span>{formatMessage(category.posts.length === 1 ? ui.noteCountOne : ui.noteCountMany, { count: category.posts.length })}</span>
+  {tags.length > 0 && <nav class="tag-cloud" aria-label={ui.noteTags}>
+    {tags.map((tag) => <a href={`${withBase(templatePath("blog", "/search/"))}?q=${encodeURIComponent(tag)}`}>#{tag}</a>)}
+  </nav>}
+
+  <div class="category-overview">
+    {categories.length > 0 ? categories.map((category) => (
+      <article class="category-overview-item">
+        <div class="category-overview-main">
+          <div class="category-overview-heading">
+            <h2><a href={withBase(categoryPath(category.name))}>{category.name}</a></h2>
+            <span>{formatMessage(category.posts.length === 1 ? ui.noteCountOne : ui.noteCountMany, { count: category.posts.length })}</span>
+          </div>
+          <p><span>{ui.recentlyUpdated}</span><a href={withBase(postPath(category.latestPost))}>{category.latestPost.data.title}</a></p>
+          <div class="category-overview-meta">
+            <time datetime={category.latest.toISOString()}>{formatDate(category.latest, blog.language)}</time>
+            {category.tags.length > 0 && <span>{category.tags.join(" · ")}</span>}
+          </div>
         </div>
-        <ol>{category.posts.map((post) => (
-          <li><a href={withBase(postPath(post))}>{post.data.title}</a><span>{post.data.description}</span></li>
-        ))}</ol>
-      </section>
+        <a class="category-enter" href={withBase(categoryPath(category.name))} aria-label={`${ui.enterCategory} ${category.name}`}>{ui.enterCategory}</a>
+      </article>
     )) : <EmptyState title={ui.categoriesEmptyTitle} description={ui.categoriesEmptyDescription} />}
   </div>
   <slot />

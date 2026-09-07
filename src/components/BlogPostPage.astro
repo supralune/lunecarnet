@@ -3,7 +3,7 @@ import SiteFooter from "./SiteFooter.astro";
 import BlogHeader from "./BlogHeader.astro";
 import { templatePath } from "../config/runtime";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { formatDate, postPath, type Post } from "../lib/posts";
+import { categoryPath, formatDate, postModifiedDate, postPath, type Post } from "../lib/posts";
 import type { BlogConfig, IdentityConfig } from "../types";
 import { withBase } from "../lib/url";
 import { render } from "astro:content";
@@ -20,7 +20,7 @@ interface Props {
 }
 const { post, previous, next, blog, identity, messages } = Astro.props;
 const { Content, headings } = await render(post);
-const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const toc = headings.filter((heading) => heading.depth >= 1 && heading.depth <= 3);
 const ui = resolveMessages(blog.language, messages);
 const schema = {
   "@context": "https://schema.org",
@@ -28,12 +28,13 @@ const schema = {
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.publishDate.toISOString(),
+  dateModified: postModifiedDate(post).toISOString(),
   author: { "@type": "Person", name: identity.name },
   mainEntityOfPage: new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString()
 };
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} lang={blog.language} pageClass="blog-page" type="article" publishedTime={post.data.publishDate} schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
+<BaseLayout title={post.data.title} description={post.data.description} lang={blog.language} pageClass="blog-page" type="article" publishedTime={post.data.publishDate} modifiedTime={post.data.updatedDate} schema={schema} feed={{ title: `${blog.title} RSS`, href: templatePath("blog", "/rss.xml") }} messages={messages}>
   <slot name="head" slot="head" />
   <div class="site-shell article-site">
     <BlogHeader blog={blog} messages={messages}>
@@ -41,11 +42,15 @@ const schema = {
     </BlogHeader>
     <main class="article-main" id="main">
       <header class="article-header">
-        <a href={withBase(templatePath("blog"))}>{ui.backToNotes}</a>
+        <div class="article-breadcrumb"><a href={withBase(templatePath("blog"))}>{ui.home}</a><span>/</span><a href={withBase(categoryPath(post.data.category))}>{post.data.category}</a></div>
         <p class="eyebrow">{post.data.category}</p>
         <h1>{post.data.title}</h1>
         <p>{post.data.description}</p>
-        <div><time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate, blog.language)}</time><span>/</span><span>{formatMessage(ui.minuteRead, { count: post.data.readingTime })}</span></div>
+        <div class="article-meta">
+          <time datetime={post.data.publishDate.toISOString()}>{formatMessage(ui.publishedOn, { date: formatDate(post.data.publishDate, blog.language) })}</time>
+          {post.data.updatedDate && <><span>/</span><time datetime={post.data.updatedDate.toISOString()}>{formatMessage(ui.updatedOn, { date: formatDate(post.data.updatedDate, blog.language) })}</time></>}
+          <span>/</span><span>{formatMessage(ui.minuteRead, { count: post.data.readingTime })}</span>
+        </div>
       </header>
       <div class:list={["article-shell", { "has-toc": toc.length > 1 }]}>
         <article class="article-content"><Content /></article>
@@ -57,8 +62,7 @@ const schema = {
         )}
       </div>
       <nav class="article-tags" aria-label={ui.noteTags}>{post.data.tags.map((tag) => <a href={`${withBase(templatePath("blog", "/search/"))}?q=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>
-      {(previous || next) && (
-        <nav class:list={["post-navigation", { "is-single": !previous || !next }]} aria-label={ui.adjacentNotes}>
+      <nav class:list={["post-navigation", { "is-single": !previous || !next }]} aria-label={ui.adjacentNotes}>
           {previous && (
             <a class="previous-note" href={withBase(postPath(previous))}>
               <small><span aria-hidden="true">←</span>{ui.previousNote}</small>
@@ -71,8 +75,13 @@ const schema = {
               <span class="post-navigation-title">{next.data.title}</span>
             </a>
           )}
+          {!previous && !next && (
+            <a class="archive-note" href={withBase(templatePath("blog", "/archive/"))}>
+              <small>{ui.archiveTitle}<span aria-hidden="true">→</span></small>
+              <span class="post-navigation-title">{ui.browseArchive}</span>
+            </a>
+          )}
         </nav>
-      )}
     </main>
     <SiteFooter variant="blog" identity={identity} locale={blog.language} messages={messages}>
       <slot name="footer-extra" slot="extra" />

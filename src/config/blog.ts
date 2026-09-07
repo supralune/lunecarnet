@@ -14,5 +14,7 @@ export const blog: BlogConfig = {
   contactNote: "Email is the best way to reach me for questions, corrections, or thoughtful conversations about anything published here."
 };
 
-/** Maximum number of recent posts rendered on the blog home page. */
-export const blogHomePostLimit = 8;
+export const blogPagination = {
+  postsPerPage: 8,
+  categoryPostsPerPage: 10
+};

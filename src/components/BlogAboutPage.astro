@@ -8,6 +8,7 @@ import PageHeading from "./PageHeading.astro";
 interface Props extends BlogTemplateConfig { posts: Post[] }
 const { posts, blog, identity, messages } = Astro.props;
 const ui = resolveMessages(blog.language, messages);
+const hasCustomContent = Astro.slots.has("content");
 ---
 
 <BlogPageLayout title={ui.blogAboutTitle} description={ui.blogAboutDescription} active="about" posts={posts} blog={blog} identity={identity} messages={messages}>
@@ -15,15 +16,19 @@ const ui = resolveMessages(blog.language, messages);
   <slot name="header-actions" slot="header-actions" />
   <PageHeading eyebrow={ui.blogAboutEyebrow} title={ui.blogAboutHeading} intro={ui.blogAboutIntro} />
   <div class="prose-page">
-    <section><h2>{ui.whyIWrite}</h2><p>{blog.about}</p><p>{blog.writingPurpose}</p></section>
-    <section><h2>{ui.whatICover}</h2><p>{blog.coverage}</p></section>
-    <section><h2>{ui.aboutAuthor}</h2><p><strong>{identity.name}</strong></p><p>{blog.authorBio}</p></section>
-    <section>
-      <h2>{ui.contact}</h2>
-      <p>{blog.contactNote}</p>
-      <p>{ui.publicEmail}: <a href={`mailto:${identity.email}`}>{identity.email}</a></p>
-      {identity.github && <p>{ui.github}: <a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></p>}
-    </section>
+    {hasCustomContent ? <slot name="content" /> : (
+      <Fragment>
+        <section><h2>{ui.whyIWrite}</h2><p>{blog.about}</p><p>{blog.writingPurpose}</p></section>
+        <section><h2>{ui.whatICover}</h2><p>{blog.coverage}</p></section>
+        <section><h2>{ui.aboutAuthor}</h2><p><strong>{identity.name}</strong></p><p>{blog.authorBio}</p></section>
+        <section>
+          <h2>{ui.contact}</h2>
+          <p>{blog.contactNote}</p>
+          <p>{ui.publicEmail}: <a href={`mailto:${identity.email}`}>{identity.email}</a></p>
+          {identity.github && <p>{ui.github}: <a href={identity.github} target="_blank" rel="noreferrer">{identity.github}</a></p>}
+        </section>
+      </Fragment>
+    )}
     <slot />
   </div>
   <slot name="sidebar" slot="sidebar" />

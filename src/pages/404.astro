@@ -2,17 +2,10 @@
 import { academic } from "@/config/academic";
 import { blog } from "@/config/blog";
 import { siteMode } from "@/config/runtime";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { withBase } from "@/lib/url";
+import NotFoundPage from "@/components/NotFoundPage.astro";
 
 const siteTitle = siteMode === "blog" ? blog.title : siteMode === "academic" ? academic.title : "Lunecarnet";
+const locale = siteMode === "academic" ? academic.language : blog.language;
 ---
 
-<BaseLayout title={`Page not found · ${siteTitle}`} description="The requested page could not be found.">
-  <main class="not-found" id="main">
-    <p class="eyebrow">404 · NOT FOUND</p>
-    <h1>This page has not been written yet.</h1>
-    <p>Return to the home page and continue exploring.</p>
-    <a class="button primary" href={withBase("/")}>Back home</a>
-  </main>
-</BaseLayout>
+<NotFoundPage siteTitle={siteTitle} locale={locale} />
