@@ -12,6 +12,37 @@ const rootPath = fileURLToPath(root);
 const run = promisify(execFile);
 const manifest = JSON.parse(await readFile(new URL("package.json", root), "utf8"));
 
+function hasResolvableLockedPackage(packages, ownerPath, dependency) {
+  let current = ownerPath;
+  while (current) {
+    if (packages[`${current}/node_modules/${dependency}`]) return true;
+    const parentMarker = current.lastIndexOf("/node_modules/");
+    if (parentMarker < 0) break;
+    current = current.slice(0, parentMarker);
+  }
+  return Boolean(packages[`node_modules/${dependency}`]);
+}
+
+test("keeps the lockfile dependency graph complete across platforms", async () => {
+  const lock = JSON.parse(await readFile(new URL("package-lock.json", root), "utf8"));
+  const missing = [];
+
+  for (const [packagePath, entry] of Object.entries(lock.packages)) {
+    const required = new Set([
+      ...Object.keys(entry.dependencies ?? {}),
+      ...Object.keys(entry.optionalDependencies ?? {}),
+      ...Object.keys(entry.peerDependencies ?? {}).filter((name) => !entry.peerDependenciesMeta?.[name]?.optional)
+    ]);
+    for (const dependency of required) {
+      if (!hasResolvableLockedPackage(lock.packages, packagePath, dependency)) {
+        missing.push(`${packagePath || "<root>"} -> ${dependency}`);
+      }
+    }
+  }
+
+  assert.deepEqual(missing, [], `lockfile has unresolved dependency entries:\n${missing.join("\n")}`);
+});
+
 test("exposes a Git-installable Astro package contract", async () => {
   assert.equal(manifest.name, "@lunecarnet/astro");
   assert.equal(manifest.private, true);

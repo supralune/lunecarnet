@@ -34,3 +34,4 @@ Prefer and document complete `*Page` components, `defineBlogConfig`, `defineAcad
 - Message change: provide both English and Simplified Chinese values.
 - Style change: check light/dark, 980px/720px/500px breakpoints, focus visibility, and reduced motion.
 - Before handoff, run `npm test`. Do not accept snapshots or fixtures that bypass the packed package artifact.
+- After changing dependencies or the lockfile, regenerate `package-lock.json` from an empty directory without `node_modules`, then run an isolated `npm ci`; an install against the existing local dependency tree is not sufficient.
