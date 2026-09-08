@@ -43,7 +43,7 @@ button { color: inherit; font: inherit; }
 :root[data-theme="dark"] .theme-dark { display: none; }
 .nav-toggle { display: none; min-height: 36px; padding: 0 9px; border: 1px solid var(--lc-color-line); border-radius: 3px; background: transparent; color: var(--lc-color-muted); cursor: pointer; font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
 .nav-menu { position: absolute; right: 0; bottom: -1px; display: flex; }
-.nav-menu a { min-width: 82px; padding: 5px 17px; border: 1px solid transparent; color: var(--lc-color-ink); font-size: 12px; line-height: 29px; text-align: center; }
+.nav-menu a { min-width: 82px; padding: 5px 17px; border: 1px solid transparent; color: var(--lc-color-ink); font-size: 13px; line-height: 29px; text-align: center; }
 .nav-menu a:hover { color: var(--lc-color-accent); border-bottom-color: var(--lc-color-accent); }
 .nav-menu a.current { border-color: var(--lc-color-line); border-bottom-color: var(--lc-color-paper); color: var(--lc-color-ink-strong); }
 
@@ -413,7 +413,7 @@ button { color: inherit; font: inherit; }
   .logo { font-size: 28px; }
   .variant-switcher { padding: 2px; }
   .variant-switcher a { min-width: 0; padding: 3px 7px; font-size: 8.5px; }
-  .nav-menu a { padding-inline: 9px; font-size: 11px; }
+  .nav-menu a { padding-inline: 9px; font-size: 12px; }
   .post-item, .post-item.featured { gap: 12px; padding: 21px 0; }
   .post-item.featured { margin-top: 10px; }
   .date-block { flex-basis: 42px; height: 47px; }
