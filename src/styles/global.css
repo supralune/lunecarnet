@@ -313,12 +313,12 @@ button { color: inherit; font: inherit; }
 .article-content .katex-display { max-width: 100%; margin: 24px 0; padding: 4px 0 8px; overflow-x: auto; overflow-y: hidden; }
 .article-content .katex-display > .katex { text-align: center; }
 .toc { position: sticky; top: 24px; margin-top: 30px; padding-left: 14px; border-left: 1px solid var(--lc-color-line); }
-.toc strong { display: block; margin-bottom: 8px; color: var(--lc-color-ink-strong); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.toc strong { display: block; margin-bottom: 8px; color: var(--lc-color-ink-strong); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
 .toc ol { list-style: none; }
 .toc li { margin: 6px 0; line-height: 1.45; }
 .toc li.toc-depth-2 { padding-left: 10px; }
 .toc li.toc-depth-3 { padding-left: 20px; }
-.toc a { color: var(--lc-color-muted); font-size: 10.5px; }
+.toc a { color: var(--lc-color-muted); font: 400 14px/1.5 var(--lc-font-serif); }
 .toc a:hover { color: var(--lc-color-accent); }
 .article-tags { display: flex; flex-wrap: wrap; gap: 7px; padding: 18px 0; border-top: 1px solid var(--lc-color-line); }
 .article-tags a { padding: 2px 10px; border: 1px solid var(--lc-color-line); border-radius: 14px; color: var(--lc-color-muted); font-size: 10.5px; }
