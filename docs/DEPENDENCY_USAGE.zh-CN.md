@@ -7,7 +7,7 @@ Lunecarnet 既可以作为 GitHub Template 复制，也可以作为可版本化�
 仓库发布版本 tag 后，在个人站中安装固定版本：
 
 ```bash
-npm install github:supralune/lunecarnet#v0.4.1
+npm install github:supralune/lunecarnet#v0.4.2
 ```
 
 `package.json` 会包含：
@@ -15,7 +15,7 @@ npm install github:supralune/lunecarnet#v0.4.1
 ```json
 {
   "dependencies": {
-    "@lunecarnet/astro": "github:supralune/lunecarnet#v0.4.1"
+    "@lunecarnet/astro": "github:supralune/lunecarnet#v0.4.2"
   }
 }
 ```
@@ -252,7 +252,7 @@ export default defineBlogConfig({
 
 ## 升级
 
-模板仓库发布新 tag 后，将依赖版本从例如 `v0.4.0` 改为 `v0.4.1`，然后运行：
+模板仓库发布新 tag 后，将依赖版本从例如 `v0.4.1` 改为 `v0.4.2`，然后运行：
 
 ```bash
 npm install
