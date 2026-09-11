@@ -81,11 +81,6 @@ button { color: inherit; font: inherit; }
 .template-grid .button { margin-top: auto; }
 
 /* Blog */
-.blog-hero { display: grid; grid-template-columns: minmax(0, 1fr) 205px; align-items: end; gap: 28px; padding: 2px 0 25px; border-bottom: 1px solid var(--lc-color-line); }
-.blog-hero .eyebrow { grid-column: 1 / -1; margin-bottom: -15px; }
-.blog-hero h1 { max-width: 590px; color: var(--lc-color-ink-strong); font: 500 26px/1.55 var(--lc-font-serif); letter-spacing: .01em; text-wrap: balance; }
-.blog-hero > p:last-child { color: var(--lc-color-muted); font: 12.5px/1.75 var(--lc-font-serif); }
-.blog-shell .content-section { margin-top: 25px; }
 .post-item { display: flex; gap: 18px; padding: 24px 0; border-bottom: 1px solid var(--lc-color-line-soft); }
 .post-item.featured { margin-top: 15px; padding-right: 20px; background: linear-gradient(90deg, var(--lc-color-accent-pale), color-mix(in srgb, var(--lc-color-accent-pale), transparent 87%) 72%, transparent); border-top: 1px solid color-mix(in srgb, var(--lc-color-accent), transparent 70%); border-bottom-color: color-mix(in srgb, var(--lc-color-accent), transparent 70%); }
 .date-block { flex: 0 0 48px; height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 3px; border-radius: 3px; background: var(--lc-color-warm); color: var(--lc-color-warm-ink); line-height: 1; }
@@ -378,10 +373,6 @@ button { color: inherit; font: inherit; }
   .nav-menu a { min-height: 44px; min-width: auto; display: flex; flex: 1 0 50%; align-items: center; justify-content: center; padding-inline: 12px; }
   .nav-menu a.current { border-color: transparent; border-bottom-color: var(--lc-color-accent); }
   .main-content { padding-top: 28px; }
-  .blog-hero { display: block; }
-  .blog-hero .eyebrow { margin-bottom: 8px; }
-  .blog-hero h1 { font-size: 23px; }
-  .blog-hero > p:last-child { margin-top: 10px; }
   .academic-hero h1 { font-size: 24px; }
   .sidebar { grid-template-columns: 1fr; }
   .profile-card, .sidebar-card { grid-row: auto; }

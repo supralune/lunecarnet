@@ -28,14 +28,7 @@ const isFirstPage = page.currentPage === 1;
 <BlogShell posts={posts} blog={blog} identity={identity} messages={messages}>
   <slot name="header-actions" slot="header-actions" />
     {isFirstPage ? (
-      <Fragment>
-        <section class="blog-hero">
-          <p class="eyebrow">{formatMessage(ui.blogHeroEyebrow, { year: blog.foundedYear })}</p>
-          <h1>{blog.hero}</h1>
-          <p>{blog.intro}</p>
-        </section>
-        <slot name="after-hero" />
-      </Fragment>
+      <slot name="after-hero" />
     ) : (
       <PageHeading eyebrow={formatMessage(ui.allNotesEyebrow, { current: page.currentPage })} title={ui.allNotesTitle} intro={formatMessage(ui.allNotesPageIntro, { current: page.currentPage, total: page.totalPages })} />
     )}
