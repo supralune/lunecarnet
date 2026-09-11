@@ -39,6 +39,7 @@ test(`builds the ${mode} route contract`, async () => {
     `${templateRoute("blog", "search")}index.html`,
     `${templateRoute("blog", "about")}index.html`,
     `${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`,
+    `${templateRoute("blog", "posts/mathematical-notes-and-callouts")}index.html`,
     mode === "both" ? "blog/rss.xml" : "rss.xml"
   ];
   const academicRoutes = [
@@ -115,6 +116,9 @@ test("keeps blog-only discovery and reading features inside the blog template", 
   assert.match(search, /id="search-index"/);
   assert.match(search, /Designing a Calm Digital Garden/);
   assert.match(search, /Start with the Content/);
+  const searchIndex = search.match(/<script[^>]*id="search-index"[^>]*>([\s\S]*?)<\/script>/)?.[1] ?? "";
+  assert.match(searchIndex, /Assumptions and notation/);
+  assert.doesNotMatch(searchIndex, /\[!note\]|\$\$|\\mathbb|\\begin\{aligned\}/);
 
   const article = await read(`${templateRoute("blog", "posts/designing-a-calm-digital-garden")}index.html`);
   assert.match(article, /class="toc"/);
@@ -122,6 +126,16 @@ test("keeps blog-only discovery and reading features inside the blog template", 
   assert.match(article, /class="previous-note"/);
   assert.doesNotMatch(article, /class="next-note"/);
   assert.match(article, /property="og:type" content="article"/);
+
+  const richArticle = await read(`${templateRoute("blog", "posts/mathematical-notes-and-callouts")}index.html`);
+  assert.match(richArticle, /class="katex-display"/);
+  assert.match(richArticle, /<details class="callout callout-note"[^>]*open/);
+  assert.match(richArticle, /<details class="callout callout-warning"(?![^>]*open)/);
+  assert.match(richArticle, /<aside class="callout callout-tip"/);
+  assert.match(richArticle, /<aside class="callout callout-example"/);
+  assert.match(richArticle, /<table>/);
+  assert.match(richArticle, /<pre[^>]*data-language="ts"/);
+  assert.doesNotMatch(richArticle, /\[!note\]|\[!warning\]|\[!tip\]|\[!example\]/);
 
   const middleArticle = await read(`${templateRoute("blog", "posts/notes-that-remain-useful")}index.html`);
   assert.match(middleArticle, /class="post-navigation"/);

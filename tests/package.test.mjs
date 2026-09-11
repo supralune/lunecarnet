@@ -212,7 +212,10 @@ test("builds isolated blog and academic consumers from the packed artifact", { t
     assert.match(blogPost, /target="_blank"/);
     assert.match(blogPost, /rel="noopener noreferrer"/);
     assert.doesNotMatch(blogPost, /\[!note\]/);
-    await access(join(temporaryRoot, "consumer-blog", "dist", "search", "index.html"));
+    const blogSearch = await readFile(join(temporaryRoot, "consumer-blog", "dist", "search", "index.html"), "utf8");
+    const consumerSearchIndex = blogSearch.match(/<script[^>]*id="search-index"[^>]*>([\s\S]*?)<\/script>/)?.[1] ?? "";
+    assert.match(consumerSearchIndex, /Callout 正文支持/);
+    assert.doesNotMatch(consumerSearchIndex, /\[!note\]|\[!warning\]|\$\$|\\frac/);
     assert.match(await readFile(join(temporaryRoot, "consumer-blog", "dist", "rss.xml"), "utf8"), /<rss version="2.0">/);
     const consumerSitemap = await readFile(join(temporaryRoot, "consumer-blog", "dist", "sitemap.xml"), "utf8");
     assert.match(consumerSitemap, /\/page\/2\//);
